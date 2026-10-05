@@ -244,6 +244,7 @@ let tapK=0;
 const revealPop=p=>{p=Math.sqrt(Math.max(0,Math.min(1,p)));return `brightness(${(.55+.45*p).toFixed(2)}) grayscale(${(1-p).toFixed(2)})`};
 let popF=-1,popK=0;
 function replay(){if(popF<0)return;popK++;const kd=actFor(popF,popK);act.textContent=ACTL[kd];react(heroWrap,popF,null,kd)}
+const mys=p=>{p=Math.max(0,Math.min(1,p));return `brightness(${(.25+.6*p).toFixed(2)}) grayscale(${(1-.5*p).toFixed(2)}) blur(${(9-6*p).toFixed(1)}px)`};
 const reveal=p=>{p=Math.sqrt(Math.max(0,Math.min(1,p)));return `brightness(${(.2+.8*p).toFixed(2)}) grayscale(${(1-p).toFixed(2)}) blur(${(2.5*(1-p)).toFixed(1)}px)`};
 function addCoins(n){const t=ds(new Date());coins=Math.max(0,coins+n);if(ct.day!==t)ct={day:t,n:0};ct.n+=n}
 const PRAISE_KEY=[[/양치|이빨|치아/,["반짝반짝 하얀 이! 양치 최고야!","치카치카 잘했네! 튼튼한 이가 될 거야!"]],[/숙제|공부|학습|문제|수학|영어|한글/,["집중력 대단해! 쑥쑥 똑똑해지는 중!","끝까지 해냈구나! 정말 멋진 학생이야!"]],[/책|독서|읽/,["책 읽는 모습이 정말 멋져!","오늘도 마음이 쑥쑥 자랐어!"]],[/정리|청소|치우|방/,["깔끔 대장 등장! 정리 최고야!","척척 정리했네! 너무 대단해!"]],[/운동|줄넘기|태권|달리기|걷|체조|수영/,["튼튼 쑥쑥! 몸이 힘세졌어!","땀 뻘뻘 열심히 했구나! 최고야!"]],[/샤워|씻|목욕|세수|손/,["뽀득뽀득 깨끗해졌네!","씻고 나니 향기가 솔솔~ 잘했어!"]],[/피아노|악기|연습|그림|색칠|만들/,["연습한 만큼 멋져져! 짝짝짝!","꾸준히 하는 네가 너무 자랑스러워!"]],[/일기|글|쓰기/,["오늘 하루를 멋지게 기록했네!","생각을 쓰는 모습이 정말 멋져!"]],[/물|물마|물 마/,["꿀꺽꿀꺽! 건강한 습관이야!"]],[/밥|식사|먹|야채|채소/,["냠냠 잘 먹었네! 쑥쑥 크겠다!","골고루 먹는 모습 최고야!"]],[/잠|자기|이불|일찍/,["푹 자면 키가 쑥쑥! 잘했어!"]],[/프리올쏘|프리/,["프리올쏘 하느라 수고했어! 정말 멋져!","꾸준히 하는 모습이 너무 대견해!"]]];
@@ -311,7 +312,7 @@ function render(){
   streakBadge.textContent="🔥 "+streak+"일";coinBadge.textContent="🪙 "+coins;lastPop=-1;
   const td=ds(new Date()),ea=earned&&earned.day===td;buddyLv.textContent="Lv."+n+(ea?"":"/"+g);
   if(ea){buddyImg.src=friendsData[earned.f].src;buddyImg.style.filter="";buddyFace.classList.add("glowbox");buddyQ.style.display="none";bubble.textContent=nm(earned.f)+": "+cheers[earned.f%cheers.length]}
-  else{const nxo=it.find(x=>!x.done&&!x.locked)||it.find(x=>!x.done),nx=nxo?nxo.name:"";const pf=partnerF();buddyImg.src=friendsData[pf>=0?pf:pending].src;buddyImg.style.filter=pf>=0?"":reveal(0);if(pf>=0)buddyFace.classList.add("glowbox");else buddyFace.classList.remove("glowbox");buddyQ.style.display=pf>=0?"none":"";bubble.textContent=!t?"오늘 할 일을 먼저 정해줘!":pf<0?"🎁 첫 스탬프를 찍으면 친구 3명이 나타나! 골라봐!":nm(pf)+": 벌써 Lv."+n+"! "+Math.max(1,g-n)+"개만 더 하면 우리 친구가 돼!"}
+  else{const nxo=it.find(x=>!x.done&&!x.locked)||it.find(x=>!x.done),nx=nxo?nxo.name:"";const pf=partnerF()>=0?partnerF():pending;buddyImg.src=friendsData[pf].src;buddyImg.style.filter=mys(n/g);buddyFace.classList.remove("glowbox");buddyQ.style.display="";buddyQ.style.opacity=(1-.6*Math.min(1,n/g)).toFixed(2);bubble.textContent=!t?"오늘 할 일을 먼저 정해줘!":n===0?"❓ 오늘의 친구가 숨어 있어! 스탬프를 찍어봐!":"❓ 누굴까? 벌써 Lv."+n+"! "+Math.max(1,g-n)+"개만 더 하면 정체가 나타나!"}
   bookBtn.textContent="🐾 친구 도감 "+owned.length+"/"+friendsData.length;if(app_().dataset.tab==="f")renderFriends();
  rewardInput.value=reward;goalInput.value=goal;preOn.checked=pre.on;preTime.value=pre.time;pinState.textContent=pinHash?"현재: 설정됨 🔒":"아직 없음 — 정하면 아이가 설정 화면을 열 수 없어요";photoPrev.style.display=photo?"block":"none";if(photo)photoPrev.src=photo;
  undoList.innerHTML=(it.filter(x=>x.done).map(x=>`<div style="display:flex;align-items:center;gap:6px;padding:6px 2px;border-bottom:1px solid #eee"><span style="flex:1;font-size:14px">⭐ ${esc(x.name)}</span><button onclick="undoOne('${x.id}')" style="background:#efeaff;color:#745cff;border-radius:9px;padding:6px 10px;font-weight:900">↩ 되돌리기</button></div>`).join(""))||`<div style="font-size:12px;color:#8b7d90;padding:6px 0">오늘 완료한 미션이 없어요.</div>`;
@@ -366,7 +367,7 @@ let justPicked=false;
 function pickPartner(k){justPicked=true;partner={day:ds(new Date()),f:k};save();pickBox.style.display="none";const cb=afterPick;afterPick=null;if(cb)cb()}
 function stampIt(i){
  if(i==="pre"){if(preDone===dsn())return;preDone=dsn();lastPop=missions.length}else{if(done[i])return;done[i]=true;lastPop=i}
- save();if(partnerF()<0&&!(earned&&earned.day===ds(new Date())))openPick(()=>stampShow(i));else stampShow(i)}
+ save();if(partnerF()<0&&!(earned&&earned.day===ds(new Date()))){partner={day:ds(new Date()),f:pending};save()}stampShow(i)}
 function stampShow(i){
  const n=nDone(),g=eff(),today=ds(new Date()),pz=praiseFor(i);luckyLine.style.display="none";
  const sh=document.querySelector("#modal .sheet");
@@ -380,7 +381,8 @@ function stampShow(i){
   earned={day:today,f:f,had:had};(cr[f]=cr[f]||{xp:0,hat:0}).xp+=n;pending=-1;ensurePending();save();
   if(navigator.vibrate)navigator.vibrate([40,40,40,40,40]);
   document.getElementById("modal").classList.add("show");
-  revealFriend(f,had,pz,g,n);
+  resultBox.style.display="none";pickBox.style.display="none";drawBox.style.display="";modalOk.disabled=true;sound(true);
+  setTimeout(()=>{drawBox.style.display="none";revealFriend(f,had,pz,g,n)},1700);
   return;
  }
 const lucky=Math.random()<.25;addCoins(1+(lucky?2:0));save();
@@ -388,7 +390,7 @@ const lucky=Math.random()<.25;addCoins(1+(lucky?2:0));save();
  const coinTxt=`🪙 코인 +${lucky?3:1} (모두 ${coins}개)`,pzTxt=pz?`<br>💌 ${esc(pz)}`:"";
  const p=praise[Math.floor(Math.random()*praise.length)];
  if(gotToday){const nmx=nm(earned.f);heroImg.src=friendsData[earned.f].src;heroWrap.classList.add("glowbox");msg.textContent=p;const kd=actFor(earned.f,n-1);popF=earned.f;popK=n-1;act.textContent=ACTL[kd];act.style.display="";modalText.innerHTML=`<b style="font-size:22px;color:#745cff">🐾 ${nmx} Lv.${n}</b><br>${coinTxt}${pzTxt}`;setTimeout(()=>react(heroWrap,earned.f,null,kd),250);setTimeout(()=>react(heroWrap,earned.f,null,kd),1500)}
- else{const pf=partnerF()>=0?partnerF():pending;heroImg.src=friendsData[pf].src;heroImg.style.filter="";heroWrap.classList.add("glowbox");msg.textContent=justPicked?"내가 고른 "+nm(pf)+josa(nm(pf))+" 짠! 💗":p;justPicked=false;const kd=actFor(pf,n-1);popF=pf;popK=n-1;act.textContent=ACTL[kd];act.style.display="";modalText.innerHTML=`<b style="font-size:22px;color:#745cff">🐾 ${nm(pf)} Lv.${n}/${g}</b><br>🎯 ${Math.max(1,g-n)}개 더 하면 우리 친구가 돼요!<br>${coinTxt}${pzTxt}<div style="font-size:12px;color:#8b7d90">사진을 콕 누르면 또 보여줘요!</div>`;setTimeout(()=>react(heroWrap,pf,null,kd),250);setTimeout(()=>react(heroWrap,pf,null,kd),1500)}
+ else{const pf=partnerF()>=0?partnerF():pending;heroImg.src=friendsData[pf].src;heroImg.style.filter=mys(n/g);msg.textContent=p;const kd=actFor(pf,n-1);popF=pf;popK=n-1;act.textContent=ACTL[kd];act.style.display="";modalText.innerHTML=`<b style="font-size:22px;color:#745cff">🎭 누구일까? Lv.${n}/${g}</b><br>🎯 ${Math.max(1,g-n)}개 더 하면 정체가 나타나요!<br>${coinTxt}${pzTxt}<div style="font-size:12px;color:#8b7d90">사진을 콕 누르면 또 보여줘요!</div>`;setTimeout(()=>react(heroWrap,pf,null,kd),250);setTimeout(()=>react(heroWrap,pf,null,kd),1500)}
  slam("콩!",false);confetti(12);sound(false);render();document.getElementById("modal").classList.add("show");
 }
 document.getElementById("newTask").addEventListener("keydown",e=>{if(e.key==="Enter")addTask()});let mus=null,musOn=true;try{musOn=localStorage.getItem("mobileKongMusic")!=="0"}catch(e){}
