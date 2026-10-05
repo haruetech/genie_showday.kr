@@ -86,7 +86,7 @@ details{background:#f8f4fb;border-radius:14px;padding:10px 12px;margin:8px 0}sum
 .rx-dance{animation:rxd 1.1s ease-in-out}
 @keyframes rxd{0%,100%{transform:translateY(0) rotate(0)}12%{transform:translateY(-14px) rotate(-12deg)}25%{transform:translateY(0) rotate(0)}37%{transform:translateY(-14px) rotate(12deg)}50%{transform:translateY(0) rotate(0) scale(1.08)}62%{transform:translateY(-12px) rotate(-10deg)}75%{transform:translateY(0)}87%{transform:translateY(-12px) rotate(10deg)}}
 .lvp{position:absolute;bottom:-5px;left:50%;transform:translateX(-50%);background:#745cff;color:#fff;border-radius:10px;padding:0 8px;font-size:13px;font-weight:900;white-space:nowrap;z-index:3;border:2px solid #fff}
-.act{font-size:19px;font-weight:900;color:#745cff;margin:3px 0}
+#heroImg{width:165px;height:165px}.act{font-size:21px;animation:pop .5s;font-weight:900;color:#745cff;margin:3px 0}
 .picks{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:10px 0}.pick{background:#fff8d6;border:3px solid #ffe16c;border-radius:18px;padding:8px 4px;animation:pop .5s backwards}
 .pick:nth-child(2){animation-delay:.12s}.pick:nth-child(3){animation-delay:.24s}.sheet .pick img{width:100%;height:auto;border-width:3px;aspect-ratio:1;border-radius:50%;border:3px solid #fff;object-fit:cover;display:block}.pick span{display:block;font-weight:900;font-size:15px;margin-top:5px;color:#40354b}
 /* ---- popups ---- */
@@ -149,7 +149,7 @@ details{background:#f8f4fb;border-radius:14px;padding:10px 12px;margin:8px 0}sum
 <button class="ok" onclick="document.getElementById('parentModal').classList.remove('show')">설정 완료 ✓</button></div></div><div class="modal" id="modal"><div class="sheet"><div style="font-size:36px">🎉✨</div>
 <div id="drawBox" style="display:none"><div class="giftbig">🎁</div><h2>누가 나올까? 두근두근…</h2></div>
 <div id="pickBox" style="display:none"><h2>오늘 같이할 친구를 골라요! 💗</h2><div class="picks" id="picks"></div></div>
-<div id="resultBox"><div class="hw" id="heroWrap"><img id="heroImg" alt=""><span class="bigstamp" id="bigStamp"></span></div><h2 id="msg"></h2><div id="newFriendBox" style="display:none"><div class="glowbox sm" id="nfWrap"><img id="nfImg" alt=""></div><div id="nfText"></div></div><div class="lucky" id="luckyLine" style="display:none"></div><div id="modalText"></div></div>
+<div id="resultBox"><div class="hw" id="heroWrap" onclick="replay()"><img id="heroImg" alt=""><span class="bigstamp" id="bigStamp"></span></div><div class="act" id="act" style="display:none"></div><h2 id="msg"></h2><div id="newFriendBox" style="display:none"><div class="glowbox sm" id="nfWrap"><img id="nfImg" alt=""></div><div id="nfText"></div></div><div class="lucky" id="luckyLine" style="display:none"></div><div id="modalText"></div></div>
 <button class="ok" id="modalOk" onclick="document.getElementById('modal').classList.remove('show')">좋아요! 다음 미션 💗</button></div></div>
 <div class="modal" id="friendModal"><div class="sheet"><div class="hw glowbox" id="fdWrap" onclick="react(fdWrap,openIdx)"><img id="fdImg" alt=""><span class="hat" id="fdHat"></span></div><div style="font-size:12px;color:#8b7d90;margin-top:2px">사진을 콕 눌러봐요!</div><h2 id="fdName" style="margin:2px 0"></h2><div id="fdLv"></div><div id="fdMsg"></div>
 <div class="care"><button onclick="doCare('snack')">🍪 간식<small>3🪙</small></button><button onclick="doCare('play')">🎾 놀기<small>1🪙</small></button><button onclick="doCare('dress')">👑 꾸미기<small>2🪙</small></button></div><div id="fdCoin" style="font-weight:900;font-size:14px;margin-bottom:6px"></div>
@@ -175,7 +175,7 @@ const nm=i=>names[i]||friendsData[i].name;
 const cheers=["고마워! 우리 친구 하자! 💗","오늘도 같이 힘내자!","너 정말 멋져!","내일 또 만나자!","최고야, 최고!"];
 function ensurePending(){if(pending>=0&&pending<friendsData.length&&!owned.includes(pending))return;const all=friendsData.map((_,i)=>i);let pool=all.filter(i=>!owned.includes(i)&&!friendsData[i].special);if(!pool.length)pool=all.filter(i=>!owned.includes(i));if(!pool.length)pool=all;pending=pool[Math.floor(Math.random()*pool.length)]}
 const TR={0:{a:"wiggle",e:"eyes,mouth",ey:[.4,.3,.58,.31],m:[.5,.45]},1:{a:"jump",e:"nose,mouth",ey:[.44,.2,.58,.2],m:[.5,.33]},2:{a:"wiggle",e:"eyes,heart",ey:[.4,.33,.6,.33],m:[.5,.45]},3:{a:"jump",e:"eyes,breath",ey:[.31,.28,.69,.28],m:[.5,.56]},4:{a:"jump",e:"zap,mouth",ey:[.35,.44,.54,.44],m:[.45,.52]},5:{a:"nod",e:"nose,heart",ey:[.43,.38,.58,.38],m:[.52,.46]},6:{a:"nod",e:"eyes,nose",ey:[.42,.42,.6,.42],m:[.51,.6]},7:{a:"wiggle",e:"eyes,mouth",ey:[.43,.27,.54,.27],m:[.48,.35]},8:{a:"jump",e:"nose,mouth",ey:[.4,.33,.57,.33],m:[.5,.44]},9:{a:"jump",e:"nose,mouth",ey:[.47,.38,.62,.37],m:[.52,.54]},10:{a:"spin",e:"nose,eyes",ey:[.44,.3,.63,.3],m:[.53,.45]},11:{a:"jump",e:"nose,eyes",ey:[.43,.27,.62,.27],m:[.53,.44]},12:{a:"wiggle",e:"eyes,heart",ey:[.4,.28,.63,.28],m:[.5,.4]},13:{a:"wiggle",e:"heart,nose",ey:[.4,.5,.6,.5],m:[.5,.62]},14:{a:"nod",e:"nose,eyes",ey:[.4,.58,.6,.58],m:[.5,.72]},15:{a:"spin",e:"eyes,heart,mouth",ey:[.43,.43,.57,.43],m:[.5,.51]},16:{a:"wiggle",e:"nose,eyes",ey:[.4,.3,.52,.3],m:[.42,.42]},17:{a:"jump",e:"nose,mouth",ey:[.46,.37,.66,.37],m:[.56,.52]},18:{a:"nod",e:"eyes,nose",ey:[.38,.12,.55,.12],m:[.46,.22]},19:{a:"wiggle",e:"nose,heart",ey:[.35,.2,.55,.2],m:[.45,.34]},20:{a:"jump",e:"nose,eyes,mouth",ey:[.47,.27,.66,.27],m:[.55,.4]},21:{a:"nod",e:"nose,heart",ey:[.38,.3,.56,.3],m:[.47,.44]},22:{a:"jump",e:"nose,mouth,eyes",ey:[.43,.22,.67,.22],m:[.55,.36]},23:{a:"wiggle",e:"heart",ey:[.4,.4,.6,.4],m:[.5,.7]}};
-function puff(el,x,y,list,n,sp,fs){for(let k=0;k<n;k++){const p=document.createElement("span");p.className="flame";p.textContent=list[k%list.length];p.style.left=x*100+"%";p.style.top=y*100+"%";const a=Math.random()*Math.PI*2,r=(sp||30)*(.5+Math.random());p.style.setProperty("--dx",Math.cos(a)*r+"px");p.style.setProperty("--dy",(Math.sin(a)*r-18)+"px");p.style.animationDelay=k*70+"ms";p.style.fontSize=((fs||16)+Math.random()*10)+"px";el.appendChild(p);setTimeout(()=>p.remove(),2000)}}
+function puff(el,x,y,list,n,sp,fs){for(let k=0;k<n;k++){const p=document.createElement("span");p.className="flame";p.textContent=list[k%list.length];p.style.left=x*100+"%";p.style.top=y*100+"%";const a=Math.random()*Math.PI*2,r=(sp||30)*(.5+Math.random());p.style.setProperty("--dx",Math.cos(a)*r+"px");p.style.setProperty("--dy",(Math.sin(a)*r-18)+"px");p.style.animationDelay=k*70+"ms";p.style.fontSize=(((fs||16)+Math.random()*10)*(el.id==="heroWrap"?1.6:1))+"px";el.appendChild(p);setTimeout(()=>p.remove(),2000)}}
 function react(el,i,snack,kind){if(!el||i<0||!friendsData[i])return;const t=TR[i]||{a:"jump",e:"heart",ey:[.4,.4,.6,.4],m:[.5,.6]},nz=friendsData[i].nose;
  ["jump","wiggle","spin","nod","dance"].forEach(c=>el.classList.remove("rx-"+c));void el.offsetWidth;const A=kind==="dance"?"dance":t.a;el.classList.add("rx-"+A);setTimeout(()=>el.classList.remove("rx-"+A),1200);
  (kind?[kind]:t.e.split(",")).forEach((k,j)=>setTimeout(()=>{
@@ -192,6 +192,9 @@ const ORDER=["eyes","nose","heart","mouth","dance","breath","zap","rainbow"];
 const ACTL={eyes:"👀 눈이 반짝반짝!",nose:"🔥 코에서 불이 뿅!",mouth:"😋 냠냠 입을 벌려요!",heart:"💗 하트가 퐁퐁!",dance:"🎵 신나게 춤을 춰요!",breath:"🐉 후~ 불을 뿜어요!",zap:"⚡ 찌릿찌릿 번개!",rainbow:"🌈 무지개가 떴어요!"};
 function actFor(i,k){const t=TR[i]||{e:"heart"},nz=friendsData[i]&&friendsData[i].nose;const l=[...new Set([...t.e.split(","),...ORDER])].filter(x=>x!=="nose"||nz);return l[((k%l.length)+l.length)%l.length]}
 let tapK=0;
+const revealPop=p=>{p=Math.sqrt(Math.max(0,Math.min(1,p)));return `brightness(${(.55+.45*p).toFixed(2)}) grayscale(${(1-p).toFixed(2)})`};
+let popF=-1,popK=0;
+function replay(){if(popF<0)return;popK++;const kd=actFor(popF,popK);act.textContent=ACTL[kd];react(heroWrap,popF,null,kd)}
 const reveal=p=>{p=Math.sqrt(Math.max(0,Math.min(1,p)));return `brightness(${(.2+.8*p).toFixed(2)}) grayscale(${(1-p).toFixed(2)}) blur(${(2.5*(1-p)).toFixed(1)}px)`};
 function addCoins(n){const t=ds(new Date());coins=Math.max(0,coins+n);if(ct.day!==t)ct={day:t,n:0};ct.n+=n}
 const esc=t=>String(t).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
@@ -299,7 +302,7 @@ function stampIt(i){
  const n=nDone(),g=eff(),today=ds(new Date()),pz=i==="pre"?"":(mp[i]||"");luckyLine.style.display="none";
  const sh=document.querySelector("#modal .sheet");
  const slam=(t,big)=>{bigStamp.className="bigstamp"+(big?" all":"");bigStamp.innerHTML=t;sh.classList.remove("shake");void bigStamp.offsetWidth;bigStamp.classList.add("slam");if(big)sh.classList.add("shake")};
- drawBox.style.display="none";pickBox.style.display="none";resultBox.style.display="";newFriendBox.style.display="none";modalOk.disabled=false;heroWrap.classList.remove("glowbox");heroImg.style.filter="";
+ act.style.display="none";popF=-1;drawBox.style.display="none";pickBox.style.display="none";resultBox.style.display="";newFriendBox.style.display="none";modalOk.disabled=false;heroWrap.classList.remove("glowbox");heroImg.style.filter="";
  const gotToday=earned&&earned.day===today;
  if(n>=g&&!gotToday){
   streak++;addCoins(4);
@@ -324,9 +327,9 @@ const lucky=Math.random()<.25;addCoins(1+(lucky?2:0));save();
  if(lucky){luckyLine.textContent="🍀 럭키 스탬프! 코인 보너스!";luckyLine.style.display="";setTimeout(()=>puff(sh,.5,.15,["🪙","✨","🍀"],8,90,22),500)}
  const coinTxt=`🪙 코인 +${lucky?3:1} (모두 ${coins}개)`,pzTxt=pz?`<br>💌 ${esc(pz)}`:"";
  const p=praise[Math.floor(Math.random()*praise.length)];
- if(gotToday){const nmx=nm(earned.f);heroImg.src=friendsData[earned.f].src;heroWrap.classList.add("glowbox");msg.textContent=p;const kd=actFor(earned.f,n-1);modalText.innerHTML=`<b style="font-size:22px;color:#745cff">🐾 ${nmx} Lv.${n}</b><div class="act">${ACTL[kd]}</div>${coinTxt}${pzTxt}`;setTimeout(()=>react(heroWrap,earned.f,null,kd),650)}
- else{heroImg.src=friendsData[pending].src;heroImg.style.filter=reveal(n/g);msg.textContent=p;const kd=actFor(pending,n-1);modalText.innerHTML=`<b style="font-size:22px;color:#745cff">🐾 오늘의 친구 Lv.${n}/${g}</b><div class="act">${ACTL[kd]}</div>👀 색깔이 ${Math.round(Math.min(1,n/g)*100)}% 돌아왔어요! ${Math.max(1,g-n)}개 남았어요<br>${coinTxt}${pzTxt}`;setTimeout(()=>react(heroWrap,pending,null,kd),650)}
- slam("콩!",false);confetti(22);sound(false);render();document.getElementById("modal").classList.add("show");
+ if(gotToday){const nmx=nm(earned.f);heroImg.src=friendsData[earned.f].src;heroWrap.classList.add("glowbox");msg.textContent=p;const kd=actFor(earned.f,n-1);popF=earned.f;popK=n-1;act.textContent=ACTL[kd];act.style.display="";modalText.innerHTML=`<b style="font-size:22px;color:#745cff">🐾 ${nmx} Lv.${n}</b><br>${coinTxt}${pzTxt}`;setTimeout(()=>react(heroWrap,earned.f,null,kd),250);setTimeout(()=>react(heroWrap,earned.f,null,kd),1500)}
+ else{heroImg.src=friendsData[pending].src;heroImg.style.filter=revealPop(n/g);msg.textContent=p;const kd=actFor(pending,n-1);popF=pending;popK=n-1;act.textContent=ACTL[kd];act.style.display="";modalText.innerHTML=`<b style="font-size:22px;color:#745cff">🐾 오늘의 친구 Lv.${n}/${g}</b><br>👀 색깔 ${Math.round(Math.min(1,n/g)*100)}% · ${Math.max(1,g-n)}개 남았어요<br>${coinTxt}${pzTxt}<div style="font-size:12px;color:#8b7d90">사진을 콕 누르면 또 보여줘요!</div>`;setTimeout(()=>react(heroWrap,pending,null,kd),250);setTimeout(()=>react(heroWrap,pending,null,kd),1500)}
+ slam("콩!",false);confetti(12);sound(false);render();document.getElementById("modal").classList.add("show");
 }
 document.getElementById("newTask").addEventListener("keydown",e=>{if(e.key==="Enter")addTask()});ensurePending();renderFriends();render();buddyFace.onclick=()=>{const fid=earned&&earned.day===dsn()?earned.f:pending;tapK++;react(buddyFace,fid,null,actFor(fid,nDone()-1+tapK))};tick();setInterval(tick,15000);
 </script></body></html>
