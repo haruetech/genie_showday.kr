@@ -175,7 +175,7 @@ details{background:#f8f4fb;border-radius:14px;padding:10px 12px;margin:8px 0}sum
 <details open><summary>📝 오늘의 미션</summary>
 <div class="add"><input id="newTask" maxlength="35" placeholder="예: 양치하기"><button class="addBtn" onclick="addTask()">추가</button></div>
 <div class="add" style="margin-top:6px;align-items:center"><span style="font-size:13px;font-weight:900;flex:none">⏰ 예약 시간(선택)</span><input id="newTime" type="time"></div>
-<div class="add" style="margin-top:6px"><input id="newPraise" maxlength="40" placeholder="💌 칭찬 한마디(선택) 예: 양치 잘했네!"></div>
+<div class="add" style="margin-top:6px"><input id="newPraise" maxlength="40" placeholder="💌 칭찬 한마디(비우면 자동으로 칭찬해줘요)"></div>
 <div id="parentTaskList" style="margin-top:8px"></div></details>
 <details><summary>⏰ 예약 · 알림</summary>
 <p style="margin:0 0 6px;font-size:12px;color:#83778b">시간을 정한 미션은 그 시간이 되어야 열리고, 열릴 때 알려줘요. (앱이 열려 있을 때)</p>
@@ -246,6 +246,9 @@ let popF=-1,popK=0;
 function replay(){if(popF<0)return;popK++;const kd=actFor(popF,popK);act.textContent=ACTL[kd];react(heroWrap,popF,null,kd)}
 const reveal=p=>{p=Math.sqrt(Math.max(0,Math.min(1,p)));return `brightness(${(.2+.8*p).toFixed(2)}) grayscale(${(1-p).toFixed(2)}) blur(${(2.5*(1-p)).toFixed(1)}px)`};
 function addCoins(n){const t=ds(new Date());coins=Math.max(0,coins+n);if(ct.day!==t)ct={day:t,n:0};ct.n+=n}
+const PRAISE_KEY=[[/양치|이빨|치아/,["반짝반짝 하얀 이! 양치 최고야!","치카치카 잘했네! 튼튼한 이가 될 거야!"]],[/숙제|공부|학습|문제|수학|영어|한글/,["집중력 대단해! 쑥쑥 똑똑해지는 중!","끝까지 해냈구나! 정말 멋진 학생이야!"]],[/책|독서|읽/,["책 읽는 모습이 정말 멋져!","오늘도 마음이 쑥쑥 자랐어!"]],[/정리|청소|치우|방/,["깔끔 대장 등장! 정리 최고야!","척척 정리했네! 너무 대단해!"]],[/운동|줄넘기|태권|달리기|걷|체조|수영/,["튼튼 쑥쑥! 몸이 힘세졌어!","땀 뻘뻘 열심히 했구나! 최고야!"]],[/샤워|씻|목욕|세수|손/,["뽀득뽀득 깨끗해졌네!","씻고 나니 향기가 솔솔~ 잘했어!"]],[/피아노|악기|연습|그림|색칠|만들/,["연습한 만큼 멋져져! 짝짝짝!","꾸준히 하는 네가 너무 자랑스러워!"]],[/일기|글|쓰기/,["오늘 하루를 멋지게 기록했네!","생각을 쓰는 모습이 정말 멋져!"]],[/물|물마|물 마/,["꿀꺽꿀꺽! 건강한 습관이야!"]],[/밥|식사|먹|야채|채소/,["냠냠 잘 먹었네! 쑥쑥 크겠다!","골고루 먹는 모습 최고야!"]],[/잠|자기|이불|일찍/,["푹 자면 키가 쑥쑥! 잘했어!"]],[/프리올쏘|프리/,["프리올쏘 하느라 수고했어! 정말 멋져!","꾸준히 하는 모습이 너무 대견해!"]]];
+const PRAISE_GEN=["해냈구나! 정말 멋져!","약속을 지켰네! 너무 대견해!","역시 우리 딸! 최고야!","끝까지 해내는 모습이 반짝반짝 빛나!","오늘도 한 걸음 쑥! 자랑스러워!"];
+function praiseFor(i){const name=i==="pre"?"프리올쏘 하기":(missions[+i]||"");if(i!=="pre"&&mp[+i])return mp[+i];const hit=PRAISE_KEY.find(k=>k[0].test(name));const pool=hit?hit[1]:PRAISE_GEN;const t=pool[Math.floor(Math.random()*pool.length)];return hit?t:"'"+name+"' "+t}
 const esc=t=>String(t).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const HATS=["","🎀","🎩","👑","🕶️","🌸","⭐","🎧"],SNACKS=["🍪","🍓","🥕","🍎","🍰","🍩"];
 const lvOf=i=>Math.min(5,1+Math.floor(((cr[i]||{}).xp||0)/5));
@@ -267,8 +270,8 @@ function taskRow(x){const pop=lastPop!==-1&&(x.pre?lastPop===missions.length:las
 function savePre(){pre.on=preOn.checked;pre.time=preTime.value||"20:00";save();lastSig=null;tick()}
 function remind(l){const p=l.find(x=>x.pre),only=p&&l.length===1;remWrap.style.display=p?"":"none";remEmo.style.display=p?"none":"";remTitle.textContent=only?"🔔 프리올쏘 시간이에요!":"🔔 미션 시간이에요!";remText.innerHTML=l.map(x=>`<b>${x.name}</b> (${fmt(x.time)})`).join("<br>")+"<br>하고 스탬프 받자!";remindModal.classList.add("show");sound(false);if(navigator.vibrate)navigator.vibrate([80,60,80,60,160]);try{if(window.Notification&&Notification.permission==="granted")new Notification(only?"프리올쏘 하기 🐶":"미션 시간이에요 ⏰",{body:l.map(x=>x.name).join(", ")+" — 콩콩 미션을 열어볼까요?",icon:"images/preortho.jpg"})}catch(e){}}
 function closeRemind(){remindModal.classList.remove("show")}
-let lastSig=null;
-function tick(){const a=items(),sig=a.map(x=>x.locked?1:0).join("");if(sig===lastSig)return;lastSig=sig;render();let r=null;try{r=JSON.parse(localStorage.getItem("mobileKongRem2")||"null")}catch(e){}if(!r||r.day!==dsn())r={day:dsn(),ids:[]};const fresh=a.filter(x=>x.time&&!x.locked&&!x.done&&!r.ids.includes(String(x.id)));if(fresh.length){fresh.forEach(x=>r.ids.push(String(x.id)));try{localStorage.setItem("mobileKongRem2",JSON.stringify(r))}catch(e){}remind(fresh)}}
+let lastSig=null;const bootDay=new Date().toLocaleDateString("sv");
+function tick(){if(new Date().toLocaleDateString("sv")!==bootDay){location.reload();return}const a=items(),sig=a.map(x=>x.locked?1:0).join("");if(sig===lastSig)return;lastSig=sig;render();let r=null;try{r=JSON.parse(localStorage.getItem("mobileKongRem2")||"null")}catch(e){}if(!r||r.day!==dsn())r={day:dsn(),ids:[]};const fresh=a.filter(x=>x.time&&!x.locked&&!x.done&&!r.ids.includes(String(x.id)));if(fresh.length){fresh.forEach(x=>r.ids.push(String(x.id)));try{localStorage.setItem("mobileKongRem2",JSON.stringify(r))}catch(e){}remind(fresh)}}
 function requestNotif(){try{if(!window.Notification){alert("이 폰 브라우저는 알림을 지원하지 않아요. 달력 일정을 이용해 주세요.");return}Notification.requestPermission().then(p=>alert(p==="granted"?"앱이 열려 있을 때 알림이 떠요":"알림이 허용되지 않았어요"))}catch(e){alert("알림을 켤 수 없어요")}}
 function downloadIcs(){const pad=n=>String(n).padStart(2,"0"),d=new Date(),[h,m]=pre.time.split(":"),url=location.href.split("#")[0];
  const L=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//kongkong//KR","CALSCALE:GREGORIAN","BEGIN:VEVENT","UID:kongkong-preortho@"+(location.host||"local"),"DTSTAMP:"+new Date().toISOString().replace(/[-:]/g,"").split(".")[0]+"Z","DTSTART:"+d.getFullYear()+pad(d.getMonth()+1)+pad(d.getDate())+"T"+h+m+"00","DURATION:PT15M","RRULE:FREQ=DAILY","SUMMARY:🐶 프리올쏘 하기","DESCRIPTION:콩콩 미션을 열고 스탬프를 받아요! "+url,"URL:"+url,"BEGIN:VALARM","TRIGGER:PT0S","ACTION:DISPLAY","DESCRIPTION:프리올쏘 하기","END:VALARM","END:VEVENT","END:VCALENDAR"];
@@ -312,7 +315,7 @@ function render(){
   bookBtn.textContent="🐾 친구 도감 "+owned.length+"/"+friendsData.length;if(app_().dataset.tab==="f")renderFriends();
  rewardInput.value=reward;goalInput.value=goal;preOn.checked=pre.on;preTime.value=pre.time;pinState.textContent=pinHash?"현재: 설정됨 🔒":"아직 없음 — 정하면 아이가 설정 화면을 열 수 없어요";photoPrev.style.display=photo?"block":"none";if(photo)photoPrev.src=photo;
  undoList.innerHTML=(it.filter(x=>x.done).map(x=>`<div style="display:flex;align-items:center;gap:6px;padding:6px 2px;border-bottom:1px solid #eee"><span style="flex:1;font-size:14px">⭐ ${esc(x.name)}</span><button onclick="undoOne('${x.id}')" style="background:#efeaff;color:#745cff;border-radius:9px;padding:6px 10px;font-weight:900">↩ 되돌리기</button></div>`).join(""))||`<div style="font-size:12px;color:#8b7d90;padding:6px 0">오늘 완료한 미션이 없어요.</div>`;
- parentTaskList.innerHTML=missions.length?missions.map((m,i)=>`<div style="display:flex;align-items:center;gap:6px;padding:7px 2px;border-bottom:1px solid #eee"><span style="flex:1;font-size:14px;min-width:0;overflow-wrap:anywhere">${i+1}. ${m}</span><input type="time" value="${mt[i]||""}" onchange="setMt(${i},this.value)" style="flex:none;width:106px;padding:4px 6px;font-size:14px;border-radius:9px"><button onclick="removeTask(${i})" style="background:#fff0f4;color:#a9677e;border-radius:9px;padding:6px 8px">삭제</button></div><input value="${esc(mp[i]||"")}" maxlength="40" placeholder="💌 칭찬 한마디(선택)" onchange="setMp(${i},this.value)" style="width:100%;margin:0 0 4px;padding:5px 8px;font-size:13px;border-radius:9px;border-bottom:1px solid #eee">`).join(""):`<div style="font-size:12px;color:#8b7d90;padding:8px 0">등록된 할 일이 없습니다.</div>`;
+ parentTaskList.innerHTML=missions.length?missions.map((m,i)=>`<div style="display:flex;align-items:center;gap:6px;padding:7px 2px;border-bottom:1px solid #eee"><span style="flex:1;font-size:14px;min-width:0;overflow-wrap:anywhere">${i+1}. ${m}</span><input type="time" value="${mt[i]||""}" onchange="setMt(${i},this.value)" style="flex:none;width:106px;padding:4px 6px;font-size:14px;border-radius:9px"><button onclick="removeTask(${i})" style="background:#fff0f4;color:#a9677e;border-radius:9px;padding:6px 8px">삭제</button></div><input value="${esc(mp[i]||"")}" maxlength="40" placeholder="💌 칭찬 한마디 (비우면 자동)" onchange="setMp(${i},this.value)" style="width:100%;margin:0 0 4px;padding:5px 8px;font-size:13px;border-radius:9px;border-bottom:1px solid #eee">`).join(""):`<div style="font-size:12px;color:#8b7d90;padding:8px 0">등록된 할 일이 없습니다.</div>`;
 }
 const hp=p=>{let h=5381;for(const c of "kk"+p)h=((h<<5)+h+c.charCodeAt(0))|0;return String(h)};
 let pinHash="";try{pinHash=localStorage.getItem("mobileKongPin")||""}catch(e){}
@@ -365,7 +368,7 @@ function stampIt(i){
  if(i==="pre"){if(preDone===dsn())return;preDone=dsn();lastPop=missions.length}else{if(done[i])return;done[i]=true;lastPop=i}
  save();if(partnerF()<0&&!(earned&&earned.day===ds(new Date())))openPick(()=>stampShow(i));else stampShow(i)}
 function stampShow(i){
- const n=nDone(),g=eff(),today=ds(new Date()),pz=i==="pre"?"":(mp[i]||"");luckyLine.style.display="none";
+ const n=nDone(),g=eff(),today=ds(new Date()),pz=praiseFor(i);luckyLine.style.display="none";
  const sh=document.querySelector("#modal .sheet");
  const slam=(t,big)=>{bigStamp.className="bigstamp"+(big?" all":"");bigStamp.innerHTML=t;sh.classList.remove("shake");void bigStamp.offsetWidth;bigStamp.classList.add("slam");if(big)sh.classList.add("shake")};
  act.style.display="none";popF=-1;drawBox.style.display="none";pickBox.style.display="none";resultBox.style.display="";newFriendBox.style.display="none";modalOk.disabled=false;heroWrap.classList.remove("glowbox");heroImg.style.filter="";
