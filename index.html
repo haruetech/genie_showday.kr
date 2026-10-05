@@ -119,7 +119,8 @@ details{background:#f8f4fb;border-radius:14px;padding:10px 12px;margin:8px 0}sum
 .rx-dance{animation:rxd 1.1s ease-in-out}
 @keyframes rxd{0%,100%{transform:translateY(0) rotate(0)}12%{transform:translateY(-14px) rotate(-12deg)}25%{transform:translateY(0) rotate(0)}37%{transform:translateY(-14px) rotate(12deg)}50%{transform:translateY(0) rotate(0) scale(1.08)}62%{transform:translateY(-12px) rotate(-10deg)}75%{transform:translateY(0)}87%{transform:translateY(-12px) rotate(10deg)}}
 .lvp{position:absolute;bottom:-5px;left:50%;transform:translateX(-50%);background:#745cff;color:#fff;border-radius:10px;padding:0 8px;font-size:13px;font-weight:900;white-space:nowrap;z-index:3;border:2px solid #fff}
-#heroImg{width:165px;height:165px}.giftHand{position:absolute;left:-16px;bottom:-10px;font-size:50px;line-height:1;z-index:9;cursor:pointer;animation:gh .7s ease-in-out infinite alternate;filter:drop-shadow(0 3px 5px #0004)}.glowbox.sm .giftHand{font-size:34px;left:-12px;bottom:-8px}
+#heroImg{width:165px;height:165px}.giftbtn{background:#ff5c93;color:#fff!important;border-radius:18px;padding:10px 12px;box-shadow:0 5px 0 #d63d76;cursor:pointer;animation:btnp .7s ease-in-out infinite alternate;font-size:19px}.giftbtn span{font-size:15px;opacity:.95}
+.giftHand{position:absolute;left:-16px;bottom:-10px;font-size:50px;line-height:1;z-index:9;cursor:pointer;animation:gh .7s ease-in-out infinite alternate;filter:drop-shadow(0 3px 5px #0004)}.glowbox.sm .giftHand{font-size:34px;left:-12px;bottom:-8px}
 @keyframes gh{from{transform:rotate(-12deg) scale(1)}to{transform:rotate(12deg) scale(1.15)}}
 .act{font-size:21px;animation:pop .5s;font-weight:900;color:#745cff;margin:3px 0}
 .picks{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:10px 0}.picks .pick:nth-child(4){animation-delay:.36s}.pick{background:#fff8d6;border:3px solid #ffe16c;border-radius:18px;padding:8px 4px;animation:pop .5s backwards}
@@ -342,9 +343,10 @@ function revealFriend(f,had,pz,g,n){
  const big=bigStamp;big.className="bigstamp all";big.innerHTML="완료<br>쾅!";sh.classList.remove("shake");void big.offsetWidth;big.classList.add("slam");sh.classList.add("shake");
  confetti(80);sound(true);render();renderFriends();setTimeout(()=>fire(photo?nfWrap:heroWrap,f),700);setTimeout(()=>fire(photo?nfWrap:heroWrap,f),1900);
  const tg=photo?nfWrap:heroWrap;tg.querySelectorAll(".giftHand").forEach(x=>x.remove());const gh=document.createElement("span");gh.className="giftHand";gh.textContent="🎁";gh.onclick=e=>{e.stopPropagation();openGift(gh,f)};tg.appendChild(gh);
- giftState={f,n};modalOk.disabled=true;luckyLine.textContent="🎁 "+name+josa(name)+" 선물을 들고 왔어요! 선물을 눌러봐요!";luckyLine.style.display=""}
+ giftState={f,n};modalOk.disabled=true;luckyLine.textContent="🎁 "+name+josa(name)+" 선물을 들고 왔어요!";luckyLine.className="lucky giftbtn";luckyLine.innerHTML="🎁 "+name+josa(name)+" 선물을 들고 왔어요!<br><span>👆 여기를 콕 눌러서 열어봐요!</span>";luckyLine.style.display="";luckyLine.onclick=()=>{if(giftState)openGift(gh,f)};resultBox.onclick=()=>{if(giftState)openGift(gh,f)};
+ setTimeout(()=>{if(giftState&&giftState.f===f)openGift(gh,f)},9000)}
 let giftState=null;
-function openGift(el,f){if(!giftState)return;giftState=null;const r=Math.random(),name=nm(f),tg=el.parentNode;let t="";
+function openGift(el,f){if(!giftState)return;giftState=null;luckyLine.onclick=null;resultBox.onclick=null;luckyLine.className="lucky";const r=Math.random(),name=nm(f),tg=el.parentNode;let t="";
  if(r<.4){const c=5+Math.floor(Math.random()*6);addCoins(c);t="🪙 코인 "+c+"개가 들어 있었어요!"}
  else if(r<.75){const c=cr[f]=cr[f]||{xp:0,hat:0};let h=1+Math.floor(Math.random()*(HATS.length-1));if(h===c.hat)h=h%(HATS.length-1)+1;c.hat=h;t=HATS[h]+" 예쁜 소품! "+name+josa(name)+" 바로 썼어요!"}
  else{const c=cr[f]=cr[f]||{xp:0,hat:0};c.xp+=5;addCoins(3);t="💖 "+name+" 레벨 UP! 코인 3개도 덤!"}
