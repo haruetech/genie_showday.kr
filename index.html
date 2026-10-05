@@ -99,6 +99,9 @@ details{background:#f8f4fb;border-radius:14px;padding:10px 12px;margin:8px 0}sum
 @keyframes btnp{from{transform:scale(1)}to{transform:scale(1.06)}}
 .imus{position:absolute;right:14px;top:calc(14px + env(safe-area-inset-top));width:46px;height:46px;border-radius:50%;background:#ffffffcc;font-size:24px;z-index:2;box-shadow:0 4px 12px #6a4fc544}.imus.off{opacity:.55}.imus.off:after{content:"";position:absolute;left:8px;right:8px;top:21px;height:4px;background:#e0457b;border-radius:3px;transform:rotate(-40deg)}
 .ihint{position:relative;font-size:13px;font-weight:900;color:#fff;opacity:.95;animation:btnp 1s ease-in-out infinite alternate}
+.cheer{position:absolute;top:calc(9% + env(safe-area-inset-top));left:50%;transform:translateX(-50%) scale(0);background:#ff5c93;color:#fff;border-radius:24px;padding:10px 22px;font-size:26px;font-weight:900;line-height:1.25;text-align:center;box-shadow:0 8px 0 #d63d76,0 14px 24px #7a2f5a44;z-index:3;white-space:nowrap;pointer-events:none}
+.cheer.show{animation:cheer 2.4s ease-out forwards}
+@keyframes cheer{0%{transform:translateX(-50%) scale(0) rotate(-8deg)}12%{transform:translateX(-50%) scale(1.25) rotate(4deg)}22%{transform:translateX(-50%) scale(1) rotate(-3deg)}80%{transform:translateX(-50%) scale(1) rotate(2deg);opacity:1}100%{transform:translateX(-50%) scale(.6);opacity:0}}
 /* ---- reactions / care ---- */
 .rx-jump{animation:rxj .7s ease-out}.rx-wiggle{animation:rxw .8s ease-in-out}.rx-spin{animation:rxs .8s ease-in-out}.rx-nod{animation:rxn .8s ease-in-out}
 @keyframes rxj{0%,100%{transform:translateY(0) scale(1)}25%{transform:translateY(-22px) scale(1.06,.94)}50%{transform:translateY(0) scale(.94,1.06)}70%{transform:translateY(-10px)}}
@@ -153,7 +156,7 @@ details{background:#f8f4fb;border-radius:14px;padding:10px 12px;margin:8px 0}sum
 <div class="page" id="pageFriends"><div class="fhead"><b id="bookTitle"></b><small id="fhint"></small></div><div id="friendGrid" class="bookgrid"></div></div>
 <nav class="tabs"><button class="tab on" id="tabM" onclick="goTab('m')"><span>🎯</span>미션</button><button class="tab" id="tabF" onclick="goTab('f')"><span>🐾</span>친구들</button><button class="tab" id="tabS" onclick="openParent()"><span>⚙️</span>설정</button></nav>
 </main>
-<div id="intro"><button class="imus" id="imus" onclick="toggleMusic()" aria-label="음악 켜고 끄기">🎵</button><div class="iw"><div class="notes"><i>🎵</i><i>🎶</i><i>✨</i><i>🎵</i></div><div class="shadow"></div>
+<div id="intro"><button class="imus" id="imus" onclick="toggleMusic()" aria-label="음악 켜고 끄기">🎵</button><div class="cheer" id="cheer">Genie Genie<br>화이팅! 💪</div><div class="iw" id="iw"><div class="notes"><i>🎵</i><i>🎶</i><i>✨</i><i>🎵</i></div><div class="shadow"></div>
 <svg class="mascot" viewBox="0 0 200 230" aria-label="콩콩이">
 <g class="leg l"><ellipse cx="72" cy="214" rx="22" ry="13" fill="#ff8fb8"/></g><g class="leg r"><ellipse cx="128" cy="214" rx="22" ry="13" fill="#ff8fb8"/></g>
 <path d="M100 40C150 36 176 82 172 132C168 184 140 212 100 212C60 212 32 184 28 132C24 82 50 36 100 40Z" fill="#ffb8d2"/>
@@ -385,8 +388,12 @@ const lucky=Math.random()<.25;addCoins(1+(lucky?2:0));save();
 document.getElementById("newTask").addEventListener("keydown",e=>{if(e.key==="Enter")addTask()});let mus=null,musOn=true;try{musOn=localStorage.getItem("mobileKongMusic")!=="0"}catch(e){}
 const MEL=[[523,1],[659,1],[784,1],[659,1],[880,2],[784,2],[698,1],[659,1],[587,1],[523,1],[659,2],[587,2],[784,1],[880,1],[1047,1],[880,1],[784,2],[659,2],[698,1],[659,1],[587,1],[659,1],[523,4]];
 function mnote(A,dst,f,t,d,v,type){const o=A.createOscillator(),g=A.createGain();o.type=type||"triangle";o.frequency.value=f;o.connect(g);g.connect(dst);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+.02);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.start(t);o.stop(t+d+.05)}
+function cheerNow(){const c=document.getElementById("cheer"),w=document.getElementById("iw");if(!c||!mus)return;c.classList.remove("show");void c.offsetWidth;c.classList.add("show");
+ if(w){w.classList.remove("rx-jump");void w.offsetWidth;w.classList.add("rx-jump");puff(w,.5,.25,["💪","⭐","✨","💖"],7,90,24)}
+ let spoke=false;try{if(window.speechSynthesis&&window.SpeechSynthesisUtterance){speechSynthesis.cancel();const u=new SpeechSynthesisUtterance("지니 지니 화이팅!");u.lang="ko-KR";u.pitch=1.8;u.rate=1.05;u.volume=1;const v=speechSynthesis.getVoices().find(x=>/^ko/i.test(x.lang));if(v)u.voice=v;speechSynthesis.speak(u);spoke=true}}catch(e){}
+ if(!spoke&&mus){const t=mus.A.currentTime+.05;[523,523,659,659,784,784,1047].forEach((f,k)=>mnote(mus.A,mus.m,f,t+k*.17,.2,.2))}}
 function startMusic(){if(mus||!musOn)return;try{const A=new(window.AudioContext||window.webkitAudioContext)(),m=A.createGain();m.gain.value=.55;m.connect(A.destination);mus={A,m,t:A.currentTime+.15,i:0,timer:null};
- const beat=.26,sched=()=>{if(!mus)return;while(mus.t<mus.A.currentTime+1.5){const[f,d]=MEL[mus.i%MEL.length];mnote(A,m,f,mus.t,d*beat*.9,.17);mnote(A,m,f*2,mus.t,d*beat*.5,.05,"sine");if(mus.i%4===0)mnote(A,m,f/4,mus.t,beat*3,.2,"sine");mus.t+=d*beat;mus.i++}};
+ const beat=.26,sched=()=>{if(!mus)return;while(mus.t<mus.A.currentTime+1.5){const[f,d]=MEL[mus.i%MEL.length];mnote(A,m,f,mus.t,d*beat*.9,.17);mnote(A,m,f*2,mus.t,d*beat*.5,.05,"sine");if(mus.i%4===0)mnote(A,m,f/4,mus.t,beat*3,.2,"sine");mus.t+=d*beat;mus.i++;if(mus.i%MEL.length===0){const w=Math.max(0,(mus.t-mus.A.currentTime)*1000);setTimeout(cheerNow,w)}}};
  sched();mus.timer=setInterval(sched,400)}catch(e){mus=null}}
 function stopMusic(){if(!mus)return;const c=mus;mus=null;clearInterval(c.timer);try{c.m.gain.setTargetAtTime(0,c.A.currentTime,.15);setTimeout(()=>c.A.close(),700)}catch(e){}}
 function toggleMusic(){musOn=!musOn;try{localStorage.setItem("mobileKongMusic",musOn?"1":"0")}catch(e){}imus.classList.toggle("off",!musOn);if(musOn){startMusic();if(mus)mus.A.resume()}else stopMusic()}
