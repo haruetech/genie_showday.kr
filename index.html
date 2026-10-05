@@ -83,6 +83,7 @@ html,body{height:100%;overflow:hidden}
 <div id="parentTaskList" style="margin:9px 0 15px"></div>
 <b>상 받을 스탬프 개수</b><div class="add" style="margin:7px 0 15px"><input id="goalInput" type="number" min="1" max="20" inputmode="numeric" placeholder="예: 4"><button class="addBtn" onclick="saveGoal()">저장</button></div>
 <b>스탬프를 모았을 때 받을 상</b><div class="add" style="margin-top:7px"><input id="rewardInput" maxlength="40" placeholder="예: 놀이 30분"><button class="addBtn" onclick="saveReward()">저장</button></div>
+<b style="display:block;margin-top:15px">축하 사진 (목표를 달성하면 나와요)</b><p style="margin:4px 0">얼굴을 가린 사진을 골라주세요. 이 기기에만 저장되고 인터넷에 올라가지 않아요.</p><div class="add"><input id="photoInput" type="file" accept="image/*"><button class="addBtn" onclick="clearPhoto()">지우기</button></div><img id="photoPrev" alt="" style="display:none;width:72px;height:72px;border-radius:50%;object-fit:cover;margin-top:7px;border:3px solid #ffe16c">
 <button class="ok" onclick="document.getElementById('parentModal').classList.remove('show')">설정 완료 ✓</button></div></div><div class="modal" id="modal"><div class="sheet"><div style="font-size:36px">🎉✨</div><div class="hw"><img id="heroImg"><span class="bigstamp" id="bigStamp"></span></div><h2 id="msg"></h2><div id="modalText"></div><button class="ok" onclick="document.getElementById('modal').classList.remove('show')">좋아요! 다음 미션 💗</button></div></div>
 <script>
 const friendsData=[{"name": "몽글이", "src": "images/friend01.jpg"}, {"name": "빨강이", "src": "images/friend02.jpg"}, {"name": "코코", "src": "images/friend03.jpg"}, {"name": "코코2", "src": "images/friend04.jpg"}, {"name": "주황이", "src": "images/friend05.jpg"}, {"name": "피카", "src": "images/friend06.jpg"}, {"name": "곰곰이", "src": "images/friend07.jpg"}, {"name": "토토", "src": "images/friend08.jpg"}, {"name": "우디", "src": "images/friend09.jpg"}, {"name": "핑키", "src": "images/friend10.jpg"}, {"name": "콩이", "src": "images/friend11.jpg"}, {"name": "방울이", "src": "images/friend12.jpg"}, {"name": "오늘의 주인공", "src": "images/friend13.jpg"}];
@@ -92,6 +93,7 @@ let reward=localStorage.getItem("mobileKongReward")||"";
 let total=+(localStorage.getItem("mobileKongTotal")||0);
 let streak=+(localStorage.getItem("mobileKongStreak")||0);
 let lastPop=-1,newFriend=-1;
+let photo="";try{photo=localStorage.getItem("mobileKongPhoto")||""}catch(e){}
 let goal=+(localStorage.getItem("mobileKongGoal")||4);
 const eff=()=>Math.max(1,Math.min(goal,missions.length||goal));
 const ds=d=>d.toLocaleDateString("sv");
@@ -114,15 +116,17 @@ function render(){
   streakBadge.textContent="🔥 "+streak+"일";lastPop=-1;newFriend=-1;
  album.innerHTML=Array.from({length:g},(_,i)=>`<div class="seal ${i<n?"on":""}${i===n-1&&popNow?" pop2":""}">${i<n?"⭐":"?"}</div>`).join("");
  rewardText.textContent=reward||"오늘의 상이 기다리고 있어요!";
- rewardInput.value=reward;goalInput.value=goal;
+ rewardInput.value=reward;goalInput.value=goal;photoPrev.style.display=photo?"block":"none";if(photo)photoPrev.src=photo;
  parentTaskList.innerHTML=t?missions.map((m,i)=>`<div style="display:flex;align-items:center;gap:6px;padding:7px 2px;border-bottom:1px solid #eee"><span style="flex:1;font-size:13px">${i+1}. ${m}</span><button onclick="removeTask(${i})" style="background:#fff0f4;color:#a9677e;border-radius:9px;padding:6px 8px">삭제</button></div>`).join(""):`<div style="font-size:12px;color:#8b7d90;padding:8px 0">등록된 할 일이 없습니다.</div>`;
 }
 function openParent(){document.getElementById("parentModal").classList.add("show");render()}
 function addTask(){let v=newTask.value.trim();if(!v)return;missions.push(v);done.push(false);newTask.value="";save();render()}
 function removeTask(i){missions.splice(i,1);done.splice(i,1);save();render()}
+function clearPhoto(){photo="";try{localStorage.removeItem("mobileKongPhoto")}catch(e){}photoInput.value="";render()}
+photoInput.addEventListener("change",e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const S=480,c=document.createElement("canvas");c.width=c.height=S;const m=Math.min(im.width,im.height),sx=(im.width-m)/2,sy=(im.height-m)/2;c.getContext("2d").drawImage(im,sx,sy,m,m,0,0,S,S);photo=c.toDataURL("image/jpeg",.82);try{localStorage.setItem("mobileKongPhoto",photo)}catch(err){alert("사진을 저장하지 못했어요. 더 작은 사진으로 해보세요.")}render()};im.src=r.result};r.readAsDataURL(f)});
 function saveGoal(){goal=Math.max(1,Math.min(20,parseInt(goalInput.value)||4));localStorage.setItem("mobileKongGoal",goal);render()}
 function saveReward(){reward=rewardInput.value.trim();localStorage.setItem("mobileKongReward",reward);render()}
-function stampIt(i){if(done[i])return;done[i]=true;total++;lastPop=i;let n=done.filter(Boolean).length;let fi=(total-1)%friendsData.length;let f=friendsData[fi];if(total<=friendsData.length)newFriend=fi;heroImg.src=f.src;msg.textContent=f.name+josa(f.name)+" 스탬프를 콩!";let g=eff();let all=n===g;
+function stampIt(i){if(done[i])return;done[i]=true;total++;lastPop=i;let n=done.filter(Boolean).length;let fi=(total-1)%friendsData.length;let f=friendsData[fi];if(total<=friendsData.length)newFriend=fi;heroImg.src=f.src;msg.textContent=f.name+josa(f.name)+" 스탬프를 콩!";let g=eff();let all=n===g;if(all&&photo){heroImg.src=photo;msg.textContent="🎉 오늘 미션 완료! 최고야!"}
 bigStamp.className="bigstamp"+(all?" all":"");bigStamp.innerHTML=all?"완료<br>쾅!":"콩!";const sh=document.querySelector("#modal .sheet");sh.classList.remove("shake");void bigStamp.offsetWidth;bigStamp.classList.add("slam");if(all)sh.classList.add("shake");if(all)streak++;save();confetti(all?70:22);sound(all);modalText.innerHTML=all?`🏆 <b>스탬프 ${g}개 모으기 성공!</b><br>🔥 ${streak}일 연속!<br><br>🎁 받을 상<br><b style="font-size:16px">${reward||"오늘의 특별한 상"}</b><br><br>정말 멋지게 해냈어요!`:`${praise[Math.floor(Math.random()*praise.length)]}<br><b>${n}번째 스탬프</b>를 받았어요 ⭐${n<g?"<br>상까지 "+(g-n)+"개 남았어요!":""}`;render();document.getElementById("modal").classList.add("show")}
 document.getElementById("newTask").addEventListener("keydown",e=>{if(e.key==="Enter")addTask()});render();
 </script></body></html>
