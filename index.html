@@ -97,6 +97,8 @@ details{background:#f8f4fb;border-radius:14px;padding:10px 12px;margin:8px 0}sum
 @keyframes shad{0%,50%,100%{transform:scale(1);opacity:1}25%,75%{transform:scale(.72);opacity:.6}}
 @keyframes note{0%{opacity:0;transform:translateY(20px) scale(.6)}25%{opacity:1}100%{opacity:0;transform:translateY(-50px) rotate(20deg) scale(1.2)}}
 @keyframes btnp{from{transform:scale(1)}to{transform:scale(1.06)}}
+.imus{position:absolute;right:14px;top:calc(14px + env(safe-area-inset-top));width:46px;height:46px;border-radius:50%;background:#ffffffcc;font-size:24px;z-index:2;box-shadow:0 4px 12px #6a4fc544}.imus.off{opacity:.55}.imus.off:after{content:"";position:absolute;left:8px;right:8px;top:21px;height:4px;background:#e0457b;border-radius:3px;transform:rotate(-40deg)}
+.ihint{position:relative;font-size:13px;font-weight:900;color:#fff;opacity:.95;animation:btnp 1s ease-in-out infinite alternate}
 /* ---- reactions / care ---- */
 .rx-jump{animation:rxj .7s ease-out}.rx-wiggle{animation:rxw .8s ease-in-out}.rx-spin{animation:rxs .8s ease-in-out}.rx-nod{animation:rxn .8s ease-in-out}
 @keyframes rxj{0%,100%{transform:translateY(0) scale(1)}25%{transform:translateY(-22px) scale(1.06,.94)}50%{transform:translateY(0) scale(.94,1.06)}70%{transform:translateY(-10px)}}
@@ -151,7 +153,7 @@ details{background:#f8f4fb;border-radius:14px;padding:10px 12px;margin:8px 0}sum
 <div class="page" id="pageFriends"><div class="fhead"><b id="bookTitle"></b><small id="fhint"></small></div><div id="friendGrid" class="bookgrid"></div></div>
 <nav class="tabs"><button class="tab on" id="tabM" onclick="goTab('m')"><span>🎯</span>미션</button><button class="tab" id="tabF" onclick="goTab('f')"><span>🐾</span>친구들</button><button class="tab" id="tabS" onclick="openParent()"><span>⚙️</span>설정</button></nav>
 </main>
-<div id="intro" onclick="closeIntro()"><div class="iw"><div class="notes"><i>🎵</i><i>🎶</i><i>✨</i><i>🎵</i></div><div class="shadow"></div>
+<div id="intro"><button class="imus" id="imus" onclick="toggleMusic()" aria-label="음악 켜고 끄기">🎵</button><div class="iw"><div class="notes"><i>🎵</i><i>🎶</i><i>✨</i><i>🎵</i></div><div class="shadow"></div>
 <svg class="mascot" viewBox="0 0 200 230" aria-label="콩콩이">
 <g class="leg l"><ellipse cx="72" cy="214" rx="22" ry="13" fill="#ff8fb8"/></g><g class="leg r"><ellipse cx="128" cy="214" rx="22" ry="13" fill="#ff8fb8"/></g>
 <path d="M100 40C150 36 176 82 172 132C168 184 140 212 100 212C60 212 32 184 28 132C24 82 50 36 100 40Z" fill="#ffb8d2"/>
@@ -162,7 +164,7 @@ details{background:#f8f4fb;border-radius:14px;padding:10px 12px;margin:8px 0}sum
 <ellipse cx="52" cy="140" rx="13" ry="8" fill="#ff7aa6" opacity=".55"/><ellipse cx="148" cy="140" rx="13" ry="8" fill="#ff7aa6" opacity=".55"/>
 <path d="M82 138Q100 164 118 138Z" fill="#c2335f"/><path d="M90 150Q100 160 110 150Q100 146 90 150Z" fill="#ff8aa0"/>
 </svg></div>
-<div class="ibub" id="introMsg">콩콩! 오늘도<br>미션을 수행하자구~ 🎶</div><div class="isub" id="introSub"></div><button class="ibtn" onclick="event.stopPropagation();closeIntro()">미션 시작! 💗</button></div>
+<div class="ibub" id="introMsg">콩콩! 오늘도<br>미션을 수행하자구~ 🎶</div><div class="isub" id="introSub"></div><div class="ihint" id="ihint">화면을 콕 누르면 노래가 나와요 🎵</div><button class="ibtn" onclick="event.stopPropagation();closeIntro()">미션 시작! 💗</button></div>
 <div class="modal" id="parentModal"><div class="sheet" style="text-align:left">
 <div style="display:flex;justify-content:space-between;align-items:center"><h2 style="margin:0">👨‍👩‍👧 부모님 설정</h2><button onclick="document.getElementById('parentModal').classList.remove('show')" style="background:#f3edf5;border-radius:50%;width:36px;height:36px">✕</button></div>
 <p style="font-size:12px;color:#83778b;margin:4px 0 0">아이 화면에는 설정 내용이 보이지 않습니다.</p>
@@ -380,7 +382,16 @@ const lucky=Math.random()<.25;addCoins(1+(lucky?2:0));save();
  else{const pf=partnerF()>=0?partnerF():pending;heroImg.src=friendsData[pf].src;heroImg.style.filter=revealPop(n/g);msg.textContent=p;const kd=actFor(pf,n-1);popF=pf;popK=n-1;act.textContent=ACTL[kd];act.style.display="";modalText.innerHTML=`<b style="font-size:22px;color:#745cff">🐾 ${nm(pf)} Lv.${n}/${g}</b><br>👀 색깔 ${Math.round(Math.min(1,n/g)*100)}% · ${Math.max(1,g-n)}개 남았어요<br>${coinTxt}${pzTxt}<div style="font-size:12px;color:#8b7d90">사진을 콕 누르면 또 보여줘요!</div>`;setTimeout(()=>react(heroWrap,pf,null,kd),250);setTimeout(()=>react(heroWrap,pf,null,kd),1500)}
  slam("콩!",false);confetti(12);sound(false);render();document.getElementById("modal").classList.add("show");
 }
-document.getElementById("newTask").addEventListener("keydown",e=>{if(e.key==="Enter")addTask()});function introInit(){const t=tCount(),n=nDone(),g=eff();introSub.textContent=!t?"부모님이 오늘의 미션을 정해주세요":n>=g?"오늘 미션을 다 했어! 최고야 🏆":"오늘 미션 "+t+"개 · 🔥 "+streak+"일째 도전 중!"}
-function closeIntro(){const e=document.getElementById("intro");if(e.classList.contains("out"))return;sound(false);e.classList.add("out");setTimeout(()=>e.remove(),500)}
+document.getElementById("newTask").addEventListener("keydown",e=>{if(e.key==="Enter")addTask()});let mus=null,musOn=true;try{musOn=localStorage.getItem("mobileKongMusic")!=="0"}catch(e){}
+const MEL=[[523,1],[659,1],[784,1],[659,1],[880,2],[784,2],[698,1],[659,1],[587,1],[523,1],[659,2],[587,2],[784,1],[880,1],[1047,1],[880,1],[784,2],[659,2],[698,1],[659,1],[587,1],[659,1],[523,4]];
+function mnote(A,dst,f,t,d,v,type){const o=A.createOscillator(),g=A.createGain();o.type=type||"triangle";o.frequency.value=f;o.connect(g);g.connect(dst);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+.02);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.start(t);o.stop(t+d+.05)}
+function startMusic(){if(mus||!musOn)return;try{const A=new(window.AudioContext||window.webkitAudioContext)(),m=A.createGain();m.gain.value=.55;m.connect(A.destination);mus={A,m,t:A.currentTime+.15,i:0,timer:null};
+ const beat=.26,sched=()=>{if(!mus)return;while(mus.t<mus.A.currentTime+1.5){const[f,d]=MEL[mus.i%MEL.length];mnote(A,m,f,mus.t,d*beat*.9,.17);mnote(A,m,f*2,mus.t,d*beat*.5,.05,"sine");if(mus.i%4===0)mnote(A,m,f/4,mus.t,beat*3,.2,"sine");mus.t+=d*beat;mus.i++}};
+ sched();mus.timer=setInterval(sched,400)}catch(e){mus=null}}
+function stopMusic(){if(!mus)return;const c=mus;mus=null;clearInterval(c.timer);try{c.m.gain.setTargetAtTime(0,c.A.currentTime,.15);setTimeout(()=>c.A.close(),700)}catch(e){}}
+function toggleMusic(){musOn=!musOn;try{localStorage.setItem("mobileKongMusic",musOn?"1":"0")}catch(e){}imus.classList.toggle("off",!musOn);if(musOn){startMusic();if(mus)mus.A.resume()}else stopMusic()}
+function introGesture(){ihint.style.display="none";if(!musOn)return;if(mus)mus.A.resume();else startMusic()}
+function introInit(){imus.classList.toggle("off",!musOn);if(!musOn)ihint.style.display="none";else{startMusic();document.getElementById("intro").addEventListener("pointerdown",introGesture,{once:true})}const t=tCount(),n=nDone(),g=eff();introSub.textContent=!t?"부모님이 오늘의 미션을 정해주세요":n>=g?"오늘 미션을 다 했어! 최고야 🏆":"오늘 미션 "+t+"개 · 🔥 "+streak+"일째 도전 중!"}
+function closeIntro(){const e=document.getElementById("intro");if(e.classList.contains("out"))return;stopMusic();sound(false);e.classList.add("out");setTimeout(()=>e.remove(),500)}
 ensurePending();renderFriends();render();introInit();buddyFace.onclick=()=>{const fid=earned&&earned.day===dsn()?earned.f:(partnerF()>=0?partnerF():pending);tapK++;react(buddyFace,fid,null,actFor(fid,nDone()-1+tapK))};tick();setInterval(tick,15000);
 </script></body></html>
