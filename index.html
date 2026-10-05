@@ -92,7 +92,7 @@ details{background:#f8f4fb;border-radius:14px;padding:10px 12px;margin:8px 0}sum
 .bookgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}
 .bk{text-align:center}.sheet .bk img{width:100%;height:auto;aspect-ratio:1;border-width:3px}
 .bk span{display:block;font-size:13px;font-weight:900;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.bk.lk img{filter:brightness(0) opacity(.18);border-color:#e8dff0}.bk.lk span{color:#b9aec0}.bk.sp img{border-color:#ff80ad}
+.bk.lk img{filter:grayscale(1) opacity(.6);border-color:#e8dff0}.bk.lk span{color:#b9aec0}#friendGrid .bk{position:relative}.bk.lk:after{content:"🔒";position:absolute;right:2px;top:2px;font-size:14px}.bk.sp img{border-color:#ff80ad}
 @media (max-height:620px){.hero h1{font-size:17px}.stars i{font-size:19px}.bface{width:72px;height:72px}.bubble{font-size:14px}.task b{font-size:15px}.stamp{min-height:32px}}
 </style></head><body><main class="app" data-tab="m">
 <section class="hero"><div class="hl"><div><b>🌈 콩콩 어드벤처</b><span class="streak" id="streakBadge">🔥 0일</span></div><h1>미션하고 스탬프 콩! 💗</h1><div class="gl" id="goalLine"></div><div class="prog"><span id="stat">0/0</span><div class="bar"><div id="fill"></div></div></div></div><div class="stars" id="stars"></div></section>
@@ -159,7 +159,8 @@ function requestNotif(){try{if(!window.Notification){alert("이 폰 브라우저
 function downloadIcs(){const pad=n=>String(n).padStart(2,"0"),d=new Date(),[h,m]=pre.time.split(":"),url=location.href.split("#")[0];
  const L=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//kongkong//KR","CALSCALE:GREGORIAN","BEGIN:VEVENT","UID:kongkong-preortho@"+(location.host||"local"),"DTSTAMP:"+new Date().toISOString().replace(/[-:]/g,"").split(".")[0]+"Z","DTSTART:"+d.getFullYear()+pad(d.getMonth()+1)+pad(d.getDate())+"T"+h+m+"00","DURATION:PT15M","RRULE:FREQ=DAILY","SUMMARY:🐶 프리올쏘 하기","DESCRIPTION:콩콩 미션을 열고 스탬프를 받아요! "+url,"URL:"+url,"BEGIN:VALARM","TRIGGER:PT0S","ACTION:DISPLAY","DESCRIPTION:프리올쏘 하기","END:VALARM","END:VEVENT","END:VCALENDAR"];
  const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([L.join("\r\n")],{type:"text/calendar;charset=utf-8"}));a.download="preortho-alarm.ics";document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500)}
-function renderFriends(){bookTitle.textContent="📖 친구 도감 "+owned.length+"/"+friendsData.length;friendGrid.innerHTML=friendsData.map((f,i)=>owned.includes(i)?`<div class="bk${f.special?" sp":""}" onclick="openFriend(${i})"><img src="${f.src}" alt=""><span>${nm(i)}</span></div>`:`<div class="bk lk"><img src="${f.src}" alt=""><span>?</span></div>`).join("")}
+function renderFriends(){bookTitle.textContent="📖 친구 도감 "+owned.length+"/"+friendsData.length;friendGrid.innerHTML=friendsData.map((f,i)=>owned.includes(i)?`<div class="bk${f.special?" sp":""}" onclick="openFriend(${i})"><img src="${f.src}" alt=""><span>${nm(i)}</span></div>`:`<div class="bk lk" onclick="peek(${i})"><img src="${f.src}" alt=""><span>${f.special?"???":"아직 못 만났어"}</span></div>`).join("")}
+function peek(i){const bubbleEl=document.querySelector(".fhead small");bubbleEl.textContent="🔒 미션을 완료하면 만날 수 있어요!"}
 function goTab(t){const app=document.querySelector(".app");app.dataset.tab=t;tabM.classList.toggle("on",t==="m");tabF.classList.toggle("on",t==="f");if(t==="f")renderFriends()}
 function openFriend(i){openIdx=i;fdImg.src=friendsData[i].src;fdName.textContent=nm(i);renameInput.value=names[i]||"";friendModal.classList.add("show");setTimeout(()=>fire(fdWrap,i),350)}
 function closeFriend(){friendModal.classList.remove("show")}
