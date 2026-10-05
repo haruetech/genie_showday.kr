@@ -69,6 +69,34 @@ details{background:#f8f4fb;border-radius:14px;padding:10px 12px;margin:8px 0}sum
 @keyframes pop{0%{transform:scale(1)}30%{transform:scale(1.12) rotate(-2deg)}60%{transform:scale(.97) rotate(1deg)}100%{transform:scale(1)}}
 @keyframes ringp{from{box-shadow:0 0 0 0 #ff80ad66}to{box-shadow:0 0 0 7px #ff80ad22}}
 
+/* ---- intro ---- */
+#intro{position:fixed;inset:0;z-index:70;background:radial-gradient(circle at 50% 35%,#ffe9a8 0,#ffc6dd 38%,#a99bff 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:20px 20px calc(24px + env(safe-area-inset-bottom));transition:opacity .45s,transform .45s;overflow:hidden}
+#intro.out{opacity:0;transform:scale(1.08);pointer-events:none}
+#intro:before{content:"";position:absolute;inset:-40%;background:repeating-conic-gradient(from 0deg,#ffffff40 0 9deg,#ffffff00 9deg 20deg);animation:spin 24s linear infinite}
+.iw{position:relative;width:230px;height:250px;display:grid;place-items:end center}
+.mascot{width:210px;height:230px;overflow:visible;animation:appear 1s cubic-bezier(.2,1.4,.4,1) both,dance 1.1s ease-in-out 1s infinite}
+.mascot *{transform-box:fill-box}
+.mascot .arm{animation:wave .55s ease-in-out infinite alternate}.mascot .arm.l{transform-origin:85% 10%}.mascot .arm.r{transform-origin:15% 10%;animation-delay:.27s}
+.mascot .leg{animation:step .55s ease-in-out infinite alternate}.mascot .leg.r{animation-delay:.27s}
+.mascot .sprout{transform-origin:50% 100%;animation:sprout .55s ease-in-out infinite alternate}
+.mascot .eye{animation:blink 3.4s infinite;transform-origin:50% 50%}
+.shadow{position:absolute;bottom:0;left:50%;width:130px;height:16px;margin-left:-65px;background:#0000002a;border-radius:50%;animation:shad 1.1s ease-in-out 1s infinite}
+.notes{position:absolute;inset:0;pointer-events:none}.notes i{position:absolute;font-style:normal;font-size:30px;opacity:0;animation:note 2.2s ease-out infinite}
+.notes i:nth-child(1){left:0;top:50%}.notes i:nth-child(2){right:0;top:42%;animation-delay:.55s}.notes i:nth-child(3){left:12%;top:10%;animation-delay:1.1s}.notes i:nth-child(4){right:8%;top:6%;animation-delay:1.6s}
+.ibub{position:relative;background:#fff;border-radius:22px;padding:12px 18px;font-size:23px;font-weight:900;line-height:1.35;text-align:center;color:#5b45d6;box-shadow:0 8px 22px #7a5bd244;animation:pop .6s .9s backwards}
+.ibub:before{content:"";position:absolute;left:50%;top:-12px;margin-left:-11px;border:11px solid transparent;border-bottom-color:#fff;border-top:0}
+.isub{position:relative;font-size:16px;font-weight:900;color:#fff;text-shadow:0 2px 6px #6a4fc566;text-align:center;animation:pop .6s 1.1s backwards}
+.ibtn{position:relative;margin-top:6px;background:#745cff;color:#fff;border-radius:22px;padding:15px 34px;font-size:22px;font-weight:900;box-shadow:0 8px 0 #5642c4,0 14px 22px #4a35b755;animation:pop .6s 1.3s backwards,btnp 1s 2s ease-in-out infinite alternate}
+.ibtn:active{transform:translateY(4px);box-shadow:0 4px 0 #5642c4}
+@keyframes appear{0%{transform:translateY(90px) scale(.2);opacity:0}70%{transform:translateY(-12px) scale(1.08);opacity:1}100%{transform:translateY(0) scale(1)}}
+@keyframes dance{0%,100%{transform:translateY(0) rotate(-4deg) scale(1.03,.97)}25%{transform:translateY(-18px) rotate(0) scale(.97,1.04)}50%{transform:translateY(0) rotate(4deg) scale(1.03,.97)}75%{transform:translateY(-18px) rotate(0) scale(.97,1.04)}}
+@keyframes wave{from{transform:rotate(-38deg)}to{transform:rotate(38deg)}}
+@keyframes step{from{transform:translateY(0)}to{transform:translateY(-7px)}}
+@keyframes sprout{from{transform:rotate(-14deg)}to{transform:rotate(14deg)}}
+@keyframes blink{0%,92%,100%{transform:scaleY(1)}96%{transform:scaleY(.1)}}
+@keyframes shad{0%,50%,100%{transform:scale(1);opacity:1}25%,75%{transform:scale(.72);opacity:.6}}
+@keyframes note{0%{opacity:0;transform:translateY(20px) scale(.6)}25%{opacity:1}100%{opacity:0;transform:translateY(-50px) rotate(20deg) scale(1.2)}}
+@keyframes btnp{from{transform:scale(1)}to{transform:scale(1.06)}}
 /* ---- reactions / care ---- */
 .rx-jump{animation:rxj .7s ease-out}.rx-wiggle{animation:rxw .8s ease-in-out}.rx-spin{animation:rxs .8s ease-in-out}.rx-nod{animation:rxn .8s ease-in-out}
 @keyframes rxj{0%,100%{transform:translateY(0) scale(1)}25%{transform:translateY(-22px) scale(1.06,.94)}50%{transform:translateY(0) scale(.94,1.06)}70%{transform:translateY(-10px)}}
@@ -123,6 +151,18 @@ details{background:#f8f4fb;border-radius:14px;padding:10px 12px;margin:8px 0}sum
 <div class="page" id="pageFriends"><div class="fhead"><b id="bookTitle"></b><small id="fhint"></small></div><div id="friendGrid" class="bookgrid"></div></div>
 <nav class="tabs"><button class="tab on" id="tabM" onclick="goTab('m')"><span>🎯</span>미션</button><button class="tab" id="tabF" onclick="goTab('f')"><span>🐾</span>친구들</button><button class="tab" id="tabS" onclick="openParent()"><span>⚙️</span>설정</button></nav>
 </main>
+<div id="intro" onclick="closeIntro()"><div class="iw"><div class="notes"><i>🎵</i><i>🎶</i><i>✨</i><i>🎵</i></div><div class="shadow"></div>
+<svg class="mascot" viewBox="0 0 200 230" aria-label="콩콩이">
+<g class="leg l"><ellipse cx="72" cy="214" rx="22" ry="13" fill="#ff8fb8"/></g><g class="leg r"><ellipse cx="128" cy="214" rx="22" ry="13" fill="#ff8fb8"/></g>
+<path d="M100 40C150 36 176 82 172 132C168 184 140 212 100 212C60 212 32 184 28 132C24 82 50 36 100 40Z" fill="#ffb8d2"/>
+<path d="M62 78C70 58 88 52 100 52" stroke="#fff" stroke-width="9" stroke-linecap="round" fill="none" opacity=".6"/>
+<g class="arm l"><ellipse cx="34" cy="132" rx="14" ry="30" fill="#ff93bb" stroke="#f0608f" stroke-width="3" transform="rotate(18 34 132)"/></g><g class="arm r"><ellipse cx="166" cy="132" rx="14" ry="30" fill="#ff93bb" stroke="#f0608f" stroke-width="3" transform="rotate(-18 166 132)"/></g>
+<g class="sprout"><path d="M100 44C100 30 98 22 94 14" stroke="#4dbb6b" stroke-width="6" stroke-linecap="round" fill="none"/><ellipse cx="82" cy="16" rx="18" ry="10" fill="#6fd68a" transform="rotate(-25 82 16)"/><ellipse cx="108" cy="12" rx="16" ry="9" fill="#58c876" transform="rotate(25 108 12)"/></g>
+<g class="eye"><ellipse cx="74" cy="112" rx="11" ry="15" fill="#40354b"/><circle cx="78" cy="106" r="4.5" fill="#fff"/></g><g class="eye"><ellipse cx="126" cy="112" rx="11" ry="15" fill="#40354b"/><circle cx="130" cy="106" r="4.5" fill="#fff"/></g>
+<ellipse cx="52" cy="140" rx="13" ry="8" fill="#ff7aa6" opacity=".55"/><ellipse cx="148" cy="140" rx="13" ry="8" fill="#ff7aa6" opacity=".55"/>
+<path d="M82 138Q100 164 118 138Z" fill="#c2335f"/><path d="M90 150Q100 160 110 150Q100 146 90 150Z" fill="#ff8aa0"/>
+</svg></div>
+<div class="ibub" id="introMsg">콩콩! 오늘도<br>미션을 수행하자구~ 🎶</div><div class="isub" id="introSub"></div><button class="ibtn" onclick="event.stopPropagation();closeIntro()">미션 시작! 💗</button></div>
 <div class="modal" id="parentModal"><div class="sheet" style="text-align:left">
 <div style="display:flex;justify-content:space-between;align-items:center"><h2 style="margin:0">👨‍👩‍👧 부모님 설정</h2><button onclick="document.getElementById('parentModal').classList.remove('show')" style="background:#f3edf5;border-radius:50%;width:36px;height:36px">✕</button></div>
 <p style="font-size:12px;color:#83778b;margin:4px 0 0">아이 화면에는 설정 내용이 보이지 않습니다.</p>
@@ -340,5 +380,7 @@ const lucky=Math.random()<.25;addCoins(1+(lucky?2:0));save();
  else{const pf=partnerF()>=0?partnerF():pending;heroImg.src=friendsData[pf].src;heroImg.style.filter=revealPop(n/g);msg.textContent=p;const kd=actFor(pf,n-1);popF=pf;popK=n-1;act.textContent=ACTL[kd];act.style.display="";modalText.innerHTML=`<b style="font-size:22px;color:#745cff">🐾 ${nm(pf)} Lv.${n}/${g}</b><br>👀 색깔 ${Math.round(Math.min(1,n/g)*100)}% · ${Math.max(1,g-n)}개 남았어요<br>${coinTxt}${pzTxt}<div style="font-size:12px;color:#8b7d90">사진을 콕 누르면 또 보여줘요!</div>`;setTimeout(()=>react(heroWrap,pf,null,kd),250);setTimeout(()=>react(heroWrap,pf,null,kd),1500)}
  slam("콩!",false);confetti(12);sound(false);render();document.getElementById("modal").classList.add("show");
 }
-document.getElementById("newTask").addEventListener("keydown",e=>{if(e.key==="Enter")addTask()});ensurePending();renderFriends();render();buddyFace.onclick=()=>{const fid=earned&&earned.day===dsn()?earned.f:(partnerF()>=0?partnerF():pending);tapK++;react(buddyFace,fid,null,actFor(fid,nDone()-1+tapK))};tick();setInterval(tick,15000);
+document.getElementById("newTask").addEventListener("keydown",e=>{if(e.key==="Enter")addTask()});function introInit(){const t=tCount(),n=nDone(),g=eff();introSub.textContent=!t?"부모님이 오늘의 미션을 정해주세요":n>=g?"오늘 미션을 다 했어! 최고야 🏆":"오늘 미션 "+t+"개 · 🔥 "+streak+"일째 도전 중!"}
+function closeIntro(){const e=document.getElementById("intro");if(e.classList.contains("out"))return;sound(false);e.classList.add("out");setTimeout(()=>e.remove(),500)}
+ensurePending();renderFriends();render();introInit();buddyFace.onclick=()=>{const fid=earned&&earned.day===dsn()?earned.f:(partnerF()>=0?partnerF():pending);tapK++;react(buddyFace,fid,null,actFor(fid,nDone()-1+tapK))};tick();setInterval(tick,15000);
 </script></body></html>
