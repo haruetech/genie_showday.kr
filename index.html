@@ -382,7 +382,7 @@ photoInput.addEventListener("change",e=>{const f=e.target.files[0];if(!f)return;
 function saveGoal(){goal=Math.max(1,Math.min(20,parseInt(goalInput.value)||4));localStorage.setItem("mobileKongGoal",goal);schedulePush();render()}
 function saveReward(){reward=rewardInput.value.trim();localStorage.setItem("mobileKongReward",reward);schedulePush();render()}
 /* ---- 가족 공유 (Supabase) ---- */
-const SB_URL="https://YOUR-PROJECT.supabase.co",SB_KEY="sb_publishable_tiLGpJNheNZZ4Yn9cIhTow_HjW2dx2E";
+const SB_URL="https://ayygbemcxuajccaknfir.supabase.co",SB_KEY="sb_publishable_tiLGpJNheNZZ4Yn9cIhTow_HjW2dx2E";
 const SBOK=/^https:\/\/[a-z0-9-]+\.supabase\.co$/i.test(SB_URL)&&SB_KEY.length>30&&!/YOUR/.test(SB_KEY+SB_URL);
 const SYNCK=["Tasks","Done","MT","MP","Reward","Goal","Total","Streak","Day","Owned","Pending","Earned","Names","Pre","PreDone","Coins","CT","Care","Partner","Quiz","QStat","Pin"];
 let fam="",syncTs=0,pushT=null,busyP=false,busyL=false;
