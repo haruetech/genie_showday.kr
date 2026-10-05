@@ -2,140 +2,136 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="robots" content="noindex,nofollow"><meta name="theme-color" content="#8b70ff"><title>콩콩 미션</title>
 <style>
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}html,body{margin:0;min-height:100%;font-family:Arial,"Noto Sans KR",sans-serif;background:#fff7e8;color:#40354b}
-body{padding-bottom:env(safe-area-inset-bottom)}button,input{font:inherit}button{border:0;touch-action:manipulation}
-.app{width:100%;max-width:480px;margin:auto;min-height:100vh;padding:8px 10px 72px}
-.hero{background:linear-gradient(135deg,#826cff,#ff76a9);color:white;border-radius:20px;padding:13px 14px;box-shadow:0 10px 24px #a270a833}
-.hero h1{font-size:21px;line-height:1.1;margin:2px 0 4px}.hero p{margin:0;font-size:12px;font-weight:700;line-height:1.3}
-.prog{display:flex;gap:9px;align-items:center;margin-top:8px;font-weight:900}.bar{height:12px;flex:1;background:#ffffff55;border-radius:20px;overflow:hidden}#fill{height:100%;background:#ffe26a;transition:.35s}
-.title{font-size:16px;font-weight:900;margin:12px 2px 6px}
-.parent{background:white;border-radius:16px;padding:9px;box-shadow:0 5px 16px #8f718b17}.add{display:flex;gap:7px}input{min-width:0;flex:1;border:2px solid #eadcf0;border-radius:14px;padding:9px 10px;font-size:14px;outline:none}.addBtn{min-width:58px;background:#ff72a4;color:white;border-radius:12px;font-weight:900}
-.hint{font-size:10px;color:#8b7d90;margin:5px 2px 0}
-.tasks{display:grid;gap:6px;margin-top:7px}.task{background:white;border-radius:14px;padding:8px 9px;display:grid;grid-template-columns:27px 1fr auto;align-items:center;gap:8px;box-shadow:0 5px 16px #8f718b18}.task .ico{font-size:19px}.task b{font-size:13px;line-height:1.2}.stamp{background:#745cff;color:#fff;border-radius:14px;padding:8px 8px;font-size:11px;font-weight:900;min-height:34px}.stamp:disabled{background:#bbb2c7}.delete{grid-column:2/4;background:none;color:#aa8292;text-align:right;font-size:10px;padding:0 3px}
-.reward{background:#fff;border-radius:16px;padding:9px}.rewardView{margin-top:6px;background:#fff3bd;border-radius:13px;padding:8px;display:flex;gap:10px;align-items:center}.gift{font-size:27px}
-.friends{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;padding:1px}.friends::-webkit-scrollbar{display:none}.friend{min-width:0;background:#fff;border-radius:14px;padding:4px;text-align:center;scroll-snap-align:start;box-shadow:0 4px 14px #8f718b18;position:relative}.friend img{width:100%;height:auto;aspect-ratio:1;object-fit:cover;border-radius:14px}.friend span{display:block;font-size:10px;font-weight:900;padding:3px}.locked{filter:grayscale(.8);opacity:.48}.locked:after{content:"🔒";position:absolute;right:10px;top:10px;font-size:16px}
-.album{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;background:#fff;border-radius:15px;padding:8px}.seal{aspect-ratio:1;border:3px dashed #ead9e2;border-radius:50%;display:grid;place-items:center;font-size:18px;background:#fffafd}.seal.on{background:#fff0a1;border-style:solid;border-color:#ff80ad}
-.modal{position:fixed;inset:0;background:#35233eaa;display:none;align-items:flex-end;justify-content:center;z-index:20}.modal.show{display:flex}.sheet{width:100%;max-width:480px;background:#fff;border-radius:30px 30px 0 0;padding:24px 20px calc(25px + env(safe-area-inset-bottom));text-align:center;animation:up .3s}@keyframes up{from{transform:translateY(100%)}}.sheet img{width:150px;height:150px;object-fit:cover;border-radius:50%;border:6px solid #ffe16c}.sheet h2{font-size:22px;margin:10px 0 6px}.ok{width:100%;margin-top:8px;background:#745cff;color:white;border-radius:17px;padding:14px;font-weight:900;font-size:16px}
-.nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:#ffffffee;backdrop-filter:blur(12px);display:grid;grid-template-columns:1fr 1fr;padding:4px 12px calc(4px + env(safe-area-inset-bottom));border-top:1px solid #eee;z-index:10}.nav button{background:none;padding:4px;font-weight:900;color:#6d6072}.nav small{display:block;font-size:11px;margin-top:2px}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;overflow:hidden;font-family:Arial,"Noto Sans KR",sans-serif;background:#fff7e8;color:#40354b}
+button,input{font:inherit}button{border:0;touch-action:manipulation;cursor:pointer}
+input{min-width:0;flex:1;border:2px solid #eadcf0;border-radius:14px;padding:9px 10px;font-size:16px;outline:none}
+.add{display:flex;gap:7px}.addBtn{min-width:58px;background:#ff72a4;color:#fff;border-radius:12px;font-weight:900}
 
-.locked{filter:none;opacity:1}.locked:after{content:"";}.locked img{filter:brightness(0) opacity(.18)}.locked span{color:#b9aec0}
-.friend.new{animation:pop .6s}
-.task.pop{animation:pop .55s}.seal.on{animation:pop .5s}
-@keyframes pop{0%{transform:scale(1)}30%{transform:scale(1.18) rotate(-3deg)}60%{transform:scale(.94) rotate(2deg)}100%{transform:scale(1)}}
-.cf{position:fixed;top:-30px;z-index:50;pointer-events:none;animation:fall linear forwards}
-@keyframes fall{to{transform:translateY(110vh) rotate(var(--r))}}
-.streak{background:#ffffff40;border-radius:12px;padding:1px 8px;font-size:12px;margin-left:4px}
-#heroImg{animation:bounce 1s infinite alternate}@keyframes bounce{from{transform:translateY(0)}to{transform:translateY(-8px)}}
+/* ---- layout: hero / missions(scroll) / reward / buddy ---- */
+.app{width:100%;max-width:480px;margin:0 auto;height:100vh;height:100dvh;padding:8px 10px calc(8px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:6px;overflow:hidden}
+.hero{position:relative;flex:none;display:flex;gap:8px;align-items:center;background:linear-gradient(135deg,#826cff,#ff76a9);color:#fff;border-radius:18px;padding:9px 12px;box-shadow:0 8px 20px #a270a833}
+.hl{flex:1;min-width:0}.hero b{font-size:13px}.hero h1{font-size:19px;line-height:1.2;margin:3px 0 0}
+.gl{font-size:13px;font-weight:900;margin-top:3px;opacity:.95;overflow-wrap:anywhere}
+.stars{flex:none;display:grid;gap:2px;background:#ffffff30;border-radius:14px;padding:6px;justify-items:center}
+.stars i{font-style:normal;font-size:22px;line-height:1;filter:grayscale(1) opacity(.45);transition:.3s}.stars i.on{filter:none;animation:pop .5s}
+.streak{background:#ffffff40;border-radius:12px;padding:1px 8px;font-size:13px;margin-left:4px}
+.prog{display:flex;gap:9px;align-items:center;margin-top:6px;font-weight:900;font-size:16px}
+.bar{height:13px;flex:1;background:#ffffff55;border-radius:20px;overflow:hidden}#fill{height:100%;background:#ffe26a;transition:.35s}
+.page{display:none;flex:1 1 auto;min-height:0;flex-direction:column;gap:6px}
+.app[data-tab="m"] #pageMission{display:flex}.app[data-tab="f"] #pageFriends{display:flex}.app[data-tab="f"] .hero{display:none}
+.grp{font-size:12px;font-weight:900;color:#8b7d90;margin:4px 2px 0}
+.tabs{flex:none;display:grid;grid-template-columns:repeat(3,1fr);gap:6px;background:#fff;border-radius:18px;padding:5px;box-shadow:0 -2px 14px #8f718b1a}
+.tab{background:none;border-radius:13px;padding:5px 0;font-size:12px;font-weight:900;color:#8b7d90;display:flex;flex-direction:column;align-items:center;gap:1px}
+.tab span{font-size:21px;line-height:1.1}.tab.on{background:#efeaff;color:#745cff}
+.fhead{flex:none;display:flex;justify-content:space-between;align-items:baseline;margin:2px 4px}.fhead b{font-size:19px}.fhead small{color:#8b7d90;font-weight:700;font-size:12px}
+#friendGrid{flex:1 1 auto;min-height:0;overflow-y:auto;align-content:start;margin:0;padding:2px 2px 6px;-webkit-overflow-scrolling:touch}
+#friendGrid .bk img{width:100%;height:auto;aspect-ratio:1;border-radius:50%;object-fit:cover;border:3px solid #ffe16c;background:#eee;display:block}
+details{background:#f8f4fb;border-radius:14px;padding:10px 12px;margin:8px 0}summary{font-weight:900;font-size:16px;cursor:pointer}details[open] summary{margin-bottom:8px}
+.lbl{font-size:13px;font-weight:900;display:block;margin:10px 0 5px}
 
-html,body{height:100%;overflow:hidden}
-.app{height:100vh;height:100dvh;min-height:0;padding:8px 10px calc(8px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:6px;overflow:hidden}
-.hero{padding:10px 12px;flex:none}.hero h1{font-size:19px;margin:2px 0 2px}.hero p{font-size:11px}.prog{margin-top:6px}
-.title{font-size:14px;margin:2px 2px 0;flex:none}
-.tscroll{flex:1;min-height:0;overflow-y:auto}.tasks{margin-top:0}
-.task{padding:6px 8px;grid-template-columns:24px 1fr auto}.stamp{min-height:32px}
-.board{flex:none;background:#fff;border-radius:16px;padding:6px 8px;display:flex;align-items:center;gap:8px}
-.album{display:flex;flex-wrap:wrap;gap:5px;padding:0;background:none;flex:none;max-width:48%}
-.seal{aspect-ratio:auto;width:30px;height:30px;border-width:2px;font-size:14px}
-.seal.on{animation:none}.seal.pop2{animation:pop .5s}
-.board .rewardView{margin:0;flex:1;min-width:0;padding:6px 8px}.board .gift{font-size:24px}.board .rewardView b{font-size:11px}.board .rewardView div div{font-size:12px;font-weight:900}
-.friends{flex:none;grid-template-columns:repeat(7,1fr);gap:4px}
-.friend{padding:2px;border-radius:10px}.friend img{border-radius:10px}.friend span{font-size:8px;padding:1px 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.sheet{max-height:92vh;overflow-y:auto}
-.hw{position:relative;display:inline-block}
-.bigstamp{position:absolute;right:-26px;bottom:-8px;border:5px solid #ff3d6e;color:#ff3d6e;border-radius:50%;width:70px;height:70px;display:grid;place-items:center;font-weight:900;font-size:20px;line-height:1.05;background:#fffc;opacity:0;pointer-events:none;transform:rotate(-18deg)}
-.bigstamp.all{width:104px;height:104px;font-size:28px;border-width:6px;right:-34px}
-.bigstamp.slam{animation:slam .55s cubic-bezier(.2,1.5,.4,1) forwards}
-@keyframes slam{0%{opacity:0;transform:scale(4) rotate(-45deg)}60%{opacity:1;transform:scale(.88) rotate(-18deg)}100%{opacity:.96;transform:scale(1) rotate(-18deg)}}
-.sheet.shake{animation:up .3s,shake .35s .45s}
-@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}50%{transform:translateX(7px)}75%{transform:translateX(-4px)}}
+.tscroll{flex:1 1 auto;min-height:0;overflow-y:auto;border-radius:14px;-webkit-overflow-scrolling:touch}
+.tasks{display:grid;gap:5px;padding:2px 0}
+.task{background:#fff;border-radius:13px;padding:5px 8px;display:grid;grid-template-columns:26px 1fr auto;align-items:center;gap:8px;box-shadow:0 3px 10px #8f718b18}
+.task .ico{font-size:20px;text-align:center;display:grid;place-items:center}
+.task b{font-size:16px;line-height:1.2;overflow-wrap:anywhere}.task small{font-weight:700;color:#8b7d90;font-size:12px}
+.stamp{background:#745cff;color:#fff;border-radius:12px;padding:6px 10px;font-size:14px;font-weight:900;min-height:34px;white-space:nowrap}
+.stamp:disabled{background:#bbb2c7}
+.task.done{opacity:.62;box-shadow:none}
+.task.pre{border:2px dashed #ffb0cc}.task.lock{background:#f6f1f9}.task.lock b{color:#8b7d90}
+.task.ring{border:2px solid #ff80ad;animation:ringp 1s ease-in-out infinite alternate}
+.task.pop{animation:pop .55s}
+.empty{background:#fff;padding:18px;text-align:center;border-radius:16px;color:#8b7d90;font-weight:900}
 
-.hero{font-size:14px}.hero h1{font-size:25px;margin:3px 0 3px}.hero p{font-size:14px}.streak{font-size:14px}.prog{font-size:16px}.bar{height:14px}
-.title{font-size:17px}
-.task{padding:7px 9px;grid-template-columns:28px 1fr auto}.task .ico{font-size:22px}.task b{font-size:17px;line-height:1.2}.stamp{font-size:14px;padding:8px 10px;min-height:38px}
-.seal{width:34px;height:34px;font-size:17px}
-.board .gift{font-size:28px}.board .rewardView b{font-size:13px}.board .rewardView div div{font-size:16px}
-.friend span{font-size:10px}
-.sheet h2{font-size:26px}#modalText{font-size:19px;line-height:1.5}.sheet .ok{font-size:19px}
-.bigstamp{font-size:24px}.bigstamp.all{font-size:32px}
-.sheet p{font-size:14px!important}input{font-size:16px}
-@media (max-height:700px){
-.app{gap:4px;padding-top:6px}.hero{padding:8px 12px}.hero h1{font-size:22px;margin:1px 0 1px}.hero p{font-size:13px}.prog{margin-top:4px}
-.title{font-size:15px;margin:0 2px}
-.tasks{gap:4px}.task{padding:4px 8px}.task b{font-size:16px}.stamp{min-height:34px;padding:6px 9px}
-.seal{width:28px;height:28px;font-size:14px}.album{max-width:42%;gap:4px}
-.board{padding:5px 8px}.board .rewardView{padding:5px 7px}.board .rewardView b{font-size:12px;white-space:nowrap}.board .rewardView div div{font-size:15px}.board .gift{font-size:24px}
-.friends{gap:3px}.friend{padding:1px}.friend span{font-size:9px}
-}
-.friends{grid-template-columns:repeat(5,1fr);gap:4px}
-.friend{padding:2px;position:relative;overflow:hidden;border-radius:12px}.friend img{border-radius:10px}
-.friend span{position:absolute;left:2px;right:2px;bottom:2px;padding:2px 1px;font-size:11px;color:#fff;background:#0007;border-radius:0 0 10px 10px;text-shadow:0 1px 2px #0008}
-.locked span{top:2px;display:grid;place-items:center;background:none;color:#a99db0;font-size:26px;text-shadow:none;border-radius:10px}
 
-.buddy{flex:none;background:#fff;border-radius:16px;padding:8px 10px;display:flex;align-items:center;gap:12px;overflow:hidden}
-.bface{position:relative;width:104px;height:104px;flex:none}
+.buddy{flex:none;background:#fff;border-radius:16px;padding:7px 10px;display:flex;align-items:center;gap:10px}
+.bface{position:relative;width:84px;height:84px;flex:none}
 .bface img{width:100%;height:100%;object-fit:cover;border-radius:50%;border:4px solid #ffe16c;background:#eee;display:block}
-.bface span{position:absolute;inset:0;display:grid;place-items:center;font-size:44px;font-weight:900;color:#fff;text-shadow:0 2px 8px #0008;pointer-events:none}
-.bcol{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px}
-.bwrap{position:relative}.bwrap:before{content:"";position:absolute;left:-9px;top:20px;border:9px solid transparent;border-right-color:#fff3bd;border-left:0}
-.bubble{background:#fff3bd;border-radius:14px;padding:8px 10px;font-size:15px;font-weight:900;line-height:1.3;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
-.bookBtn{background:#745cff;color:#fff;border-radius:12px;padding:8px 10px;font-weight:900;font-size:14px}
+.bface span{position:absolute;inset:0;display:grid;place-items:center;font-size:36px;font-weight:900;color:#fff;text-shadow:0 2px 8px #0008;pointer-events:none}
+.bcol{flex:1;min-width:0;display:flex;flex-direction:column;gap:5px}
+.bwrap{position:relative}.bwrap:before{content:"";position:absolute;left:-9px;top:16px;border:9px solid transparent;border-right-color:#fff3bd;border-left:0}
+.bubble{background:#fff3bd;border-radius:14px;padding:6px 10px;font-size:15px;font-weight:900;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.bookBtn{background:#745cff;color:#fff;border-radius:12px;padding:7px 10px;font-weight:900;font-size:14px}
+
+/* ---- glow / fire / confetti ---- */
 .glowbox{position:relative;display:inline-block}
 .glowbox:before{content:"";position:absolute;inset:-34px;border-radius:50%;background:repeating-conic-gradient(from 0deg,#fff1a8dd 0 8deg,#fff1a800 8deg 18deg);-webkit-mask:radial-gradient(circle,#000 38%,transparent 70%);mask:radial-gradient(circle,#000 38%,transparent 70%);animation:spin 8s linear infinite;pointer-events:none}
 .glowbox:after{content:"✨";position:absolute;right:-8px;top:-6px;font-size:26px;animation:tw .8s ease-in-out infinite alternate;pointer-events:none}
 .glowbox img{position:relative;box-shadow:0 0 0 3px #ffe16c,0 0 22px 8px #ffe97acc,0 0 52px 18px #fff3b099;animation:glowp 1.3s ease-in-out infinite alternate}
-.bface.glowbox:before{inset:-16px}
-.glowbox.sm:before{inset:-18px}.glowbox.sm img,.sheet .glowbox.sm img{width:72px;height:72px;border-width:4px}
-@keyframes spin{to{transform:rotate(360deg)}}@keyframes tw{from{opacity:.3;transform:scale(.8)}to{opacity:1;transform:scale(1.2)}}
+.bface.glowbox:before{inset:-14px}.glowbox.sm:before{inset:-18px}
+.flame{position:absolute;pointer-events:none;z-index:8;font-size:22px;transform:translate(-50%,-50%);animation:flame 1s ease-out forwards}
+.cf{position:fixed;top:-30px;z-index:50;pointer-events:none;animation:fall linear forwards}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes tw{from{opacity:.3;transform:scale(.8)}to{opacity:1;transform:scale(1.2)}}
 @keyframes glowp{from{filter:brightness(1)}to{filter:brightness(1.12) saturate(1.15)}}
-.giftbig{font-size:96px;margin:10px 0;animation:shakeg .5s infinite}
+@keyframes flame{0%{opacity:0;transform:translate(-50%,-50%) scale(.3)}15%{opacity:1}100%{opacity:0;transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) scale(1.5)}}
+@keyframes fall{to{transform:translateY(110vh) rotate(var(--r))}}
+@keyframes pop{0%{transform:scale(1)}30%{transform:scale(1.12) rotate(-2deg)}60%{transform:scale(.97) rotate(1deg)}100%{transform:scale(1)}}
+@keyframes ringp{from{box-shadow:0 0 0 0 #ff80ad66}to{box-shadow:0 0 0 7px #ff80ad22}}
+
+/* ---- popups ---- */
+.modal{position:fixed;inset:0;background:#35233eaa;display:none;align-items:flex-end;justify-content:center;z-index:20}.modal.show{display:flex}
+.sheet{width:100%;max-width:480px;max-height:92vh;overflow-y:auto;background:#fff;border-radius:30px 30px 0 0;padding:22px 20px calc(22px + env(safe-area-inset-bottom));text-align:center;animation:up .3s}
+@keyframes up{from{transform:translateY(100%)}}
+.sheet img{width:140px;height:140px;object-fit:cover;border-radius:50%;border:6px solid #ffe16c}
+.sheet h2{font-size:25px;margin:10px 0 6px}.sheet p{font-size:14px!important}
+.sheet.shake{animation:up .3s,shake .35s .45s}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}50%{transform:translateX(7px)}75%{transform:translateX(-4px)}}
+.ok{width:100%;margin-top:8px;background:#745cff;color:#fff;border-radius:17px;padding:14px;font-weight:900;font-size:19px}.ok:disabled{opacity:.4}
+#modalText{font-size:19px;line-height:1.5}
+.hw{position:relative;display:inline-block}#heroImg{animation:bounce 1s infinite alternate}
+@keyframes bounce{from{transform:translateY(0)}to{transform:translateY(-8px)}}
+.bigstamp{position:absolute;right:-26px;bottom:-8px;border:5px solid #ff3d6e;color:#ff3d6e;border-radius:50%;width:70px;height:70px;display:grid;place-items:center;font-weight:900;font-size:24px;line-height:1.05;background:#fffc;opacity:0;pointer-events:none;transform:rotate(-18deg)}
+.bigstamp.all{width:104px;height:104px;font-size:32px;border-width:6px;right:-34px}
+.bigstamp.slam{animation:slam .55s cubic-bezier(.2,1.5,.4,1) forwards}
+@keyframes slam{0%{opacity:0;transform:scale(4) rotate(-45deg)}60%{opacity:1;transform:scale(.88) rotate(-18deg)}100%{opacity:.96;transform:scale(1) rotate(-18deg)}}
+.giftbig{font-size:88px;margin:10px 0;animation:shakeg .5s infinite}
 @keyframes shakeg{0%,100%{transform:rotate(0)}20%{transform:rotate(-14deg) scale(1.1)}40%{transform:rotate(12deg) scale(1.14)}60%{transform:rotate(-10deg)}80%{transform:rotate(8deg)}}
 #newFriendBox{display:flex;align-items:center;justify-content:center;gap:14px;margin:8px 0;font-weight:900;font-size:16px;text-align:left}
-.ok:disabled{opacity:.4}
+.glowbox.sm img,.sheet .glowbox.sm img{width:72px;height:72px;border-width:4px}
 .bookgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}
-.bk{text-align:center}.sheet .bk img{width:100%;height:auto;aspect-ratio:1;border-width:3px;border-radius:50%;object-fit:cover}
+.bk{text-align:center}.sheet .bk img{width:100%;height:auto;aspect-ratio:1;border-width:3px}
 .bk span{display:block;font-size:13px;font-weight:900;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .bk.lk img{filter:brightness(0) opacity(.18);border-color:#e8dff0}.bk.lk span{color:#b9aec0}.bk.sp img{border-color:#ff80ad}
-@media (max-height:700px){.bface{width:84px;height:84px}.bface span{font-size:36px}.bubble{font-size:14px}.bookBtn{padding:6px 10px;font-size:13px}.buddy{padding:6px 10px}#heroImg{width:120px;height:120px}.giftbig{font-size:80px}}
-.tscroll{flex:0 1 auto;min-height:0}
-.buddy{flex:1 1 auto;min-height:100px}
-.bface{width:clamp(96px,min(34vw,22vh),150px);height:clamp(96px,min(34vw,22vh),150px)}
-.bubble{font-size:16px}
-@media (max-height:700px){.bface{width:clamp(84px,min(30vw,20vh),130px);height:clamp(84px,min(30vw,20vh),130px)}.bubble{font-size:15px}}
-@media (min-height:760px){.buddy{flex-direction:column;justify-content:center;gap:12px}.bface{width:min(46vw,26vh,210px);height:min(46vw,26vh,210px)}.bcol{flex:none;width:100%}.bubble{text-align:center;font-size:17px}.bwrap:before{left:50%;top:-9px;margin-left:-9px;border:9px solid transparent;border-bottom-color:#fff3bd;border-top-width:0}.bookBtn{font-size:15px;padding:10px}}
-.flame{position:absolute;pointer-events:none;z-index:8;font-size:22px;transform:translate(-50%,-50%);animation:flame 1s ease-out forwards}
-@keyframes flame{0%{opacity:0;transform:translate(-50%,-50%) scale(.3)}15%{opacity:1}100%{opacity:0;transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) scale(1.5)}}
-.task.pre{border:2px dashed #ffb0cc}.task.ring{animation:ringp 1s ease-in-out infinite alternate;border:2px solid #ff80ad}
-@keyframes ringp{from{box-shadow:0 0 0 0 #ff80ad66}to{box-shadow:0 0 0 7px #ff80ad22}}
-</style></head><body><main class="app">
-<section class="hero" style="position:relative"><button onclick="openParent()" aria-label="부모님 설정" style="position:absolute;right:10px;top:9px;background:#ffffff33;color:white;border-radius:12px;padding:6px 9px;font-size:16px">⚙️</button><b>🌈 오늘의 콩콩 어드벤처</b><span class="streak" id="streakBadge">🔥 0일</span><h1>미션하고 스탬프 콩! 💗</h1><p id="goalText"></p><div class="prog"><span id="stat">0/0</span><div class="bar"><div id="fill"></div></div><span>🏆</span></div></section>
-<div class="title">🎯 오늘의 미션</div><div class="tscroll"><div id="tasks" class="tasks"></div></div>
-<div class="board"><div id="album" class="album"></div><div class="rewardView"><span class="gift">🎁</span><div><b id="goalLine"></b><div id="rewardText"></div></div></div></div>
-<div class="buddy"><div class="bface" id="buddyFace"><img id="buddyImg" alt=""><span id="buddyQ">?</span></div><div class="bcol"><div class="bwrap"><div class="bubble" id="bubble"></div></div><button class="bookBtn" id="bookBtn" onclick="openBook()"></button></div></div>
+@media (max-height:620px){.hero h1{font-size:17px}.stars i{font-size:19px}.bface{width:72px;height:72px}.bubble{font-size:14px}.task b{font-size:15px}.stamp{min-height:32px}}
+</style></head><body><main class="app" data-tab="m">
+<section class="hero"><div class="hl"><div><b>🌈 콩콩 어드벤처</b><span class="streak" id="streakBadge">🔥 0일</span></div><h1>미션하고 스탬프 콩! 💗</h1><div class="gl" id="goalLine"></div><div class="prog"><span id="stat">0/0</span><div class="bar"><div id="fill"></div></div></div></div><div class="stars" id="stars"></div></section>
+<div class="page" id="pageMission"><div class="tscroll"><div id="tasks" class="tasks"></div></div>
+<div class="buddy"><div class="bface" id="buddyFace"><img id="buddyImg" alt=""><span id="buddyQ">?</span></div><div class="bcol"><div class="bwrap"><div class="bubble" id="bubble"></div></div><button class="bookBtn" id="bookBtn" onclick="goTab('f')"></button></div></div></div>
+<div class="page" id="pageFriends"><div class="fhead"><b id="bookTitle"></b><small>눌러서 이름도 바꿔요</small></div><div id="friendGrid" class="bookgrid"></div></div>
+<nav class="tabs"><button class="tab on" id="tabM" onclick="goTab('m')"><span>🎯</span>미션</button><button class="tab" id="tabF" onclick="goTab('f')"><span>🐾</span>친구들</button><button class="tab" id="tabS" onclick="openParent()"><span>⚙️</span>설정</button></nav>
 </main>
 <div class="modal" id="parentModal"><div class="sheet" style="text-align:left">
 <div style="display:flex;justify-content:space-between;align-items:center"><h2 style="margin:0">👨‍👩‍👧 부모님 설정</h2><button onclick="document.getElementById('parentModal').classList.remove('show')" style="background:#f3edf5;border-radius:50%;width:36px;height:36px">✕</button></div>
-<p style="font-size:12px;color:#83778b">아이 화면에는 설정 내용이 보이지 않습니다.</p>
-<b>오늘 할 일 추가</b><div class="add" style="margin-top:7px"><input id="newTask" maxlength="35" placeholder="예: 양치하기"><button class="addBtn" onclick="addTask()">추가</button></div>
-<div id="parentTaskList" style="margin:9px 0 15px"></div>
-<b>상 받을 스탬프 개수</b><div class="add" style="margin:7px 0 15px"><input id="goalInput" type="number" min="1" max="20" inputmode="numeric" placeholder="예: 4"><button class="addBtn" onclick="saveGoal()">저장</button></div>
-<b>스탬프를 모았을 때 받을 상</b><div class="add" style="margin-top:7px"><input id="rewardInput" maxlength="40" placeholder="예: 놀이 30분"><button class="addBtn" onclick="saveReward()">저장</button></div>
-<b style="display:block;margin-top:15px">축하 사진 (목표를 달성하면 나와요)</b><p style="margin:4px 0">얼굴을 가린 사진을 골라주세요. 이 기기에만 저장되고 인터넷에 올라가지 않아요.</p><div class="add"><input id="photoInput" type="file" accept="image/*"><button class="addBtn" onclick="clearPhoto()">지우기</button></div><img id="photoPrev" alt="" style="display:none;width:72px;height:72px;border-radius:50%;object-fit:cover;margin-top:7px;border:3px solid #ffe16c">
-<b style="display:block;margin-top:15px">🐶 프리올쏘 알림</b><p style="margin:4px 0">정한 시간이 되면 "프리올쏘 하기" 미션이 열리고, 하면 스탬프를 받아요.</p>
-<div class="add" style="align-items:center"><label style="display:flex;align-items:center;gap:6px;font-weight:900;font-size:15px;flex:none"><input type="checkbox" id="preOn" style="flex:none;width:22px;height:22px;padding:0">사용</label><input id="preTime" type="time" value="20:00"><button class="addBtn" onclick="savePre()">저장</button></div>
+<p style="font-size:12px;color:#83778b;margin:4px 0 0">아이 화면에는 설정 내용이 보이지 않습니다.</p>
+<details open><summary>📝 오늘의 미션</summary>
+<div class="add"><input id="newTask" maxlength="35" placeholder="예: 양치하기"><button class="addBtn" onclick="addTask()">추가</button></div>
+<div class="add" style="margin-top:6px;align-items:center"><span style="font-size:13px;font-weight:900;flex:none">⏰ 예약 시간(선택)</span><input id="newTime" type="time"></div>
+<div id="parentTaskList" style="margin-top:8px"></div></details>
+<details><summary>⏰ 예약 · 알림</summary>
+<p style="margin:0 0 6px;font-size:12px;color:#83778b">시간을 정한 미션은 그 시간이 되어야 열리고, 열릴 때 알려줘요. (앱이 열려 있을 때)</p>
+<b style="font-size:14px">🐶 프리올쏘 하기</b>
+<div class="add" style="align-items:center;margin-top:6px"><label style="display:flex;align-items:center;gap:6px;font-weight:900;font-size:15px;flex:none"><input type="checkbox" id="preOn" style="flex:none;width:22px;height:22px;padding:0">사용</label><input id="preTime" type="time" value="20:00"><button class="addBtn" onclick="savePre()">저장</button></div>
 <div class="add" style="margin-top:7px"><button class="addBtn" style="flex:1;padding:10px;background:#745cff" onclick="downloadIcs()">📅 매일 알림 일정 받기</button><button class="addBtn" style="flex:1;padding:10px;background:#5aa0d8" onclick="requestNotif()">🔔 알림 허용</button></div>
-<p style="margin:4px 0;font-size:12px!important">앱을 닫아도 알림을 받으려면 위 일정을 폰 달력에 추가하세요. 앱이 열려 있을 땐 시간이 되면 알려줘요.</p>
-<b style="display:block;margin-top:15px">설정 비밀번호 (숫자 4자리)</b><p id="pinState" style="margin:4px 0"></p><div class="add"><input id="newPin" type="password" inputmode="numeric" maxlength="4" placeholder="새 비밀번호"><button class="addBtn" onclick="savePin()">저장</button></div><button onclick="removePin()" style="background:none;color:#aa8292;font-size:13px;padding:6px 2px">비밀번호 해제</button>
+<p style="margin:6px 0 0;font-size:12px;color:#83778b">앱을 닫아도 알림을 받으려면 위 일정을 폰 달력에 추가하세요.</p></details>
+<details><summary>🎁 목표와 상</summary>
+<span class="lbl" style="margin-top:0">상 받을 스탬프 개수</span><div class="add"><input id="goalInput" type="number" min="1" max="20" inputmode="numeric" placeholder="예: 4"><button class="addBtn" onclick="saveGoal()">저장</button></div>
+<span class="lbl">스탬프를 모았을 때 받을 상</span><div class="add"><input id="rewardInput" maxlength="40" placeholder="예: 놀이 30분"><button class="addBtn" onclick="saveReward()">저장</button></div></details>
+<details><summary>📷 축하 사진</summary>
+<p style="margin:0 0 6px;font-size:12px;color:#83778b">목표를 달성하면 나와요. 얼굴을 가린 사진을 골라주세요. 이 기기에만 저장되고 인터넷에 올라가지 않아요.</p><div class="add"><input id="photoInput" type="file" accept="image/*"><button class="addBtn" onclick="clearPhoto()">지우기</button></div><img id="photoPrev" alt="" style="display:none;width:72px;height:72px;border-radius:50%;object-fit:cover;margin-top:7px;border:3px solid #ffe16c"></details>
+<details><summary>🔒 비밀번호</summary>
+<p id="pinState" style="margin:0 0 6px;font-size:13px"></p><div class="add"><input id="newPin" type="password" inputmode="numeric" maxlength="4" placeholder="숫자 4자리"><button class="addBtn" onclick="savePin()">저장</button></div><button onclick="removePin()" style="background:none;color:#aa8292;font-size:13px;padding:6px 2px">비밀번호 해제</button></details>
 <button class="ok" onclick="document.getElementById('parentModal').classList.remove('show')">설정 완료 ✓</button></div></div><div class="modal" id="modal"><div class="sheet"><div style="font-size:36px">🎉✨</div>
 <div id="drawBox" style="display:none"><div class="giftbig">🎁</div><h2>누가 나올까? 두근두근…</h2></div>
 <div id="resultBox"><div class="hw" id="heroWrap"><img id="heroImg" alt=""><span class="bigstamp" id="bigStamp"></span></div><h2 id="msg"></h2><div id="newFriendBox" style="display:none"><div class="glowbox sm" id="nfWrap"><img id="nfImg" alt=""></div><div id="nfText"></div></div><div id="modalText"></div></div>
 <button class="ok" id="modalOk" onclick="document.getElementById('modal').classList.remove('show')">좋아요! 다음 미션 💗</button></div></div>
-<div class="modal" id="bookModal"><div class="sheet"><div style="display:flex;justify-content:space-between;align-items:center"><h2 style="margin:0" id="bookTitle"></h2><button onclick="closeBook()" style="background:#f3edf5;border-radius:50%;width:36px;height:36px">✕</button></div><div id="bookGrid" class="bookgrid"></div></div></div>
 <div class="modal" id="friendModal"><div class="sheet"><div class="hw glowbox" id="fdWrap" onclick="fire(fdWrap,openIdx)"><img id="fdImg" alt=""></div><div style="font-size:13px;color:#8b7d90">사진을 콕 눌러봐요! 🔥</div><h2 id="fdName"></h2><div class="add"><input id="renameInput" maxlength="8" placeholder="이름을 지어주세요"><button class="addBtn" onclick="saveName()">저장</button></div><button class="ok" onclick="closeFriend()">닫기</button></div></div>
-<div class="modal" id="remindModal"><div class="sheet"><div class="hw glowbox"><img src="images/preortho.jpg" alt="" id="remImg"></div><h2>🔔 프리올쏘 시간이에요!</h2><div id="remText" style="font-size:19px;line-height:1.5"></div><button class="ok" onclick="closeRemind()">알았어요! 하러 갈게요 🐶</button></div></div>
+<div class="modal" id="remindModal"><div class="sheet"><div class="hw glowbox" id="remWrap"><img src="images/preortho.jpg" alt="" id="remImg"></div><div id="remEmo" style="font-size:72px;display:none">⏰</div><h2 id="remTitle">🔔 미션 시간이에요!</h2><div id="remText" style="font-size:19px;line-height:1.5"></div><button class="ok" onclick="closeRemind()">알았어요! 하러 갈게요 💗</button></div></div>
 <div class="modal" id="pinModal"><div class="sheet"><h2>🔒 부모님 확인</h2><p>비밀번호 4자리를 입력하세요</p><input id="pinInput" type="password" inputmode="numeric" maxlength="4" style="width:100%;text-align:center;font-size:28px;letter-spacing:10px"><div id="pinErr" style="color:#e0457b;font-weight:900;min-height:24px;margin-top:6px"></div><button class="ok" onclick="checkPin()">확인</button><button class="ok" style="background:#f3edf5;color:#6d6072" onclick="closePin()">취소</button></div></div>
 <script>
 const friendsData=[{"name": "몽글이", "src": "images/buddy01.jpg", "nose": {"x": 0.5, "y": 0.36}}, {"name": "빨강이", "src": "images/buddy02.jpg", "nose": {"x": 0.51, "y": 0.25}}, {"name": "코코", "src": "images/buddy03.jpg", "nose": {"x": 0.52, "y": 0.6}}, {"name": "주황이", "src": "images/buddy04.jpg", "nose": {"x": 0.48, "y": 0.5}}, {"name": "피카", "src": "images/buddy05.jpg", "nose": {"x": 0.44, "y": 0.44}}, {"name": "곰곰이", "src": "images/buddy06.jpg", "nose": {"x": 0.52, "y": 0.39}}, {"name": "토토", "src": "images/buddy07.jpg", "nose": {"x": 0.51, "y": 0.53}}, {"name": "우디", "src": "images/buddy08.jpg", "nose": {"x": 0.47, "y": 0.28}}, {"name": "핑키", "src": "images/buddy09.jpg", "nose": {"x": 0.49, "y": 0.35}}, {"name": "콩이", "src": "images/buddy10.jpg", "nose": {"x": 0.53, "y": 0.48}}, {"name": "방울이", "src": "images/buddy11.jpg", "nose": {"x": 0.53, "y": 0.35}}, {"name": "체리", "src": "images/buddy13.jpg", "nose": {"x": 0.46, "y": 0.36}}, {"name": "노랑이", "src": "images/buddy14.jpg"}, {"name": "수줍이", "src": "images/buddy15.jpg", "nose": {"x": 0.5, "y": 0.55}}, {"name": "웜이", "src": "images/buddy16.jpg", "nose": {"x": 0.5, "y": 0.65}}, {"name": "꽃님이", "src": "images/buddy17.jpg"}, {"name": "딸기", "src": "images/buddy18.jpg", "nose": {"x": 0.39, "y": 0.36}}, {"name": "뽀삐", "src": "images/buddy19.jpg", "nose": {"x": 0.56, "y": 0.44}}, {"name": "솜솜이", "src": "images/buddy20.jpg", "nose": {"x": 0.46, "y": 0.13}}, {"name": "보라", "src": "images/buddy21.jpg", "nose": {"x": 0.43, "y": 0.27}}, {"name": "푸딩", "src": "images/buddy22.jpg", "nose": {"x": 0.55, "y": 0.32}}, {"name": "하늘이", "src": "images/buddy23.jpg", "nose": {"x": 0.47, "y": 0.37}}, {"name": "프리", "src": "images/preortho.jpg", "nose": {"x": 0.54, "y": 0.27}}, {"name": "오늘의 주인공", "src": "images/buddy12.jpg", "special": true}];
 let missions=JSON.parse(localStorage.getItem("mobileKongTasks")||"[]");
+let mt=[];try{mt=JSON.parse(localStorage.getItem("mobileKongMT")||"[]")}catch(e){}mt=missions.map((_,i)=>mt[i]||"");
 let done=JSON.parse(localStorage.getItem("mobileKongDone")||"[]");
 let reward=localStorage.getItem("mobileKongReward")||"";
 let total=+(localStorage.getItem("mobileKongTotal")||0);
@@ -151,22 +147,23 @@ function fire(el,idx){if(idx<0||!el)return;const nz=friendsData[idx].nose;if(!nz
 const fmt=t=>{const[h,m]=t.split(":").map(Number);return(h<12?"오전 ":"오후 ")+(h%12||12)+(m?":"+String(m).padStart(2,"0"):"시")};
 const toMin=t=>{const[h,m]=t.split(":").map(Number);return h*60+m};
 const nowMin=()=>{const d=new Date();return d.getHours()*60+d.getMinutes()};
-function preCard(){if(!pre.on)return"";const d=preDone===dsn(),open=nowMin()>=toMin(pre.time);
- return `<div class="task pre${open&&!d?" ring":""}${lastPop===missions.length?" pop":""}"><span class="ico"><img src="images/preortho.jpg" alt="" style="width:28px;height:28px;border-radius:50%;object-fit:cover;display:block"></span><b>프리올쏘 하기 <small style="font-weight:700;color:#8b7d90">${fmt(pre.time)}</small></b><button class="stamp" ${(d||!open)?"disabled":""} onclick="stampIt('pre')">${d?"완료 ✓":open?"스탬프 콩!":"🔒 "+fmt(pre.time)}</button></div>`}
-function savePre(){pre.on=preOn.checked;pre.time=preTime.value||"20:00";save();lastOpen=null;render();tick()}
-function remind(){localStorage.setItem("mobileKongRemind",dsn());remText.textContent=fmt(pre.time)+"예요! 프리올쏘 하고 스탬프 받자!";remindModal.classList.add("show");sound(false);if(navigator.vibrate)navigator.vibrate([80,60,80,60,160]);try{if(window.Notification&&Notification.permission==="granted")new Notification("프리올쏘 하기 🐶",{body:fmt(pre.time)+"예요! 콩콩 미션을 열어볼까요?",icon:"images/preortho.jpg"})}catch(e){}}
+const m_=i=>missions[i];const app_=()=>document.querySelector(".app");
+function items(){const a=missions.map((m,i)=>({id:i,name:m,time:mt[i]||"",done:!!done[i]}));if(pre.on)a.push({id:"pre",pre:true,name:"프리올쏘 하기",time:pre.time,done:preDone===dsn()});a.forEach(x=>{x.locked=!!x.time&&!x.done&&nowMin()<toMin(x.time)});return a}
+function taskRow(x){const pop=lastPop!==-1&&(x.pre?lastPop===missions.length:lastPop===x.id);return `<div class="task${x.pre?" pre":""}${x.done?" done":""}${x.locked?" lock":""}${(!x.done&&!x.locked&&x.time)?" ring":""}${pop?" pop":""}"><span class="ico">${x.pre?'<img src="images/preortho.jpg" alt="" style="width:28px;height:28px;border-radius:50%;object-fit:cover;display:block">':(x.done?"⭐":x.locked?"🔒":"🌟")}</span><b>${x.name}${x.time?` <small>${fmt(x.time)}</small>`:""}</b><button class="stamp" ${(x.done||x.locked)?"disabled":""} onclick="stampIt(${x.pre?"'pre'":x.id})">${x.done?"완료 ✓":x.locked?"🔒 "+fmt(x.time):"스탬프 콩!"}</button></div>`}
+function savePre(){pre.on=preOn.checked;pre.time=preTime.value||"20:00";save();lastSig=null;tick()}
+function remind(l){const p=l.find(x=>x.pre),only=p&&l.length===1;remWrap.style.display=p?"":"none";remEmo.style.display=p?"none":"";remTitle.textContent=only?"🔔 프리올쏘 시간이에요!":"🔔 미션 시간이에요!";remText.innerHTML=l.map(x=>`<b>${x.name}</b> (${fmt(x.time)})`).join("<br>")+"<br>하고 스탬프 받자!";remindModal.classList.add("show");sound(false);if(navigator.vibrate)navigator.vibrate([80,60,80,60,160]);try{if(window.Notification&&Notification.permission==="granted")new Notification(only?"프리올쏘 하기 🐶":"미션 시간이에요 ⏰",{body:l.map(x=>x.name).join(", ")+" — 콩콩 미션을 열어볼까요?",icon:"images/preortho.jpg"})}catch(e){}}
 function closeRemind(){remindModal.classList.remove("show")}
-let lastOpen=null;
-function tick(){const open=!!pre.on&&nowMin()>=toMin(pre.time);if(open!==lastOpen){lastOpen=open;render();if(open&&preDone!==dsn()&&localStorage.getItem("mobileKongRemind")!==dsn())remind()}}
+let lastSig=null;
+function tick(){const a=items(),sig=a.map(x=>x.locked?1:0).join("");if(sig===lastSig)return;lastSig=sig;render();let r=null;try{r=JSON.parse(localStorage.getItem("mobileKongRem2")||"null")}catch(e){}if(!r||r.day!==dsn())r={day:dsn(),ids:[]};const fresh=a.filter(x=>x.time&&!x.locked&&!x.done&&!r.ids.includes(String(x.id)));if(fresh.length){fresh.forEach(x=>r.ids.push(String(x.id)));try{localStorage.setItem("mobileKongRem2",JSON.stringify(r))}catch(e){}remind(fresh)}}
 function requestNotif(){try{if(!window.Notification){alert("이 폰 브라우저는 알림을 지원하지 않아요. 달력 일정을 이용해 주세요.");return}Notification.requestPermission().then(p=>alert(p==="granted"?"앱이 열려 있을 때 알림이 떠요":"알림이 허용되지 않았어요"))}catch(e){alert("알림을 켤 수 없어요")}}
 function downloadIcs(){const pad=n=>String(n).padStart(2,"0"),d=new Date(),[h,m]=pre.time.split(":"),url=location.href.split("#")[0];
  const L=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//kongkong//KR","CALSCALE:GREGORIAN","BEGIN:VEVENT","UID:kongkong-preortho@"+(location.host||"local"),"DTSTAMP:"+new Date().toISOString().replace(/[-:]/g,"").split(".")[0]+"Z","DTSTART:"+d.getFullYear()+pad(d.getMonth()+1)+pad(d.getDate())+"T"+h+m+"00","DURATION:PT15M","RRULE:FREQ=DAILY","SUMMARY:🐶 프리올쏘 하기","DESCRIPTION:콩콩 미션을 열고 스탬프를 받아요! "+url,"URL:"+url,"BEGIN:VALARM","TRIGGER:PT0S","ACTION:DISPLAY","DESCRIPTION:프리올쏘 하기","END:VALARM","END:VEVENT","END:VCALENDAR"];
  const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([L.join("\r\n")],{type:"text/calendar;charset=utf-8"}));a.download="preortho-alarm.ics";document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500)}
-function openBook(){bookTitle.textContent="📖 친구 도감 "+owned.length+"/"+friendsData.length;bookGrid.innerHTML=friendsData.map((f,i)=>owned.includes(i)?`<div class="bk${f.special?" sp":""}" onclick="openFriend(${i})"><img src="${f.src}" alt=""><span>${nm(i)}</span></div>`:`<div class="bk lk"><img src="${f.src}" alt=""><span>?</span></div>`).join("");bookModal.classList.add("show")}
-function closeBook(){bookModal.classList.remove("show")}
+function renderFriends(){bookTitle.textContent="📖 친구 도감 "+owned.length+"/"+friendsData.length;friendGrid.innerHTML=friendsData.map((f,i)=>owned.includes(i)?`<div class="bk${f.special?" sp":""}" onclick="openFriend(${i})"><img src="${f.src}" alt=""><span>${nm(i)}</span></div>`:`<div class="bk lk"><img src="${f.src}" alt=""><span>?</span></div>`).join("")}
+function goTab(t){const app=document.querySelector(".app");app.dataset.tab=t;tabM.classList.toggle("on",t==="m");tabF.classList.toggle("on",t==="f");if(t==="f")renderFriends()}
 function openFriend(i){openIdx=i;fdImg.src=friendsData[i].src;fdName.textContent=nm(i);renameInput.value=names[i]||"";friendModal.classList.add("show");setTimeout(()=>fire(fdWrap,i),350)}
 function closeFriend(){friendModal.classList.remove("show")}
-function saveName(){const v=renameInput.value.trim().slice(0,8);if(v)names[openIdx]=v;else delete names[openIdx];save();fdName.textContent=nm(openIdx);render();openBook()}
+function saveName(){const v=renameInput.value.trim().slice(0,8);if(v)names[openIdx]=v;else delete names[openIdx];save();fdName.textContent=nm(openIdx);render();renderFriends()}
 let goal=+(localStorage.getItem("mobileKongGoal")||4);
 let pre={on:true,time:"20:00"},preDone="";
 try{const p=JSON.parse(localStorage.getItem("mobileKongPre")||"null");if(p)pre=p;preDone=localStorage.getItem("mobileKongPreDone")||""}catch(e){}
@@ -182,23 +179,24 @@ const ds=d=>d.toLocaleDateString("sv");
   done=missions.map(()=>false);}
  localStorage.setItem("mobileKongDay",today);localStorage.setItem("mobileKongStreak",streak);
  localStorage.setItem("mobileKongDone",JSON.stringify(done));})();
-function save(){localStorage.setItem("mobileKongTasks",JSON.stringify(missions));localStorage.setItem("mobileKongDone",JSON.stringify(done));localStorage.setItem("mobileKongTotal",total);localStorage.setItem("mobileKongOwned",JSON.stringify(owned));localStorage.setItem("mobileKongPre",JSON.stringify(pre));localStorage.setItem("mobileKongPreDone",preDone);localStorage.setItem("mobileKongPending",pending);localStorage.setItem("mobileKongEarned",JSON.stringify(earned));localStorage.setItem("mobileKongNames",JSON.stringify(names));localStorage.setItem("mobileKongStreak",streak);}
+function save(){localStorage.setItem("mobileKongTasks",JSON.stringify(missions));localStorage.setItem("mobileKongDone",JSON.stringify(done));localStorage.setItem("mobileKongTotal",total);localStorage.setItem("mobileKongOwned",JSON.stringify(owned));localStorage.setItem("mobileKongPre",JSON.stringify(pre));localStorage.setItem("mobileKongPreDone",preDone);localStorage.setItem("mobileKongPending",pending);localStorage.setItem("mobileKongEarned",JSON.stringify(earned));localStorage.setItem("mobileKongNames",JSON.stringify(names));localStorage.setItem("mobileKongStreak",streak);localStorage.setItem("mobileKongMT",JSON.stringify(mt));}
 const praise=["우와 대단해!","최고야!","멋지다 멋져!","쑥쑥 크는 중!","야호! 해냈다!","역시 우리 친구!","짝짝짝! 박수!"];
 const josa=n=>{const c=n.charCodeAt(n.length-1);return c>=0xAC00&&c<=0xD7A3&&(c-0xAC00)%28?"이":"가"};
 function confetti(n){const e=["⭐","✨","💗","🎉","🌈","🎈"];for(let i=0;i<n;i++){const s=document.createElement("span");s.className="cf";s.textContent=e[i%e.length];s.style.left=Math.random()*100+"vw";s.style.fontSize=(16+Math.random()*18)+"px";s.style.setProperty("--r",(Math.random()*720-360)+"deg");s.style.animationDuration=(1.6+Math.random()*1.6)+"s";s.style.animationDelay=Math.random()*.4+"s";document.body.appendChild(s);setTimeout(()=>s.remove(),4000)}}
 function sound(big){try{const A=new(window.AudioContext||window.webkitAudioContext)();if(big){const o=A.createOscillator(),k=A.createGain();o.frequency.setValueAtTime(140,A.currentTime);o.frequency.exponentialRampToValueAtTime(40,A.currentTime+.25);k.gain.setValueAtTime(.5,A.currentTime);k.gain.exponentialRampToValueAtTime(.001,A.currentTime+.3);o.connect(k);k.connect(A.destination);o.start();o.stop(A.currentTime+.3)}const notes=big?[523,659,784,1047,1319]:[659,880];notes.forEach((f,i)=>{const o=A.createOscillator(),g=A.createGain();o.type="triangle";o.frequency.value=f;o.connect(g);g.connect(A.destination);const t=A.currentTime+i*.12;g.gain.setValueAtTime(.18,t);g.gain.exponentialRampToValueAtTime(.001,t+.3);o.start(t);o.stop(t+.3)})}catch(e){}if(navigator.vibrate)navigator.vibrate(big?[60,40,60,40,120]:40)}
 function render(){
- const n=nDone(),t=tCount(),g=eff(),popNow=lastPop>=0;stat.textContent=Math.min(n,g)+"/"+g;fill.style.width=Math.min(100,n/g*100)+"%";goalText.textContent=n>=g?"오늘 미션 완료! 최고야 🏆":"스탬프 "+g+"개 모으면 상이 기다려요!";goalLine.textContent="스탬프 "+g+"개 모으면";
- tasks.innerHTML=t?missions.map((m,i)=>`<div class="task${i===lastPop?" pop":""}"><span class="ico">${done[i]?"⭐":"🌟"}</span><b>${m}</b><button class="stamp" ${done[i]?"disabled":""} onclick="stampIt(${i})">${done[i]?"완료 ✓":"스탬프 콩!"}</button></div>`).join("")+preCard():`<div style="background:#fff;padding:25px;text-align:center;border-radius:20px;color:#8b7d90"><b>오늘 할 일을 먼저 넣어주세요 💗</b></div>`;
+ const n=nDone(),t=tCount(),g=eff();stat.textContent=Math.min(n,g)+"/"+g;fill.style.width=Math.min(100,n/g*100)+"%";goalLine.textContent="스탬프 "+g+"개 모으면 🎁 "+(reward||"오늘의 상");
+ const cols=g<=4?2:Math.min(5,Math.ceil(Math.sqrt(g)));stars.style.gridTemplateColumns="repeat("+cols+",auto)";stars.innerHTML=Array.from({length:g},(_,k)=>`<i class="${k<n?"on":""}">⭐</i>`).join("");
+ const it=items(),openL=it.filter(x=>!x.done&&!x.locked),lockL=it.filter(x=>x.locked).sort((a,b)=>toMin(a.time)-toMin(b.time)),doneL=it.filter(x=>x.done);
+ const grp=(l,h)=>l.length?(openL.length+lockL.length+doneL.length>l.length?`<div class="grp">${h}</div>`:"")+l.map(taskRow).join(""):"";
+ tasks.innerHTML=t?openL.map(taskRow).join("")+grp(lockL,"⏰ 예약 · 시간이 되면 열려요")+grp(doneL,"✅ 완료"):`<div class="empty">오늘 할 일을 먼저 넣어주세요 💗</div>`;
   streakBadge.textContent="🔥 "+streak+"일";lastPop=-1;
   const td=ds(new Date()),ea=earned&&earned.day===td;
   if(ea){buddyImg.src=friendsData[earned.f].src;buddyImg.style.filter="";buddyFace.classList.add("glowbox");buddyQ.style.display="none";bubble.textContent=nm(earned.f)+": "+cheers[earned.f%cheers.length]}
-  else{const nx=missions.find((m,i)=>!done[i])||(pre.on&&preDone!==dsn()?"프리올쏘 하기":"");buddyImg.src=friendsData[pending].src;buddyImg.style.filter="brightness(0) opacity("+(.2+.55*Math.min(1,n/g)).toFixed(2)+")";buddyFace.classList.remove("glowbox");buddyQ.style.display="";bubble.textContent=!t?"오늘 할 일을 먼저 정해줘!":(n===0&&nx)?"❓ "+nx+" 같이 하자!":"❓ 벌써 "+n+"개! "+Math.max(1,g-n)+"개만 더 하면 만날 수 있어!"}
-  bookBtn.textContent="📖 친구 도감 "+owned.length+"/"+friendsData.length;
- album.innerHTML=Array.from({length:g},(_,i)=>`<div class="seal ${i<n?"on":""}${i===n-1&&popNow?" pop2":""}">${i<n?"⭐":"?"}</div>`).join("");
- rewardText.textContent=reward||"오늘의 상이 기다리고 있어요!";
+  else{const nxo=it.find(x=>!x.done&&!x.locked)||it.find(x=>!x.done),nx=nxo?nxo.name:"";buddyImg.src=friendsData[pending].src;buddyImg.style.filter="brightness(0) opacity("+(.2+.55*Math.min(1,n/g)).toFixed(2)+")";buddyFace.classList.remove("glowbox");buddyQ.style.display="";bubble.textContent=!t?"오늘 할 일을 먼저 정해줘!":(n===0&&nx)?"❓ "+nx+" 같이 하자!":"❓ 벌써 "+n+"개! "+Math.max(1,g-n)+"개만 더 하면 만날 수 있어!"}
+  bookBtn.textContent="🐾 친구 도감 "+owned.length+"/"+friendsData.length;if(app_().dataset.tab==="f")renderFriends();
  rewardInput.value=reward;goalInput.value=goal;preOn.checked=pre.on;preTime.value=pre.time;pinState.textContent=pinHash?"현재: 설정됨 🔒":"아직 없음 — 정하면 아이가 설정 화면을 열 수 없어요";photoPrev.style.display=photo?"block":"none";if(photo)photoPrev.src=photo;
- parentTaskList.innerHTML=t?missions.map((m,i)=>`<div style="display:flex;align-items:center;gap:6px;padding:7px 2px;border-bottom:1px solid #eee"><span style="flex:1;font-size:13px">${i+1}. ${m}</span><button onclick="removeTask(${i})" style="background:#fff0f4;color:#a9677e;border-radius:9px;padding:6px 8px">삭제</button></div>`).join(""):`<div style="font-size:12px;color:#8b7d90;padding:8px 0">등록된 할 일이 없습니다.</div>`;
+ parentTaskList.innerHTML=missions.length?missions.map((m,i)=>`<div style="display:flex;align-items:center;gap:6px;padding:7px 2px;border-bottom:1px solid #eee"><span style="flex:1;font-size:14px;min-width:0;overflow-wrap:anywhere">${i+1}. ${m}</span><input type="time" value="${mt[i]||""}" onchange="setMt(${i},this.value)" style="flex:none;width:106px;padding:4px 6px;font-size:14px;border-radius:9px"><button onclick="removeTask(${i})" style="background:#fff0f4;color:#a9677e;border-radius:9px;padding:6px 8px">삭제</button></div>`).join(""):`<div style="font-size:12px;color:#8b7d90;padding:8px 0">등록된 할 일이 없습니다.</div>`;
 }
 const hp=p=>{let h=5381;for(const c of "kk"+p)h=((h<<5)+h+c.charCodeAt(0))|0;return String(h)};
 let pinHash="";try{pinHash=localStorage.getItem("mobileKongPin")||""}catch(e){}
@@ -209,8 +207,9 @@ function checkPin(){if(hp(pinInput.value)===pinHash){closePin();showParent()}els
 function savePin(){const v=newPin.value.trim();if(!/^\d{4}$/.test(v)){alert("숫자 4자리를 입력해주세요");return}pinHash=hp(v);try{localStorage.setItem("mobileKongPin",pinHash)}catch(e){}newPin.value="";render();alert("비밀번호를 저장했어요")}
 function removePin(){pinHash="";try{localStorage.removeItem("mobileKongPin")}catch(e){}render()}
 pinInput.addEventListener("keydown",e=>{if(e.key==="Enter")checkPin()});
-function addTask(){let v=newTask.value.trim();if(!v)return;missions.push(v);done.push(false);newTask.value="";save();render()}
-function removeTask(i){missions.splice(i,1);done.splice(i,1);save();render()}
+function addTask(){let v=newTask.value.trim();if(!v)return;missions.push(v);done.push(false);mt.push(newTime.value||"");newTask.value="";newTime.value="";save();lastSig=null;tick()}
+function removeTask(i){missions.splice(i,1);done.splice(i,1);mt.splice(i,1);save();lastSig=null;tick()}
+function setMt(i,v){mt[i]=v||"";save();lastSig=null;tick()}
 function clearPhoto(){photo="";try{localStorage.removeItem("mobileKongPhoto")}catch(e){}photoInput.value="";render()}
 photoInput.addEventListener("change",e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const S=480,c=document.createElement("canvas");c.width=c.height=S;const m=Math.min(im.width,im.height),sx=(im.width-m)/2,sy=(im.height-m)/2;c.getContext("2d").drawImage(im,sx,sy,m,m,0,0,S,S);photo=c.toDataURL("image/jpeg",.82);try{localStorage.setItem("mobileKongPhoto",photo)}catch(err){alert("사진을 저장하지 못했어요. 더 작은 사진으로 해보세요.")}render()};im.src=r.result};r.readAsDataURL(f)});
 function saveGoal(){goal=Math.max(1,Math.min(20,parseInt(goalInput.value)||4));localStorage.setItem("mobileKongGoal",goal);render()}
@@ -246,5 +245,5 @@ function stampIt(i){
  else{heroImg.src=friendsData[pending].src;heroImg.style.filter="brightness(0) opacity("+(.3+.6*Math.min(1,n/g)).toFixed(2)+")";msg.textContent=p;modalText.innerHTML=`<b>${n}번째 스탬프</b> ⭐<br>오늘의 친구까지 ${Math.max(1,g-n)}개 남았어요! 👀`}
  slam("콩!",false);confetti(22);sound(false);render();document.getElementById("modal").classList.add("show");
 }
-document.getElementById("newTask").addEventListener("keydown",e=>{if(e.key==="Enter")addTask()});ensurePending();render();buddyFace.onclick=()=>{if(earned&&earned.day===dsn())fire(buddyFace,earned.f)};tick();setInterval(tick,15000);
+document.getElementById("newTask").addEventListener("keydown",e=>{if(e.key==="Enter")addTask()});ensurePending();renderFriends();render();buddyFace.onclick=()=>{if(earned&&earned.day===dsn())fire(buddyFace,earned.f)};tick();setInterval(tick,15000);
 </script></body></html>
