@@ -84,7 +84,9 @@ html,body{height:100%;overflow:hidden}
 <b>상 받을 스탬프 개수</b><div class="add" style="margin:7px 0 15px"><input id="goalInput" type="number" min="1" max="20" inputmode="numeric" placeholder="예: 4"><button class="addBtn" onclick="saveGoal()">저장</button></div>
 <b>스탬프를 모았을 때 받을 상</b><div class="add" style="margin-top:7px"><input id="rewardInput" maxlength="40" placeholder="예: 놀이 30분"><button class="addBtn" onclick="saveReward()">저장</button></div>
 <b style="display:block;margin-top:15px">축하 사진 (목표를 달성하면 나와요)</b><p style="margin:4px 0">얼굴을 가린 사진을 골라주세요. 이 기기에만 저장되고 인터넷에 올라가지 않아요.</p><div class="add"><input id="photoInput" type="file" accept="image/*"><button class="addBtn" onclick="clearPhoto()">지우기</button></div><img id="photoPrev" alt="" style="display:none;width:72px;height:72px;border-radius:50%;object-fit:cover;margin-top:7px;border:3px solid #ffe16c">
+<b style="display:block;margin-top:15px">설정 비밀번호 (숫자 4자리)</b><p id="pinState" style="margin:4px 0"></p><div class="add"><input id="newPin" type="password" inputmode="numeric" maxlength="4" placeholder="새 비밀번호"><button class="addBtn" onclick="savePin()">저장</button></div><button onclick="removePin()" style="background:none;color:#aa8292;font-size:13px;padding:6px 2px">비밀번호 해제</button>
 <button class="ok" onclick="document.getElementById('parentModal').classList.remove('show')">설정 완료 ✓</button></div></div><div class="modal" id="modal"><div class="sheet"><div style="font-size:36px">🎉✨</div><div class="hw"><img id="heroImg"><span class="bigstamp" id="bigStamp"></span></div><h2 id="msg"></h2><div id="modalText"></div><button class="ok" onclick="document.getElementById('modal').classList.remove('show')">좋아요! 다음 미션 💗</button></div></div>
+<div class="modal" id="pinModal"><div class="sheet"><h2>🔒 부모님 확인</h2><p>비밀번호 4자리를 입력하세요</p><input id="pinInput" type="password" inputmode="numeric" maxlength="4" style="width:100%;text-align:center;font-size:28px;letter-spacing:10px"><div id="pinErr" style="color:#e0457b;font-weight:900;min-height:24px;margin-top:6px"></div><button class="ok" onclick="checkPin()">확인</button><button class="ok" style="background:#f3edf5;color:#6d6072" onclick="closePin()">취소</button></div></div>
 <script>
 const friendsData=[{"name": "몽글이", "src": "images/friend01.jpg"}, {"name": "빨강이", "src": "images/friend02.jpg"}, {"name": "코코", "src": "images/friend03.jpg"}, {"name": "코코2", "src": "images/friend04.jpg"}, {"name": "주황이", "src": "images/friend05.jpg"}, {"name": "피카", "src": "images/friend06.jpg"}, {"name": "곰곰이", "src": "images/friend07.jpg"}, {"name": "토토", "src": "images/friend08.jpg"}, {"name": "우디", "src": "images/friend09.jpg"}, {"name": "핑키", "src": "images/friend10.jpg"}, {"name": "콩이", "src": "images/friend11.jpg"}, {"name": "방울이", "src": "images/friend12.jpg"}, {"name": "오늘의 주인공", "src": "images/friend13.jpg"}];
 let missions=JSON.parse(localStorage.getItem("mobileKongTasks")||"[]");
@@ -116,10 +118,18 @@ function render(){
   streakBadge.textContent="🔥 "+streak+"일";lastPop=-1;newFriend=-1;
  album.innerHTML=Array.from({length:g},(_,i)=>`<div class="seal ${i<n?"on":""}${i===n-1&&popNow?" pop2":""}">${i<n?"⭐":"?"}</div>`).join("");
  rewardText.textContent=reward||"오늘의 상이 기다리고 있어요!";
- rewardInput.value=reward;goalInput.value=goal;photoPrev.style.display=photo?"block":"none";if(photo)photoPrev.src=photo;
+ rewardInput.value=reward;goalInput.value=goal;pinState.textContent=pinHash?"현재: 설정됨 🔒":"아직 없음 — 정하면 아이가 설정 화면을 열 수 없어요";photoPrev.style.display=photo?"block":"none";if(photo)photoPrev.src=photo;
  parentTaskList.innerHTML=t?missions.map((m,i)=>`<div style="display:flex;align-items:center;gap:6px;padding:7px 2px;border-bottom:1px solid #eee"><span style="flex:1;font-size:13px">${i+1}. ${m}</span><button onclick="removeTask(${i})" style="background:#fff0f4;color:#a9677e;border-radius:9px;padding:6px 8px">삭제</button></div>`).join(""):`<div style="font-size:12px;color:#8b7d90;padding:8px 0">등록된 할 일이 없습니다.</div>`;
 }
-function openParent(){document.getElementById("parentModal").classList.add("show");render()}
+const hp=p=>{let h=5381;for(const c of "kk"+p)h=((h<<5)+h+c.charCodeAt(0))|0;return String(h)};
+let pinHash="";try{pinHash=localStorage.getItem("mobileKongPin")||""}catch(e){}
+function showParent(){document.getElementById("parentModal").classList.add("show");render()}
+function openParent(){if(!pinHash){showParent();return}pinInput.value="";pinErr.textContent="";pinModal.classList.add("show");setTimeout(()=>pinInput.focus(),60)}
+function closePin(){pinModal.classList.remove("show")}
+function checkPin(){if(hp(pinInput.value)===pinHash){closePin();showParent()}else{pinErr.textContent="비밀번호가 달라요";pinInput.value=""}}
+function savePin(){const v=newPin.value.trim();if(!/^\d{4}$/.test(v)){alert("숫자 4자리를 입력해주세요");return}pinHash=hp(v);try{localStorage.setItem("mobileKongPin",pinHash)}catch(e){}newPin.value="";render();alert("비밀번호를 저장했어요")}
+function removePin(){pinHash="";try{localStorage.removeItem("mobileKongPin")}catch(e){}render()}
+pinInput.addEventListener("keydown",e=>{if(e.key==="Enter")checkPin()});
 function addTask(){let v=newTask.value.trim();if(!v)return;missions.push(v);done.push(false);newTask.value="";save();render()}
 function removeTask(i){missions.splice(i,1);done.splice(i,1);save();render()}
 function clearPhoto(){photo="";try{localStorage.removeItem("mobileKongPhoto")}catch(e){}photoInput.value="";render()}
