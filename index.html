@@ -87,7 +87,7 @@ details{background:#f8f4fb;border-radius:14px;padding:10px 12px;margin:8px 0}sum
 @keyframes rxd{0%,100%{transform:translateY(0) rotate(0)}12%{transform:translateY(-14px) rotate(-12deg)}25%{transform:translateY(0) rotate(0)}37%{transform:translateY(-14px) rotate(12deg)}50%{transform:translateY(0) rotate(0) scale(1.08)}62%{transform:translateY(-12px) rotate(-10deg)}75%{transform:translateY(0)}87%{transform:translateY(-12px) rotate(10deg)}}
 .lvp{position:absolute;bottom:-5px;left:50%;transform:translateX(-50%);background:#745cff;color:#fff;border-radius:10px;padding:0 8px;font-size:13px;font-weight:900;white-space:nowrap;z-index:3;border:2px solid #fff}
 #heroImg{width:165px;height:165px}.act{font-size:21px;animation:pop .5s;font-weight:900;color:#745cff;margin:3px 0}
-.picks{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:10px 0}.pick{background:#fff8d6;border:3px solid #ffe16c;border-radius:18px;padding:8px 4px;animation:pop .5s backwards}
+.picks{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:10px 0}.picks .pick:nth-child(4){animation-delay:.36s}.pick{background:#fff8d6;border:3px solid #ffe16c;border-radius:18px;padding:8px 4px;animation:pop .5s backwards}
 .pick:nth-child(2){animation-delay:.12s}.pick:nth-child(3){animation-delay:.24s}.sheet .pick img{width:100%;height:auto;border-width:3px;aspect-ratio:1;border-radius:50%;border:3px solid #fff;object-fit:cover;display:block}.pick span{display:block;font-weight:900;font-size:15px;margin-top:5px;color:#40354b}
 /* ---- popups ---- */
 .modal{position:fixed;inset:0;background:#35233eaa;display:none;align-items:flex-end;justify-content:center;z-index:20}.modal.show{display:flex}
@@ -160,6 +160,7 @@ details{background:#f8f4fb;border-radius:14px;padding:10px 12px;margin:8px 0}sum
 const friendsData=[{"name": "몽글이", "src": "images/buddy01.jpg", "nose": {"x": 0.5, "y": 0.36}}, {"name": "빨강이", "src": "images/buddy02.jpg", "nose": {"x": 0.51, "y": 0.25}}, {"name": "코코", "src": "images/buddy03.jpg", "nose": {"x": 0.52, "y": 0.6}}, {"name": "주황이", "src": "images/buddy04.jpg", "nose": {"x": 0.48, "y": 0.5}}, {"name": "피카", "src": "images/buddy05.jpg", "nose": {"x": 0.44, "y": 0.44}}, {"name": "곰곰이", "src": "images/buddy06.jpg", "nose": {"x": 0.52, "y": 0.39}}, {"name": "토토", "src": "images/buddy07.jpg", "nose": {"x": 0.51, "y": 0.53}}, {"name": "우디", "src": "images/buddy08.jpg", "nose": {"x": 0.47, "y": 0.28}}, {"name": "핑키", "src": "images/buddy09.jpg", "nose": {"x": 0.49, "y": 0.35}}, {"name": "콩이", "src": "images/buddy10.jpg", "nose": {"x": 0.53, "y": 0.48}}, {"name": "방울이", "src": "images/buddy11.jpg", "nose": {"x": 0.53, "y": 0.35}}, {"name": "체리", "src": "images/buddy13.jpg", "nose": {"x": 0.46, "y": 0.36}}, {"name": "노랑이", "src": "images/buddy14.jpg"}, {"name": "수줍이", "src": "images/buddy15.jpg", "nose": {"x": 0.5, "y": 0.55}}, {"name": "웜이", "src": "images/buddy16.jpg", "nose": {"x": 0.5, "y": 0.65}}, {"name": "꽃님이", "src": "images/buddy17.jpg"}, {"name": "딸기", "src": "images/buddy18.jpg", "nose": {"x": 0.39, "y": 0.36}}, {"name": "뽀삐", "src": "images/buddy19.jpg", "nose": {"x": 0.56, "y": 0.44}}, {"name": "솜솜이", "src": "images/buddy20.jpg", "nose": {"x": 0.46, "y": 0.13}}, {"name": "보라", "src": "images/buddy21.jpg", "nose": {"x": 0.43, "y": 0.27}}, {"name": "푸딩", "src": "images/buddy22.jpg", "nose": {"x": 0.55, "y": 0.32}}, {"name": "하늘이", "src": "images/buddy23.jpg", "nose": {"x": 0.47, "y": 0.37}}, {"name": "프리", "src": "images/preortho.jpg", "nose": {"x": 0.54, "y": 0.27}}, {"name": "오늘의 주인공", "src": "images/buddy12.jpg", "special": true}];
 let missions=JSON.parse(localStorage.getItem("mobileKongTasks")||"[]");
 let mt=[];try{mt=JSON.parse(localStorage.getItem("mobileKongMT")||"[]")}catch(e){}let ct={day:"",n:0};try{ct=JSON.parse(localStorage.getItem("mobileKongCT")||"null")||ct}catch(e){}
+let partner={day:"",f:-1};try{partner=JSON.parse(localStorage.getItem("mobileKongPartner")||"null")||partner}catch(e){}
 let mp=[];try{mp=JSON.parse(localStorage.getItem("mobileKongMP")||"[]")}catch(e){}
 mt=missions.map((_,i)=>mt[i]||"");mp=missions.map((_,i)=>mp[i]||"");
 let done=JSON.parse(localStorage.getItem("mobileKongDone")||"[]");
@@ -245,7 +246,7 @@ const ds=d=>d.toLocaleDateString("sv");
   done=missions.map(()=>false);}
  localStorage.setItem("mobileKongDay",today);localStorage.setItem("mobileKongStreak",streak);
  localStorage.setItem("mobileKongDone",JSON.stringify(done));})();
-function save(){localStorage.setItem("mobileKongTasks",JSON.stringify(missions));localStorage.setItem("mobileKongDone",JSON.stringify(done));localStorage.setItem("mobileKongTotal",total);localStorage.setItem("mobileKongOwned",JSON.stringify(owned));localStorage.setItem("mobileKongPre",JSON.stringify(pre));localStorage.setItem("mobileKongPreDone",preDone);localStorage.setItem("mobileKongPending",pending);localStorage.setItem("mobileKongEarned",JSON.stringify(earned));localStorage.setItem("mobileKongNames",JSON.stringify(names));localStorage.setItem("mobileKongStreak",streak);localStorage.setItem("mobileKongMT",JSON.stringify(mt));localStorage.setItem("mobileKongMP",JSON.stringify(mp));localStorage.setItem("mobileKongCoins",coins);localStorage.setItem("mobileKongCT",JSON.stringify(ct));localStorage.setItem("mobileKongCare",JSON.stringify(cr));}
+function save(){localStorage.setItem("mobileKongTasks",JSON.stringify(missions));localStorage.setItem("mobileKongDone",JSON.stringify(done));localStorage.setItem("mobileKongTotal",total);localStorage.setItem("mobileKongOwned",JSON.stringify(owned));localStorage.setItem("mobileKongPre",JSON.stringify(pre));localStorage.setItem("mobileKongPreDone",preDone);localStorage.setItem("mobileKongPending",pending);localStorage.setItem("mobileKongEarned",JSON.stringify(earned));localStorage.setItem("mobileKongNames",JSON.stringify(names));localStorage.setItem("mobileKongStreak",streak);localStorage.setItem("mobileKongMT",JSON.stringify(mt));localStorage.setItem("mobileKongMP",JSON.stringify(mp));localStorage.setItem("mobileKongCoins",coins);localStorage.setItem("mobileKongPartner",JSON.stringify(partner));localStorage.setItem("mobileKongCT",JSON.stringify(ct));localStorage.setItem("mobileKongCare",JSON.stringify(cr));}
 const praise=["우와 대단해!","최고야!","멋지다 멋져!","쑥쑥 크는 중!","야호! 해냈다!","역시 우리 친구!","짝짝짝! 박수!"];
 const josa=n=>{const c=n.charCodeAt(n.length-1);return c>=0xAC00&&c<=0xD7A3&&(c-0xAC00)%28?"이":"가"};
 function confetti(n){const e=["⭐","✨","💗","🎉","🌈","🎈"];for(let i=0;i<n;i++){const s=document.createElement("span");s.className="cf";s.textContent=e[i%e.length];s.style.left=Math.random()*100+"vw";s.style.fontSize=(16+Math.random()*18)+"px";s.style.setProperty("--r",(Math.random()*720-360)+"deg");s.style.animationDuration=(1.6+Math.random()*1.6)+"s";s.style.animationDelay=Math.random()*.4+"s";document.body.appendChild(s);setTimeout(()=>s.remove(),4000)}}
@@ -259,7 +260,7 @@ function render(){
   streakBadge.textContent="🔥 "+streak+"일";coinBadge.textContent="🪙 "+coins;lastPop=-1;
   const td=ds(new Date()),ea=earned&&earned.day===td;buddyLv.textContent="Lv."+n+(ea?"":"/"+g);
   if(ea){buddyImg.src=friendsData[earned.f].src;buddyImg.style.filter="";buddyFace.classList.add("glowbox");buddyQ.style.display="none";bubble.textContent=nm(earned.f)+": "+cheers[earned.f%cheers.length]}
-  else{const nxo=it.find(x=>!x.done&&!x.locked)||it.find(x=>!x.done),nx=nxo?nxo.name:"";buddyImg.src=friendsData[pending].src;buddyImg.style.filter=reveal(n/g);buddyFace.classList.remove("glowbox");buddyQ.style.display="";bubble.textContent=!t?"오늘 할 일을 먼저 정해줘!":(n===0&&nx)?"❓ "+nx+" 같이 하자!":"❓ 벌써 "+n+"개! "+Math.max(1,g-n)+"개만 더 하면 만날 수 있어!"}
+  else{const nxo=it.find(x=>!x.done&&!x.locked)||it.find(x=>!x.done),nx=nxo?nxo.name:"";const pf=partnerF();buddyImg.src=friendsData[pf>=0?pf:pending].src;buddyImg.style.filter=pf>=0?revealPop(n/g):reveal(0);buddyFace.classList.remove("glowbox");buddyQ.style.display=pf>=0?"none":"";bubble.textContent=!t?"오늘 할 일을 먼저 정해줘!":pf<0?"🎁 첫 스탬프를 찍으면 친구 3명이 나타나! 골라봐!":nm(pf)+": 벌써 Lv."+n+"! "+Math.max(1,g-n)+"개만 더 하면 우리 친구가 돼!"}
   bookBtn.textContent="🐾 친구 도감 "+owned.length+"/"+friendsData.length;if(app_().dataset.tab==="f")renderFriends();
  rewardInput.value=reward;goalInput.value=goal;preOn.checked=pre.on;preTime.value=pre.time;pinState.textContent=pinHash?"현재: 설정됨 🔒":"아직 없음 — 정하면 아이가 설정 화면을 열 수 없어요";photoPrev.style.display=photo?"block":"none";if(photo)photoPrev.src=photo;
  undoList.innerHTML=(it.filter(x=>x.done).map(x=>`<div style="display:flex;align-items:center;gap:6px;padding:6px 2px;border-bottom:1px solid #eee"><span style="flex:1;font-size:14px">⭐ ${esc(x.name)}</span><button onclick="undoOne('${x.id}')" style="background:#efeaff;color:#745cff;border-radius:9px;padding:6px 10px;font-weight:900">↩ 되돌리기</button></div>`).join(""))||`<div style="font-size:12px;color:#8b7d90;padding:6px 0">오늘 완료한 미션이 없어요.</div>`;
@@ -277,8 +278,8 @@ pinInput.addEventListener("keydown",e=>{if(e.key==="Enter")checkPin()});
 function addTask(){let v=newTask.value.trim();if(!v)return;missions.push(v);done.push(false);mt.push(newTime.value||"");mp.push(newPraise.value.trim());newTask.value="";newTime.value="";newPraise.value="";save();lastSig=null;tick()}
 function removeTask(i){missions.splice(i,1);done.splice(i,1);mt.splice(i,1);mp.splice(i,1);save();lastSig=null;tick()}
 function revokeEarned(){const t=ds(new Date());if(!(earned&&earned.day===t))return;const f=earned.f;if(!earned.had)owned=owned.filter(x=>x!==f);streak=Math.max(0,streak-1);addCoins(-4);earned=null;pending=f;ensurePending()}
-function undoOne(id){if(id==="pre"){if(preDone!==dsn())return;preDone="";addCoins(-1)}else{const i=+id;if(!done[i])return;done[i]=false;addCoins(-1)}if(nDone()<eff())revokeEarned();lastPop=-1;save();lastSig=null;tick();renderFriends()}
-function undoAll(){if(!confirm("오늘 완료한 스탬프를 모두 되돌릴까요?\n오늘 받은 코인과 새 친구도 취소돼요."))return;const t=ds(new Date());done=missions.map(()=>false);preDone="";if(earned&&earned.day===t)revokeEarned();if(ct.day===t){coins=Math.max(0,coins-ct.n);ct={day:t,n:0}}lastPop=-1;save();lastSig=null;tick();renderFriends()}
+function undoOne(id){if(id==="pre"){if(preDone!==dsn())return;preDone="";addCoins(-1)}else{const i=+id;if(!done[i])return;done[i]=false;addCoins(-1)}if(nDone()<eff())revokeEarned();if(nDone()===0)partner={day:"",f:-1};lastPop=-1;save();lastSig=null;tick();renderFriends()}
+function undoAll(){if(!confirm("오늘 완료한 스탬프를 모두 되돌릴까요?\n오늘 받은 코인과 새 친구도 취소돼요."))return;const t=ds(new Date());done=missions.map(()=>false);preDone="";if(earned&&earned.day===t)revokeEarned();partner={day:"",f:-1};if(ct.day===t){coins=Math.max(0,coins-ct.n);ct={day:t,n:0}}lastPop=-1;save();lastSig=null;tick();renderFriends()}
 function setMp(i,v){mp[i]=v.trim();save()}
 function setMt(i,v){mt[i]=v||"";save();lastSig=null;tick()}
 function clearPhoto(){photo="";try{localStorage.removeItem("mobileKongPhoto")}catch(e){}photoInput.value="";render()}
@@ -293,12 +294,18 @@ function revealFriend(f,had,pz,g,n){
  modalText.innerHTML=`🏆 <b>스탬프 ${g}개 모으기 성공!</b><br><b style="color:#745cff">🐾 ${name} Lv.${n} 달성!</b><br>🪙 코인 +4 (모두 ${coins}개)<br>${pz?"💌 "+esc(pz)+"<br>":""}🔥 ${streak}일 연속!<br>📖 친구 ${owned.length}/${friendsData.length}${owned.length===friendsData.length?" 모두 모았어요!":""}<br><br>🎁 받을 상<br><b style="font-size:20px">${reward||"오늘의 특별한 상"}</b>`;
  const big=bigStamp;big.className="bigstamp all";big.innerHTML="완료<br>쾅!";sh.classList.remove("shake");void big.offsetWidth;big.classList.add("slam");sh.classList.add("shake");
  confetti(80);sound(true);render();renderFriends();setTimeout(()=>fire(photo?nfWrap:heroWrap,f),700);setTimeout(()=>fire(photo?nfWrap:heroWrap,f),1900)}
-let pickCtx=null;
-function pickFriend(j){const c=pickCtx;if(!c)return;pickCtx=null;const f=c.cands[j];
- if(f!==c.f){if(!c.had)owned=owned.filter(x=>x!==c.f);const h2=owned.includes(f);if(!h2)owned.push(f);earned={day:c.today,f:f,had:h2};pending=-1;ensurePending()}
- (cr[f]=cr[f]||{xp:0,hat:0}).xp+=c.n;save();pickBox.style.display="none";revealFriend(f,earned.had,c.pz,c.g,c.n)}
+let afterPick=null;
+const partnerF=()=>partner.day===ds(new Date())&&partner.f>=0?partner.f:-1;
+function openPick(cb){afterPick=cb;const pool=friendsData.map((_,k)=>k).filter(k=>!friendsData[k].special),fresh=pool.filter(k=>!owned.includes(k)),old=pool.filter(k=>owned.includes(k)),shuf=a=>a.sort(()=>Math.random()-.5);
+ const c=shuf(fresh).slice(0,3);if(c.length<3)c.push(...shuf(old).slice(0,3-c.length));
+ act.style.display="none";drawBox.style.display="none";resultBox.style.display="none";luckyLine.style.display="none";modalOk.disabled=true;
+ picks.innerHTML=c.map(k=>`<button class="pick" onclick="pickPartner(${k})"><img src="${friendsData[k].src}" alt=""><span>${nm(k)}</span></button>`).join("");
+ pickBox.style.display="";document.getElementById("modal").classList.add("show");sound(false);confetti(30)}
+function pickPartner(k){partner={day:ds(new Date()),f:k};save();pickBox.style.display="none";const cb=afterPick;afterPick=null;if(cb)cb()}
 function stampIt(i){
  if(i==="pre"){if(preDone===dsn())return;preDone=dsn();lastPop=missions.length}else{if(done[i])return;done[i]=true;lastPop=i}
+ save();if(partnerF()<0&&!(earned&&earned.day===ds(new Date())))openPick(()=>stampShow(i));else stampShow(i)}
+function stampShow(i){
  const n=nDone(),g=eff(),today=ds(new Date()),pz=i==="pre"?"":(mp[i]||"");luckyLine.style.display="none";
  const sh=document.querySelector("#modal .sheet");
  const slam=(t,big)=>{bigStamp.className="bigstamp"+(big?" all":"");bigStamp.innerHTML=t;sh.classList.remove("shake");void bigStamp.offsetWidth;bigStamp.classList.add("slam");if(big)sh.classList.add("shake")};
@@ -306,21 +313,12 @@ function stampIt(i){
  const gotToday=earned&&earned.day===today;
  if(n>=g&&!gotToday){
   streak++;addCoins(4);
-  const f=pending,had=owned.includes(f);
+  const f=partnerF()>=0?partnerF():pending,had=owned.includes(f);
   if(!had)owned.push(f);
-  earned={day:today,f:f,had:had};pending=-1;ensurePending();save();
-  resultBox.style.display="none";pickBox.style.display="none";drawBox.style.display="";modalOk.disabled=true;
+  earned={day:today,f:f,had:had};(cr[f]=cr[f]||{xp:0,hat:0}).xp+=n;pending=-1;ensurePending();save();
   if(navigator.vibrate)navigator.vibrate([40,40,40,40,40]);
   document.getElementById("modal").classList.add("show");
-  setTimeout(()=>{
-   drawBox.style.display="none";
-   const pool=friendsData.map((_,k)=>k).filter(k=>k!==f&&!friendsData[k].special),fresh=pool.filter(k=>!owned.includes(k)),old=pool.filter(k=>owned.includes(k));
-   const shuf=a=>a.sort(()=>Math.random()-.5),alts=shuf(fresh).slice(0,2);if(alts.length<2)alts.push(...shuf(old).slice(0,2-alts.length));
-   if(!alts.length){revealFriend(f,had,pz,g,n);return}
-   const cands=shuf([f,...alts]);pickCtx={cands,f,had,today,pz,g,n};
-   picks.innerHTML=cands.map((k,j)=>`<button class="pick" onclick="pickFriend(${j})"><img src="${friendsData[k].src}" alt=""><span>${nm(k)}</span></button>`).join("");
-   pickBox.style.display="";sound(true);confetti(50);
-  },1600);
+  revealFriend(f,had,pz,g,n);
   return;
  }
 const lucky=Math.random()<.25;addCoins(1+(lucky?2:0));save();
@@ -328,8 +326,8 @@ const lucky=Math.random()<.25;addCoins(1+(lucky?2:0));save();
  const coinTxt=`🪙 코인 +${lucky?3:1} (모두 ${coins}개)`,pzTxt=pz?`<br>💌 ${esc(pz)}`:"";
  const p=praise[Math.floor(Math.random()*praise.length)];
  if(gotToday){const nmx=nm(earned.f);heroImg.src=friendsData[earned.f].src;heroWrap.classList.add("glowbox");msg.textContent=p;const kd=actFor(earned.f,n-1);popF=earned.f;popK=n-1;act.textContent=ACTL[kd];act.style.display="";modalText.innerHTML=`<b style="font-size:22px;color:#745cff">🐾 ${nmx} Lv.${n}</b><br>${coinTxt}${pzTxt}`;setTimeout(()=>react(heroWrap,earned.f,null,kd),250);setTimeout(()=>react(heroWrap,earned.f,null,kd),1500)}
- else{heroImg.src=friendsData[pending].src;heroImg.style.filter=revealPop(n/g);msg.textContent=p;const kd=actFor(pending,n-1);popF=pending;popK=n-1;act.textContent=ACTL[kd];act.style.display="";modalText.innerHTML=`<b style="font-size:22px;color:#745cff">🐾 오늘의 친구 Lv.${n}/${g}</b><br>👀 색깔 ${Math.round(Math.min(1,n/g)*100)}% · ${Math.max(1,g-n)}개 남았어요<br>${coinTxt}${pzTxt}<div style="font-size:12px;color:#8b7d90">사진을 콕 누르면 또 보여줘요!</div>`;setTimeout(()=>react(heroWrap,pending,null,kd),250);setTimeout(()=>react(heroWrap,pending,null,kd),1500)}
+ else{const pf=partnerF()>=0?partnerF():pending;heroImg.src=friendsData[pf].src;heroImg.style.filter=revealPop(n/g);msg.textContent=p;const kd=actFor(pf,n-1);popF=pf;popK=n-1;act.textContent=ACTL[kd];act.style.display="";modalText.innerHTML=`<b style="font-size:22px;color:#745cff">🐾 ${nm(pf)} Lv.${n}/${g}</b><br>👀 색깔 ${Math.round(Math.min(1,n/g)*100)}% · ${Math.max(1,g-n)}개 남았어요<br>${coinTxt}${pzTxt}<div style="font-size:12px;color:#8b7d90">사진을 콕 누르면 또 보여줘요!</div>`;setTimeout(()=>react(heroWrap,pf,null,kd),250);setTimeout(()=>react(heroWrap,pf,null,kd),1500)}
  slam("콩!",false);confetti(12);sound(false);render();document.getElementById("modal").classList.add("show");
 }
-document.getElementById("newTask").addEventListener("keydown",e=>{if(e.key==="Enter")addTask()});ensurePending();renderFriends();render();buddyFace.onclick=()=>{const fid=earned&&earned.day===dsn()?earned.f:pending;tapK++;react(buddyFace,fid,null,actFor(fid,nDone()-1+tapK))};tick();setInterval(tick,15000);
+document.getElementById("newTask").addEventListener("keydown",e=>{if(e.key==="Enter")addTask()});ensurePending();renderFriends();render();buddyFace.onclick=()=>{const fid=earned&&earned.day===dsn()?earned.f:(partnerF()>=0?partnerF():pending);tapK++;react(buddyFace,fid,null,actFor(fid,nDone()-1+tapK))};tick();setInterval(tick,15000);
 </script></body></html>
