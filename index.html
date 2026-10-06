@@ -564,15 +564,21 @@ function downloadIcsPlan(){const pad=x=>String(x).padStart(2,"0"),stamp=new Date
  L.push("END:VCALENDAR");const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([L.join("\r\n")],{type:"text/calendar;charset=utf-8"}));a.download="kongkong-plan.ics";document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500);
  alert(cnt+"개 일정을 파일로 만들었어요. 열면 폰 달력에 들어가고, 정한 시간에 폰이 알려줘요.\n※ 매주 반복 일정은 공휴일에도 알림이 와요.")}
 /* ---- 가족 메시지 (채팅) ---- */
-const ROLES=["엄마","아빠","아이","할머니","할아버지"],QUICK=["사랑해 💗","잘했어요 👍","다녀왔어요 🏠","데리러 갈게 🚗","조금 늦어요 ⏰","알겠어요 ✅"];
+const ROLES=["엄마","아빠","아이","고모","이모","삼촌","할머니","할아버지"],QUICK=["사랑해 💗","잘했어요 👍","다녀왔어요 🏠","데리러 갈게 🚗","조금 늦어요 ⏰","알겠어요 ✅"];
 let me="",msgs=[],msgFid="",msgRead=0,msgSeen=-1,msgTo="all",msgBusy=false,msgErr="";
 try{me=localStorage.getItem("mobileKongMe")||"";const q=JSON.parse(localStorage.getItem("mobileKongMsgs")||"null");if(q&&q.list){msgs=q.list;msgFid=q.fid||""}msgRead=+(localStorage.getItem("mobileKongMsgRead")||0);const sv=localStorage.getItem("mobileKongMsgSeen");if(sv!==null)msgSeen=+sv}catch(e){}
-const msgVis=m=>m.t==="all"||m.t===me||m.f===me;
+const msgVis=m=>m.x!=="__join"&&(m.t==="all"||m.t===me||m.f===me);
+let mem=[];try{mem=JSON.parse(localStorage.getItem("mobileKongMem")||"[]")}catch(e){}
+function roster(){const s=new Set(mem);msgs.forEach(m=>{if(m.f)s.add(m.f);if(m.t&&m.t!=="all")s.add(m.t)});const a=[...s].filter(x=>x&&x!==me);return a.sort((x,y)=>{const i=ROLES.indexOf(x),j=ROLES.indexOf(y);return (i<0?99:i)-(j<0?99:j)})}
+function addMem(){const r=(prompt("받는 사람 이름(예: 큰이모, 삼촌)")||"").trim().slice(0,6);if(!r||r===me)return;if(!mem.includes(r)){mem.push(r);try{localStorage.setItem("mobileKongMem",JSON.stringify(mem))}catch(e){}}msgTo=r;renderChat()}
+var meAsked=false;function askMe(){if(me||meAsked||!SBOK||!fam||document.getElementById("intro")||document.querySelector(".modal.show"))return;meAsked=true;const d=document.createElement("div");d.id="meModal";d.className="modal show";d.style.zIndex=99998;d.innerHTML='<div class="sheet"><div class="cwho2"><p>👋 이 폰은 누구 폰인가요?<br><small style="font-weight:700;color:#83778b">가족끼리 이름으로 메시지를 보내요</small></p>'+ROLES.map(r=>`<button onclick="pickMe('${r}')">${r}</button>`).join("")+'<button onclick="pickMe(\'__etc\')">✏️ 직접 입력</button><br><button style="background:none;color:#a094aa;font-size:13px" onclick="document.getElementById(\'meModal\').remove()">나중에</button></div></div>';document.body.appendChild(d)}
+function pickMe(r){setMe(r);if(me){const m=document.getElementById("meModal");if(m)m.remove()}}
 const msgNum=m=>typeof m.id==="number"?m.id:0;
 function msgSave(){try{localStorage.setItem("mobileKongMsgs",JSON.stringify({fid:msgFid,list:msgs.slice(-150)}));localStorage.setItem("mobileKongMsgRead",String(msgRead));localStorage.setItem("mobileKongMsgSeen",String(msgSeen))}catch(e){}}
 function msgUnread(){return msgs.filter(m=>msgNum(m)>msgRead&&m.f!==me&&msgVis(m)).length}
 function updMsgDot(){const n=msgUnread(),d=document.getElementById("msgDot");if(!d)return;d.textContent=n>9?"9+":n;d.style.display=n?"":"none"}
-function setMe(r){if(r==="__etc"){r=(prompt("이름(예: 이모, 삼촌)")||"").trim().slice(0,6);if(!r)return}me=r;try{localStorage.setItem("mobileKongMe",me)}catch(e){}if(msgTo===me)msgTo="all";renderChat();fetchMsgs(true)}
+function setMe(r){if(r==="__etc"){r=(prompt("이름(예: 이모, 삼촌)")||"").trim().slice(0,6);if(!r)return}me=r;try{localStorage.setItem("mobileKongMe",me)}catch(e){}if(msgTo===me)msgTo="all";renderChat();announce();fetchMsgs(true)}
+async function announce(){try{if(SBOK&&fam&&me)await rpc("kong_msg_send",{p_code:await idOf(fam),p_data:await encObj(fam,{f:me,t:"all",x:"__join"})})}catch(e){}}
 function chgMe(){me="";renderChat()}
 function setTo(t){msgTo=t;renderChat()}
 function msgToast(list){const t=document.getElementById("msgToast"),m=list[list.length-1];t.innerHTML="<small>💬 "+esc(m.f)+(m.t!=="all"?" → 나에게":"")+(list.length>1?" 외 "+(list.length-1)+"개":"")+"</small>"+esc(m.x);t.style.display="block";clearTimeout(t._h);t._h=setTimeout(()=>{t.style.display="none"},12000);
@@ -591,7 +597,7 @@ function renderChat(){const L=document.getElementById("chatList");if(!L)return;
   if(!mine)h+=`<div class="cn">${esc(m.f)}</div>`;
   h+=`<div class="cb ${mine?"me":"ot"}">${m.t!=="all"?`<span class="cwhis">${mine?"→ "+esc(m.t)+"에게":"🔒 나에게"}</span>`:""}${esc(m.x)}</div><div class="cm ${mine?"me":""}">${tm}${m.tmp?" · 보내는 중":""}</div>`});
  L.innerHTML=h||'<div class="evempty">💬<br>아직 메시지가 없어요<br><small>아래에서 첫 메시지를 보내 보세요</small></div>';
- const to=["all"].concat(ROLES.filter(r=>r!==me));cTo.innerHTML=to.map(t=>`<button class="${msgTo===t?"on":""}" onclick="setTo('${t}')">${t==="all"?"👨‍👩‍👧 전체":esc(t)+"에게"}</button>`).join("");
+ const to=["all"].concat(roster());if(!to.includes(msgTo))msgTo="all";cTo.innerHTML=to.map(t=>`<button class="${msgTo===t?"on":""}" onclick="setTo('${t}')">${t==="all"?"👨‍👩‍👧 전체":esc(t)+"에게"}</button>`).join("")+'<button onclick="addMem()">＋ 사람 추가</button>';
  cQ.innerHTML=QUICK.map((q,i)=>`<button onclick="sendMsg(QUICK[${i}])">${q}</button>`).join("");
  const atTab=document.querySelector(".app").dataset.tab==="c";if(atTab){const mx=Math.max(0,...msgs.map(msgNum));if(mx>msgRead){msgRead=mx;msgSave()}L.scrollTop=L.scrollHeight}updMsgDot()}
 async function fetchMsgs(force){if(!SBOK||!fam||!me||msgBusy)return;if(document.visibilityState==="hidden"&&!force)return;msgBusy=true;
@@ -796,5 +802,5 @@ const WD=["일","월","화","수","목","금","토"];
 function dateLabels(){const d=new Date();todayLbl.textContent="📅 "+(d.getMonth()+1)+"월 "+d.getDate()+"일 ("+WD[d.getDay()]+")";const il=document.getElementById("idate");if(il)il.textContent="📅 "+d.getFullYear()+"년 "+(d.getMonth()+1)+"월 "+d.getDate()+"일 "+WD[d.getDay()]+"요일"}
 function introInit(){dateLabels();imus.classList.toggle("off",!musOn);if(!musOn)ihint.style.display="none";else{startMusic();document.getElementById("intro").addEventListener("pointerdown",introGesture,{once:true})}const t=tCount(),n=nDone(),g=eff();introSub.textContent=!t?"부모님이 오늘의 미션을 정해주세요":n>=g?"오늘 미션을 다 했어! 최고야 🏆":"오늘 미션 "+t+"개 · 🔥 "+streak+"일째 도전 중!"}
 function closeIntro(){const e=document.getElementById("intro");if(e.classList.contains("out"))return;stopMusic();sound(false);e.classList.add("out");setTimeout(()=>e.remove(),500)}
-ensurePending();renderFriends();render();introInit();buddyFace.onclick=()=>{const fid=earned&&earned.day===dsn()?earned.f:(partnerF()>=0?partnerF():pending);tapK++;react(buddyFace,fid,null,actFor(fid,nDone()-1+tapK))};tick();setInterval(tick,15000);setInterval(evAlarmTick,20000);setInterval(()=>fetchMsgs(false),10000);setTimeout(()=>{fetchMsgs(false);updMsgDot()},1800);document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")fetchMsgs(true)});document.getElementById("cInput").addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.isComposing){e.preventDefault();sendMsg()}});setTimeout(evAlarmTick,2500);
+ensurePending();renderFriends();render();introInit();buddyFace.onclick=()=>{const fid=earned&&earned.day===dsn()?earned.f:(partnerF()>=0?partnerF():pending);tapK++;react(buddyFace,fid,null,actFor(fid,nDone()-1+tapK))};tick();setInterval(tick,15000);setInterval(askMe,2500);setInterval(evAlarmTick,20000);setInterval(()=>fetchMsgs(false),10000);setTimeout(()=>{fetchMsgs(false);updMsgDot()},1800);document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")fetchMsgs(true)});document.getElementById("cInput").addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.isComposing){e.preventDefault();sendMsg()}});setTimeout(evAlarmTick,2500);
 </script></body></html>
