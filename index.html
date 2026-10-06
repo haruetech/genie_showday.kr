@@ -177,6 +177,9 @@ details{background:#f8f4fb;border-radius:14px;padding:10px 12px;margin:8px 0}sum
 #msgToast{position:fixed;top:max(10px,env(safe-area-inset-top));left:10px;right:10px;z-index:99999;background:#745cff;color:#fff;border-radius:18px;padding:13px 16px;box-shadow:0 10px 30px #4a36b066;font-size:16px;font-weight:900;display:none;animation:toastIn .35s cubic-bezier(.2,1.4,.4,1)}#msgToast small{display:block;font-size:12px;opacity:.85;margin-bottom:2px}
 @keyframes toastIn{from{transform:translateY(-120%)}to{transform:none}}
 .tab .dot{right:18%}
+.evcal .calg button{aspect-ratio:auto;height:46px;padding-top:3px;font-size:15px}.evcal .calg button .dd{position:absolute;bottom:3px;left:0;right:0;display:flex;justify-content:center;gap:2px}.evcal .calg button .dd i{width:6px;height:6px;border-radius:50%;background:#745cff}.evcal .calg button .dd i.g{background:#ff72a4}.evcal .calg button.sel .dd i{background:#fff}.evcal .calg button .dd b{font-size:9px;line-height:6px;color:#745cff;font-weight:900}.evcal .calg button.sel .dd b{color:#fff}
+.evday{background:#fff;border:2px solid #e5defa;border-radius:18px;padding:10px 12px;margin-top:8px}.evday h3{margin:0 0 4px;font-size:16px;color:#40354b}.evday .hol{color:#e0457b;font-size:13px;font-weight:900}.evtag{display:inline-block;font-size:11px;font-weight:900;border-radius:8px;padding:2px 6px;margin-right:4px;background:#f3edf5;color:#83778b}.evtag.rep{background:#efeaff;color:#745cff}.evtag.al{background:#fff4d6;color:#a07a14}
+.evbtns{display:flex;gap:6px;margin-top:8px}.evbtns button{flex:1;border-radius:12px;padding:9px;font-weight:900;font-size:14px;background:#efeaff;color:#745cff}
 </style></head><body><main class="app" data-tab="m">
 <section class="hero"><div class="hl"><div><b id="todayLbl">🌈 콩콩</b><span class="streak" id="streakBadge">🔥 0일</span><span class="streak cn" id="coinBadge">🪙 0</span></div><h1>미션하고 스탬프 콩! 💗</h1><div class="gl" id="goalLine"></div><div class="prog"><span id="stat">0/0</span><div class="bar"><div id="fill"></div></div></div></div><div class="stars" id="stars"></div></section>
 <div class="page" id="pageMission"><div class="tscroll"><div id="tasks" class="tasks"></div></div>
@@ -227,7 +230,7 @@ details{background:#f8f4fb;border-radius:14px;padding:10px 12px;margin:8px 0}sum
 <div class="add" style="margin-top:6px;align-items:center"><input id="skA" type="date"><span style="flex:none">~</span><input id="skB" type="date"><button class="addBtn" onclick="addSkip()">추가</button></div>
 <div id="skList" style="margin-top:6px"></div></details>
 <details><summary>🗓 달력으로 일정 등록 (날짜별)</summary>
-<p style="margin:0 0 6px;font-size:12px;color:#83778b">병원·예약·행사처럼 그날 하루만 있는 일정이나, 아이에게 전할 메시지를 날짜를 눌러서 등록해요. 그날이 되면 자동으로 들어와요.</p>
+<p style="margin:0 0 6px;font-size:12px;color:#83778b">병원·예약·행사처럼 그날 하루만 있는 일정이나, 아이에게 전할 메시지를 날짜를 눌러서 등록해요. (미션은 “오늘의 미션”에서 따로 등록해요) 그날이 되면 자동으로 들어와요.</p>
 <div class="calnav"><button onclick="calNav(-1)">◀</button><b id="calTitle"></b><button onclick="calNav(1)">▶</button></div>
 <div class="calg" id="calGrid"></div>
 <div id="calDay" style="margin-top:10px"></div>
@@ -441,7 +444,7 @@ function render(){renderEv();
 }
 const hp=p=>{let h=5381;for(const c of "kk"+p)h=((h<<5)+h+c.charCodeAt(0))|0;return String(h)};
 let pinHash="";try{pinHash=localStorage.getItem("mobileKongPin")||""}catch(e){}
-function showParent(){document.getElementById("parentModal").classList.add("show");render()}
+function showParent(){document.getElementById("parentModal").classList.add("show");render();if(evGoCal){const k=evGoCal;evGoCal="";calSel=k;const d0=new Date(k+"T00:00:00");calY=d0.getFullYear();calM=d0.getMonth();calRepSel=[d0.getDay()];document.querySelectorAll("#parentModal details").forEach(d=>{d.open=d.querySelector("summary").textContent.includes("달력으로")});calUI();setTimeout(()=>{const d=[...document.querySelectorAll("#parentModal details")].find(x=>x.querySelector("summary").textContent.includes("달력으로"));if(d)d.scrollIntoView()},80)}}
 function openParent(){if(!pinHash){showParent();return}pinInput.value="";pinErr.textContent="";pinModal.classList.add("show");setTimeout(()=>pinInput.focus(),60)}
 function closePin(){pinModal.classList.remove("show")}
 function checkPin(){if(hp(pinInput.value)===pinHash){closePin();showParent()}else{pinErr.textContent="비밀번호가 달라요";pinInput.value=""}}
@@ -472,13 +475,27 @@ function skDel(i){skip.ranges.splice(i,1);saveWeek();wkUI()}
 /* ---- 오늘 일정(미션 아님) + 이동시간 ---- */
 const ROUTE_API="";/* 이동시간 API 주소 — 연결 규격 확인 후 채움 */
 function evSave(){try{localStorage.setItem("mobileKongEv",JSON.stringify(ev))}catch(e){}schedulePush()}
-function renderEv(){const b=document.getElementById("evBox");if(!b)return;const L=ev.day===dsn()?ev.list:[],left=L.filter(x=>!x.ok).length,dot=document.getElementById("evDot");if(dot){dot.textContent=left;dot.style.display=left?"":"none"}
- const nx=L.findIndex(x=>!x.ok&&x.ad&&!x.msg);let h="";
- h+=L.length?'<div class="evcard"><b>📅 오늘 일정</b>'+L.map((x,i)=>`<div class="evrow ${x.ok?"ok":""}"><span class="evt">${x.msg?"💌":esc(x.t||"--:--")}</span><div class="evm"><b>${esc(x.n)}</b>${(x.pl||x.fl)?`<small>📍 ${esc(x.pl)} ${esc(x.fl)}</small>`:""}${x.ad?`<small>${esc(x.ad)}</small>`:""}${(i===nx)?`<div class="evr" id="evR"><button onclick="routeGo(${i})">🧭 지금 위치에서 이동시간 보기</button></div>`:""}</div><button class="evok" onclick="evOk(${i})">${x.msg?(x.ok?"읽음 ✓":"읽었어요"):(x.ok?"확인함 ✓":"확인했어요")}</button></div>`).join("")+"</div>":'<div class="evempty">📅<br>오늘은 등록된 일정이 없어요<br><small>설정의 “요일별 일정”·“달력”에서 일정을 넣을 수 있어요</small></div>';
- const T=tomorrowItems();
- if(T.length)h+='<div class="evcard"><b>🌙 내일 일정</b>'+T.map(x=>`<div class="evrow"><span class="evt">${x.msg?"💌":esc(x.t||"--:--")}</span><div class="evm"><b>${x.k==="m"?"🎯 ":""}${esc(x.n)}${x.al==="day"?" 🔔":""}</b>${(x.pl||x.fl)?`<small>📍 ${esc(x.pl)} ${esc(x.fl)}</small>`:""}</div></div>`).join("")+"</div>";
- h+='<div class="evcard"><b>🔁 매주 일정 한눈에</b><div style="margin-top:4px">'+wkBoardHtml()+"</div></div>";
- b.innerHTML=h}
+let evY=new Date().getFullYear(),evM=new Date().getMonth(),evSel=ds(new Date());
+function dayEvents(k){const today=ds(new Date()),out=[];
+ if(k===today){ev.list.forEach((x,i)=>out.push(Object.assign({i},x)));return out}
+ (cal[k]||[]).forEach(x=>{if(x.k!=="m")out.push({n:x.n,t:x.t||"",pl:x.pl||"",fl:x.fl||"",ad:x.ad||"",al:x.al||"",msg:x.k==="g"?1:0})});
+ if(!isOff(k)){const wd=new Date(k+"T00:00:00").getDay();(week.d[wd]||[]).forEach(x=>{if(x.k==="e")out.push({n:x.n,t:x.t||"",pl:x.pl||"",fl:x.fl||"",ad:x.ad||"",al:x.al||"",msg:0,rep:1})})}
+ return out.sort((a,b)=>(a.t||"")<(b.t||"")?-1:1)}
+function evNav(d){evM+=d;if(evM<0){evM=11;evY--}if(evM>11){evM=0;evY++}renderEv()}
+function evPick(k){evSel=k;renderEv()}
+function evToday(){const t=new Date();evY=t.getFullYear();evM=t.getMonth();evSel=ds(t);renderEv()}
+function editDay(){evGoCal=evSel;openParent()}
+let evGoCal="";
+function renderEv(){const b=document.getElementById("evBox");if(!b)return;const today=ds(new Date()),L=ev.day===dsn()?ev.list:[],left=L.filter(x=>!x.ok).length,dot=document.getElementById("evDot");if(dot){dot.textContent=left;dot.style.display=left?"":"none"}
+ const first=new Date(evY,evM,1).getDay(),days=new Date(evY,evM+1,0).getDate();
+ let g=WDN.map((w,i)=>`<i style="${i===0?"color:#e0457b":""}">${w}</i>`).join("");for(let i=0;i<first;i++)g+="<span></span>";
+ for(let d=1;d<=days;d++){const k=evY+"-"+p2(evM+1)+"-"+p2(d),wd=new Date(evY,evM,d).getDay(),E=dayEvents(k),hn=HOL[k]||"",nt=E.filter(x=>!x.msg).length,ng=E.filter(x=>x.msg).length;
+  g+=`<button class="${k===today?"td ":""}${k===evSel?"sel ":""}${wd===0?"sun ":""}${hn?"hol ":""}${k<today?"off":""}" onclick="evPick('${k}')">${hn?`<span class="hn">${esc(hn.replace(" 연휴","").replace("대체공휴일","대체"))}</span>`:""}${d}<span class="dd">${nt>3?"<b>"+nt+"</b>":"<i></i>".repeat(nt)}${ng?'<i class="g"></i>':""}</span></button>`}
+ const sd=new Date(evSel+"T00:00:00"),E=dayEvents(evSel),isT=evSel===today,nx=isT?L.findIndex(x=>!x.ok&&x.ad&&!x.msg):-1;
+ const rows=E.length?E.map(x=>{const ok=isT&&x.ok;return `<div class="evrow ${ok?"ok":""}"><span class="evt">${x.msg?"💌":esc(x.t?fmt(x.t):"종일")}</span><div class="evm"><b>${esc(x.n)}</b><div>${x.rep?'<span class="evtag rep">🔁 매주</span>':""}${(x.al!==""&&x.al!=null&&!x.msg&&x.al in ALN)?`<span class="evtag al">🔔 ${ALN[x.al]}</span>`:""}</div>${(x.pl||x.fl)?`<small>📍 ${esc(x.pl)} ${esc(x.fl)}</small>`:""}${x.ad?`<small>${esc(x.ad)}</small>`:""}${(isT&&x.i===nx)?`<div class="evr" id="evR"><button onclick="routeGo(${x.i})">🧭 지금 위치에서 이동시간 보기</button></div>`:""}</div>${isT?`<button class="evok" onclick="evOk(${x.i})">${x.msg?(ok?"읽음 ✓":"읽었어요"):(ok?"확인함 ✓":"확인했어요")}</button>`:""}</div>`}).join(""):'<div class="evempty" style="padding:14px 6px">이 날은 등록된 일정이 없어요</div>';
+ b.innerHTML=`<div class="evcard evcal"><div class="calnav"><button onclick="evNav(-1)">◀</button><b>${evY}년 ${evM+1}월</b><button onclick="evNav(1)">▶</button></div><div class="calg">${g}</div></div>
+ <div class="evday"><h3>${sd.getMonth()+1}월 ${sd.getDate()}일 (${WDN[sd.getDay()]})${isT?" · 오늘":""} ${HOL[evSel]?`<span class="hol">🎌 ${esc(HOL[evSel])}</span>`:""}${inSkip(evSel)?' <span class="hol">😴 쉬는 날</span>':""}</h3>${rows}<div class="evbtns"><button onclick="evToday()">📅 오늘로</button><button onclick="editDay()">✏️ 이 날 일정 넣기</button></div></div>
+ <details class="evcard" style="margin-top:8px"><summary style="font-weight:900;font-size:14px;color:#745cff">🔁 매주 일정 한눈에</summary><div style="margin-top:4px">${wkBoardHtml()}</div></details>`}
 function evOk(i){if(!ev.list[i])return;ev.list[i].ok=!ev.list[i].ok;evSave();renderEv()}
 function routeFetch(lat,lng,x){/* 규격 확인 후 이 함수만 맞추면 돼요. 결과: {car:분, bus:분, walk:분} */
  return fetch(ROUTE_API+"?from="+lat+","+lng+"&to="+encodeURIComponent(x.ad)).then(r=>{if(!r.ok)throw new Error("route");return r.json()}).then(j=>({car:j.car,bus:j.transit||j.bus,walk:j.walk}))}
@@ -504,7 +521,7 @@ function calUI(){if(!document.getElementById("calGrid"))return;const today=ds(ne
  const sd=new Date(calSel+"T00:00:00"),wd=sd.getDay(),L=cal[calSel]||[],W=(week.d[wd]||[]);
  calDay.innerHTML=`<b style="color:#745cff">${sd.getMonth()+1}월 ${sd.getDate()}일 (${WDN[wd]})${HOL[calSel]?` <span style="color:#e0457b">🎌 ${esc(HOL[calSel])}</span>`:""}${inSkip(calSel)?" 😴 쉬는 날":""}</b>`+(W.length?`<div style="font-size:12px;color:#83778b;margin-top:3px">매주 반복: ${W.map(x=>(x.k==="e"?"📅":"🎯")+" "+esc(x.t||"")+" "+esc(x.n)).join(" · ")}</div>`:"")+
   (L.length?L.map((x,i)=>`<div class="wkrow"><span style="flex:none">${x.k==="g"?"💌":x.k==="m"?"🎯":"📅"}</span><span style="flex:1;font-size:14px;overflow-wrap:anywhere">${esc(x.t||"")} ${esc(x.n)}${(x.pl||x.fl)?" · "+esc(x.pl)+" "+esc(x.fl):""}</span><button onclick="calDel('${calSel}',${i})" style="background:#fff0f4;color:#a9677e;border-radius:9px;padding:6px 8px">삭제</button></div>`).join(""):'<div style="font-size:13px;color:#a094aa;margin-top:4px">이 날 등록한 일정이 없어요.</div>');
- calKind.innerHTML=["m","e","g"].map(k=>`<button class="${calK===k?"on":""}" onclick="setCalK('${k}')">${CKN[k]}</button>`).join("");calName.placeholder=CPH[calK];calPlaceBox.style.display=calK==="e"?"":"none";calTime.style.opacity=calK==="g"?".4":"1";if(!calAl.options.length)calAl.innerHTML=alOpts("10");calRepBox.style.display=calK==="g"?"none":"";const rp=calRep.checked&&calK!=="g";calRepDays.style.display=rp?"":"none";calRepDays.innerHTML=WORD.map(d=>`<button class="${calRepSel.includes(d)?"on":""}" onclick="calRepTog(${d})">${WDN[d]}</button>`).join("")}
+ calKind.innerHTML=["e","g"].map(k=>`<button class="${calK===k?"on":""}" onclick="setCalK('${k}')">${CKN[k]}</button>`).join("");calName.placeholder=CPH[calK];calPlaceBox.style.display=calK==="e"?"":"none";calTime.style.opacity=calK==="g"?".4":"1";if(!calAl.options.length)calAl.innerHTML=alOpts("10");calRepBox.style.display=calK==="g"?"none":"";const rp=calRep.checked&&calK!=="g";calRepDays.style.display=rp?"":"none";calRepDays.innerHTML=WORD.map(d=>`<button class="${calRepSel.includes(d)?"on":""}" onclick="calRepTog(${d})">${WDN[d]}</button>`).join("")}
 function addCal(){const n=calName.value.trim(),t=calK==="g"?"":calTime.value,today=ds(new Date()),rep=calRep.checked&&calK!=="g";if(!n){alert("이름이나 내용을 넣어 주세요");return}
  const base={n,t,pl:calK==="e"?calPlace.value.trim():"",fl:calK==="e"?calFloor.value.trim():"",ad:calK==="e"?calAddr.value.trim():"",al:calK==="e"?calAl.value:""};
  if(rep){const days=calRepSel.length?calRepSel:[new Date(calSel+"T00:00:00").getDay()];days.forEach(d=>{if(!week.d[d].some(x=>x.n===n&&x.t===t)){const o={n,t};if(calK==="e"){o.k="e";o.al=base.al;o.pl=base.pl;o.fl=base.fl;o.ad=base.ad}week.d[d].push(o)}});saveWeek();wkUI();
