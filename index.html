@@ -253,7 +253,7 @@ details{background:#f8f4fb;border-radius:14px;padding:10px 12px;margin:8px 0}sum
 <p style="margin:0 0 6px;font-size:12px;color:#83778b">시간을 정한 미션은 그 시간이 되어야 열리고, 열릴 때 알려줘요. (앱이 열려 있을 때)</p>
 <b style="font-size:14px">🐶 프리올쏘 하기</b>
 <div class="add" style="align-items:center;margin-top:6px"><label style="display:flex;align-items:center;gap:6px;font-weight:900;font-size:15px;flex:none"><input type="checkbox" id="preOn" style="flex:none;width:22px;height:22px;padding:0">사용</label><input id="preTime" type="time" value="20:00"><button class="addBtn" onclick="savePre()">저장</button></div>
-<div class="add" style="margin-top:7px"><button class="addBtn" style="flex:1;padding:10px;background:#745cff" onclick="downloadIcs()">📅 매일 알림 일정 받기</button><button class="addBtn" style="flex:1;padding:10px;background:#5aa0d8" onclick="requestNotif()">🔔 알림 허용</button></div>
+<div class="add" style="margin-top:7px"><button class="addBtn" style="flex:1;padding:10px;background:#745cff" onclick="downloadIcs()">📅 매일 알림 일정 받기</button><button class="addBtn" style="flex:1;padding:10px;background:#5aa0d8" onclick="requestNotif()">🔔 알림 켜기</button></div><div id="pushStat" style="font-size:12px;color:#83778b;margin-top:5px"></div>
 <p style="margin:6px 0 0;font-size:12px;color:#83778b">앱을 닫아도 알림을 받으려면 위 일정을 폰 달력에 추가하세요.</p>
 <button class="addBtn" style="width:100%;padding:10px;margin-top:8px;background:#e0709a" onclick="downloadIcsAll()">📅 오늘 예약 미션 모두 달력에 넣기</button></details>
 <details><summary>🔄 오늘 기록 되돌리기</summary>
@@ -372,7 +372,42 @@ function remind(l){const p=l.find(x=>x.pre),only=p&&l.length===1;remEmo.textCont
 function closeRemind(){remindModal.classList.remove("show")}
 let lastSig=null;const bootDay=new Date().toLocaleDateString("sv");
 function tick(){if(new Date().toLocaleDateString("sv")!==bootDay){location.reload();return}const a=items(),sig=a.map(x=>x.locked?1:0).join("");if(sig===lastSig)return;lastSig=sig;render();let r=null;try{r=JSON.parse(localStorage.getItem("mobileKongRem2")||"null")}catch(e){}if(!r||r.day!==dsn())r={day:dsn(),ids:[]};const fresh=a.filter(x=>x.time&&!x.locked&&!x.done&&!r.ids.includes(String(x.id)));if(fresh.length){fresh.forEach(x=>r.ids.push(String(x.id)));try{localStorage.setItem("mobileKongRem2",JSON.stringify(r))}catch(e){}remind(fresh)}}
-function requestNotif(){try{if(!window.Notification){alert("이 폰 브라우저는 알림을 지원하지 않아요. 달력 일정을 이용해 주세요.");return}Notification.requestPermission().then(p=>alert(p==="granted"?"앱이 열려 있을 때 알림이 떠요":"알림이 허용되지 않았어요"))}catch(e){alert("알림을 켤 수 없어요")}}
+const VAPID_PUB="BAtXNmKCCxZ5727Z7EzMjZPBzwa7mEU0ljM3f4DGHBjFW-wkQNe7fdrzs2QeeAqQZn92sukCdw7c30DZCfdK31g";
+const urlB64=t=>{t=t.replace(/-/g,"+").replace(/_/g,"/");return Uint8Array.from(atob(t+"=".repeat((4-t.length%4)%4)),c=>c.charCodeAt(0))};
+const isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent),isStandalone=()=>(window.matchMedia&&matchMedia("(display-mode: standalone)").matches)||navigator.standalone===true;
+const pushOK=()=>"serviceWorker" in navigator&&"PushManager" in window&&"Notification" in window;
+let pushState="";
+function idbSet(k,v){return new Promise((res,rej)=>{const q=indexedDB.open("kongkong-sw",1);q.onupgradeneeded=()=>q.result.createObjectStore("kv");q.onsuccess=()=>{const t=q.result.transaction("kv","readwrite");t.objectStore("kv").put(v,k);t.oncomplete=()=>res();t.onerror=()=>rej()};q.onerror=()=>rej()})}
+async function ensurePush(ask){
+ if(!SBOK||!fam)return "fam";if(!pushOK())return "unsupported";if(isIOS&&!isStandalone())return "ios";
+ if(Notification.permission==="denied")return "denied";
+ if(Notification.permission!=="granted"){if(!ask)return "off";const p=await Notification.requestPermission();if(p!=="granted")return "denied"}
+ const reg=await navigator.serviceWorker.register("/sw.js");await navigator.serviceWorker.ready;
+ let sub=await reg.pushManager.getSubscription();
+ if(!sub)sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:urlB64(VAPID_PUB)});
+ await idbSet("fam",fam);await rpc("kong_push_sub",{p_code:await idOf(fam),p_sub:sub.toJSON(),p_who:me||""});
+ pushState="on";return "on"}
+const PUSHMSG={fam:"먼저 설정에서 가족 코드를 연결해 주세요.",unsupported:"이 브라우저는 꺼져 있을 때 알림을 지원하지 않아요. 달력 알림(📅 매일 알림 일정 받기)을 이용해 주세요.",ios:"아이폰은 공유 버튼 → '홈 화면에 추가'로 설치한 앱에서 이 버튼을 눌러야 해요.",denied:"알림이 차단돼 있어요. 폰 설정에서 이 앱(또는 브라우저)의 알림을 허용해 주세요.",off:"알림이 아직 꺼져 있어요.",on:"✅ 알림이 켜졌어요! 앱을 닫아도 일정·메시지 알림이 울려요."};
+async function requestNotif(){try{const r=await ensurePush(true);pushState=r;updPushStat();alert(PUSHMSG[r]||"알림을 켤 수 없어요");if(r==="on")pushSync(true)}catch(e){alert("알림을 켤 수 없어요. 잠시 뒤 다시 눌러 주세요.")}}
+function updPushStat(){const e=document.getElementById("pushStat");if(e)e.textContent=pushState==="on"?"✅ 이 폰은 앱이 꺼져도 알림이 와요":(pushState==="ios"?"📱 홈 화면에 설치한 앱에서 켜 주세요":(pushState==="denied"?"🚫 알림이 차단됨(폰 설정에서 허용)":"🔕 아직 꺼짐 — 위 🔔 버튼을 눌러 주세요"))}
+let pushSig="";
+function pushPlan(){const out=[],now=Date.now(),mk=(k,at,to,t,b,g,tag)=>({k,at,to,t,b,g,tag});
+ for(let n=0;n<=7;n++){const d=new Date();d.setDate(d.getDate()+n);const k=ds(d),at0=new Date(k+"T00:00:00").getTime();
+  dayEvents(k).forEach(x=>{if(!x.t||x.ok||x.al===""||x.al==null)return;const[h,m]=x.t.split(":"),tm=+h*60+ +m;let at,t,b;
+   const where=((x.pl||"")+" "+(x.fl||"")).trim();
+   if(x.al==="day"){at=at0-86400000+20*3600000;t=(x.msg?"💌 ":"📅 ")+"내일 일정이 있어요";b=x.n+" ("+fmt(x.t)+")"+(where?"\n📍 "+where:"")}
+   else if(/^\d+$/.test(String(x.al))){at=at0+(tm-(+x.al))*60000;t="🔔 "+(x.al==="0"?"지금 일정이에요":"곧 일정이에요 ("+ALN[x.al]+")");b=x.n+" ("+fmt(x.t)+")"+(where?"\n📍 "+where:"")}
+   else return;
+   if(at>now-60000)out.push(mk("e:"+k+":"+x.n+":"+x.t+":"+x.al,at,"",t,b,"e","e-"+x.n))});
+  const ms={};items().forEach(x=>{if(!x.time)return;if(n===0&&x.done)return;(ms[x.time]=ms[x.time]||[]).push(x.name)});
+  Object.keys(ms).forEach(tm=>{const[h,m]=tm.split(":"),at=at0+(+h*60+ +m)*60000;if(at>now-60000)out.push(mk("m:"+k+":"+tm,at,"아이","🔔 미션 시간이에요!",ms[tm].join(", "),"m","m-"+tm))})}
+ return out}
+let pushBusy=false;
+let pushFail=0;async function pushSync(force){if(!SBOK||!fam||pushBusy||(!force&&Date.now()<pushFail))return;pushBusy=true;try{const plan=pushPlan(),sig=JSON.stringify(plan);if(!force&&sig===pushSig){pushBusy=false;return}
+ const items=[];for(const p of plan)items.push({k:p.k,at:p.at,to:p.to,b:await encObj(fam,{t:p.t,b:p.b,g:p.g,tag:p.tag})});
+ await rpc("kong_push_replace",{p_code:await idOf(fam),p_items:items});pushSig=sig}catch(e){pushFail=Date.now()+300000}pushBusy=false}
+async function pushChat(x,to){try{const fid=await idOf(fam),all=to==="all";await rpc("kong_push_send",{p_code:fid,p_from:me,p_to:all?"":to,p_blob:await encObj(fam,{t:"💬 "+me+(all?"":" → 나에게"),b:x,g:"c",tag:"chat"})});
+ fetch(SB_URL+"/functions/v1/kong-push",{method:"POST",headers:{apikey:SB_KEY,"Content-Type":"application/json"},body:"{}"}).catch(()=>{})}catch(e){}}
 function downloadIcs(){const pad=n=>String(n).padStart(2,"0"),d=new Date(),[h,m]=pre.time.split(":"),url=location.href.split("#")[0];
  const L=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//kongkong//KR","CALSCALE:GREGORIAN","BEGIN:VEVENT","UID:kongkong-preortho@"+(location.host||"local"),"DTSTAMP:"+new Date().toISOString().replace(/[-:]/g,"").split(".")[0]+"Z","DTSTART:"+d.getFullYear()+pad(d.getMonth()+1)+pad(d.getDate())+"T"+h+m+"00","DURATION:PT15M","RRULE:FREQ=DAILY","SUMMARY:🐶 프리올쏘 하기","DESCRIPTION:콩콩 미션을 열고 스탬프를 받아요! "+url,"URL:"+url,"BEGIN:VALARM","TRIGGER:PT0S","ACTION:DISPLAY","DESCRIPTION:프리올쏘 하기","END:VALARM","END:VEVENT","END:VCALENDAR"];
  const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([L.join("\r\n")],{type:"text/calendar;charset=utf-8"}));a.download="preortho-alarm.ics";document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500)}
@@ -572,12 +607,12 @@ let mem=[];try{mem=JSON.parse(localStorage.getItem("mobileKongMem")||"[]")}catch
 function roster(){const s=new Set(mem);msgs.forEach(m=>{if(m.f)s.add(m.f);if(m.t&&m.t!=="all")s.add(m.t)});const a=[...s].filter(x=>x&&x!==me);return a.sort((x,y)=>{const i=ROLES.indexOf(x),j=ROLES.indexOf(y);return (i<0?99:i)-(j<0?99:j)})}
 function addMem(){const r=(prompt("받는 사람 이름(예: 큰이모, 삼촌)")||"").trim().slice(0,6);if(!r||r===me)return;if(!mem.includes(r)){mem.push(r);try{localStorage.setItem("mobileKongMem",JSON.stringify(mem))}catch(e){}}msgTo=r;renderChat()}
 var meAsked=false;function askMe(){if(me||meAsked||!SBOK||!fam||document.getElementById("intro")||document.querySelector(".modal.show"))return;meAsked=true;const d=document.createElement("div");d.id="meModal";d.className="modal show";d.style.zIndex=99998;d.innerHTML='<div class="sheet"><div class="cwho2"><p>👋 이 폰은 누구 폰인가요?<br><small style="font-weight:700;color:#83778b">가족끼리 이름으로 메시지를 보내요</small></p>'+ROLES.map(r=>`<button onclick="pickMe('${r}')">${r}</button>`).join("")+'<button onclick="pickMe(\'__etc\')">✏️ 직접 입력</button><br><button style="background:none;color:#a094aa;font-size:13px" onclick="document.getElementById(\'meModal\').remove()">나중에</button></div></div>';document.body.appendChild(d)}
-function pickMe(r){setMe(r);if(me){const m=document.getElementById("meModal");if(m)m.remove()}}
+function pickMe(r){setMe(r);if(me){const m=document.getElementById("meModal");if(m)m.remove();ensurePush(true).then(x=>{pushState=x;updPushStat();pushSync(true)}).catch(()=>{})}}
 const msgNum=m=>typeof m.id==="number"?m.id:0;
 function msgSave(){try{localStorage.setItem("mobileKongMsgs",JSON.stringify({fid:msgFid,list:msgs.slice(-150)}));localStorage.setItem("mobileKongMsgRead",String(msgRead));localStorage.setItem("mobileKongMsgSeen",String(msgSeen))}catch(e){}}
 function msgUnread(){return msgs.filter(m=>msgNum(m)>msgRead&&m.f!==me&&msgVis(m)).length}
 function updMsgDot(){const n=msgUnread(),d=document.getElementById("msgDot");if(!d)return;d.textContent=n>9?"9+":n;d.style.display=n?"":"none"}
-function setMe(r){if(r==="__etc"){r=(prompt("이름(예: 이모, 삼촌)")||"").trim().slice(0,6);if(!r)return}me=r;try{localStorage.setItem("mobileKongMe",me)}catch(e){}if(msgTo===me)msgTo="all";renderChat();announce();fetchMsgs(true)}
+function setMe(r){if(r==="__etc"){r=(prompt("이름(예: 이모, 삼촌)")||"").trim().slice(0,6);if(!r)return}me=r;try{localStorage.setItem("mobileKongMe",me)}catch(e){}if(msgTo===me)msgTo="all";renderChat();announce();fetchMsgs(true);ensurePush(false).then(x=>{pushState=x;updPushStat()}).catch(()=>{})}
 async function announce(){try{if(SBOK&&fam&&me)await rpc("kong_msg_send",{p_code:await idOf(fam),p_data:await encObj(fam,{f:me,t:"all",x:"__join"})})}catch(e){}}
 function chgMe(){me="";renderChat()}
 function setTo(t){msgTo=t;renderChat()}
@@ -610,7 +645,7 @@ async function fetchMsgs(force){if(!SBOK||!fam||!me||msgBusy)return;if(document.
   msgSave();renderChat()}catch(e){msgErr=/^4/.test(String(e.message))?"💬 메시지 서버 설정이 필요해요. (supabase_chat.sql 실행)":"⚠️ 메시지 서버에 연결하지 못했어요";if(document.querySelector(".app").dataset.tab==="c")renderChat()}
  msgBusy=false}
 async function sendMsg(q){const inp=document.getElementById("cInput"),x=(q||inp.value).trim();if(!x||!me||!fam)return;const tmp={id:"t"+Date.now(),f:me,t:msgTo,x,ts:Date.now(),tmp:1};msgs.push(tmp);if(!q)inp.value="";renderChat();
- try{await rpc("kong_msg_send",{p_code:await idOf(fam),p_data:await encObj(fam,{f:me,t:msgTo,x})});msgErr="";msgBusy=false;await fetchMsgs(true)}catch(e){msgs=msgs.filter(m=>m!==tmp);msgErr=/^4/.test(String(e.message))?"💬 메시지 서버 설정이 필요해요. (supabase_chat.sql 실행)":"⚠️ 보내지 못했어요. 인터넷을 확인해 주세요";if(!q)inp.value=x;renderChat()}}
+ try{const _to=msgTo;await rpc("kong_msg_send",{p_code:await idOf(fam),p_data:await encObj(fam,{f:me,t:msgTo,x})});pushChat(x,_to);msgErr="";msgBusy=false;await fetchMsgs(true)}catch(e){msgs=msgs.filter(m=>m!==tmp);msgErr=/^4/.test(String(e.message))?"💬 메시지 서버 설정이 필요해요. (supabase_chat.sql 실행)":"⚠️ 보내지 못했어요. 인터넷을 확인해 주세요";if(!q)inp.value=x;renderChat()}}
 function addTask(){let v=newTask.value.trim();if(!v)return;missions.push(v);done.push(false);mt.push(newTime.value||"");mp.push(newPraise.value.trim());newTask.value="";newTime.value="";newPraise.value="";save();lastSig=null;tick()}
 function removeTask(i){missions.splice(i,1);done.splice(i,1);mt.splice(i,1);mp.splice(i,1);save();lastSig=null;tick()}
 function revokeEarned(){const t=ds(new Date());if(!(earned&&earned.day===t))return;const f=earned.f;if(!earned.had)owned=owned.filter(x=>x!==f);streak=Math.max(0,streak-1);addCoins(-4);earned=null;pending=f;ensurePending()}
@@ -802,5 +837,5 @@ const WD=["일","월","화","수","목","금","토"];
 function dateLabels(){const d=new Date();todayLbl.textContent="📅 "+(d.getMonth()+1)+"월 "+d.getDate()+"일 ("+WD[d.getDay()]+")";const il=document.getElementById("idate");if(il)il.textContent="📅 "+d.getFullYear()+"년 "+(d.getMonth()+1)+"월 "+d.getDate()+"일 "+WD[d.getDay()]+"요일"}
 function introInit(){dateLabels();imus.classList.toggle("off",!musOn);if(!musOn)ihint.style.display="none";else{startMusic();document.getElementById("intro").addEventListener("pointerdown",introGesture,{once:true})}const t=tCount(),n=nDone(),g=eff();introSub.textContent=!t?"부모님이 오늘의 미션을 정해주세요":n>=g?"오늘 미션을 다 했어! 최고야 🏆":"오늘 미션 "+t+"개 · 🔥 "+streak+"일째 도전 중!"}
 function closeIntro(){const e=document.getElementById("intro");if(e.classList.contains("out"))return;stopMusic();sound(false);e.classList.add("out");setTimeout(()=>e.remove(),500)}
-ensurePending();renderFriends();render();introInit();buddyFace.onclick=()=>{const fid=earned&&earned.day===dsn()?earned.f:(partnerF()>=0?partnerF():pending);tapK++;react(buddyFace,fid,null,actFor(fid,nDone()-1+tapK))};tick();setInterval(tick,15000);setInterval(askMe,2500);setInterval(evAlarmTick,20000);setInterval(()=>fetchMsgs(false),10000);setTimeout(()=>{fetchMsgs(false);updMsgDot()},1800);document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")fetchMsgs(true)});document.getElementById("cInput").addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.isComposing){e.preventDefault();sendMsg()}});setTimeout(evAlarmTick,2500);
+ensurePending();renderFriends();render();introInit();buddyFace.onclick=()=>{const fid=earned&&earned.day===dsn()?earned.f:(partnerF()>=0?partnerF():pending);tapK++;react(buddyFace,fid,null,actFor(fid,nDone()-1+tapK))};tick();setInterval(tick,15000);setInterval(askMe,2500);setInterval(evAlarmTick,20000);setInterval(()=>fetchMsgs(false),10000);setTimeout(()=>{fetchMsgs(false);updMsgDot()},1800);document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")fetchMsgs(true)});document.getElementById("cInput").addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.isComposing){e.preventDefault();sendMsg()}});setTimeout(evAlarmTick,2500);setTimeout(()=>{ensurePush(false).then(x=>{pushState=x;updPushStat()}).catch(()=>{});pushSync(true)},3000);setInterval(pushSync,30000);if(navigator.serviceWorker){navigator.serviceWorker.addEventListener("message",e=>{if(e.data&&e.data.go)goTab(e.data.go==="c"?"c":e.data.go==="e"?"e":"m")});const g=new URLSearchParams(location.search).get("go");if(g)setTimeout(()=>goTab(g==="c"?"c":g==="e"?"e":"m"),1500)}updPushStat();
 </script></body></html>
