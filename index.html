@@ -245,7 +245,7 @@ details{background:#f8f4fb;border-radius:14px;padding:10px 12px;margin:8px 0}sum
 <label class="qlb"><input type="checkbox" id="qGen" onchange="saveQuiz()">💡 상식</label>
 <button class="addBtn" style="width:100%;padding:10px;margin-top:6px;background:#745cff" onclick="previewQuiz()">▶ 퀴즈 미리보기</button></details>
 <details><summary>🎁 목표와 상</summary>
-<span class="lbl" style="margin-top:0">상 받을 스탬프 개수</span><div class="add"><input id="goalInput" type="number" min="1" max="20" inputmode="numeric" placeholder="예: 4"><button class="addBtn" onclick="saveGoal()">저장</button></div>
+<p style="margin:0 0 6px;font-size:13px;color:#6b5a78;background:#f6f1ff;border-radius:12px;padding:8px 10px">🎯 <b>오늘 미션을 모두 하면</b> 친구가 나와요. 미션을 몇 개 등록했는지에 따라 개수가 자동으로 정해지고, 마지막 미션까지 끝내야 해요. (일정만 등록한 것은 세지 않아요)</p><input id="goalInput" type="hidden">
 <span class="lbl">스탬프를 모았을 때 받을 상</span><div class="add"><input id="rewardInput" maxlength="40" placeholder="예: 놀이 30분"><button class="addBtn" onclick="saveReward()">저장</button></div></details>
 <details><summary>📷 축하 사진</summary>
 <p style="margin:0 0 6px;font-size:12px;color:#83778b">목표를 달성하면 나와요. 얼굴을 가린 사진을 골라주세요. 이 기기에만 저장되고 인터넷에 올라가지 않아요.</p><div class="add"><input id="photoInput" type="file" accept="image/*"><button class="addBtn" onclick="clearPhoto()">지우기</button></div><img id="photoPrev" alt="" style="display:none;width:72px;height:72px;border-radius:50%;object-fit:cover;margin-top:7px;border:3px solid #ffe16c"></details>
@@ -352,7 +352,7 @@ try{const p=JSON.parse(localStorage.getItem("mobileKongPre")||"null");if(p)pre=p
 const dsn=()=>new Date().toLocaleDateString("sv");
 const nDone=()=>done.filter(Boolean).length+(pre.on&&preDone===dsn()?1:0);
 const tCount=()=>missions.length+(pre.on?1:0);
-const eff=()=>Math.max(1,Math.min(goal,tCount()||goal));
+const eff=()=>Math.max(1,tCount());
 const ds=d=>d.toLocaleDateString("sv");
 (function(){const today=ds(new Date()),last=localStorage.getItem("mobileKongDay");
  if(last&&last!==today){const y=new Date();y.setDate(y.getDate()-1);
@@ -382,7 +382,7 @@ const josa=n=>{const c=n.charCodeAt(n.length-1);return c>=0xAC00&&c<=0xD7A3&&(c-
 function confetti(n){const e=["⭐","✨","💗","🎉","🌈","🎈"];for(let i=0;i<n;i++){const s=document.createElement("span");s.className="cf";s.textContent=e[i%e.length];s.style.left=Math.random()*100+"vw";s.style.fontSize=(16+Math.random()*18)+"px";s.style.setProperty("--r",(Math.random()*720-360)+"deg");s.style.animationDuration=(1.6+Math.random()*1.6)+"s";s.style.animationDelay=Math.random()*.4+"s";document.body.appendChild(s);setTimeout(()=>s.remove(),4000)}}
 function sound(big){try{const A=new(window.AudioContext||window.webkitAudioContext)();if(big){const o=A.createOscillator(),k=A.createGain();o.frequency.setValueAtTime(140,A.currentTime);o.frequency.exponentialRampToValueAtTime(40,A.currentTime+.25);k.gain.setValueAtTime(.5,A.currentTime);k.gain.exponentialRampToValueAtTime(.001,A.currentTime+.3);o.connect(k);k.connect(A.destination);o.start();o.stop(A.currentTime+.3)}const notes=big?[523,659,784,1047,1319]:[659,880];notes.forEach((f,i)=>{const o=A.createOscillator(),g=A.createGain();o.type="triangle";o.frequency.value=f;o.connect(g);g.connect(A.destination);const t=A.currentTime+i*.12;g.gain.setValueAtTime(.18,t);g.gain.exponentialRampToValueAtTime(.001,t+.3);o.start(t);o.stop(t+.3)})}catch(e){}if(navigator.vibrate)navigator.vibrate(big?[60,40,60,40,120]:40)}
 function render(){renderEv();
- const n=nDone(),t=tCount(),g=eff();stat.textContent=Math.min(n,g)+"/"+g;fill.style.width=Math.min(100,n/g*100)+"%";goalLine.textContent="스탬프 "+g+"개 모으면 🎁 "+(reward||"오늘의 상");
+ const n=nDone(),t=tCount(),g=eff();stat.textContent=Math.min(n,g)+"/"+g;fill.style.width=Math.min(100,n/g*100)+"%";goalLine.textContent=(t>1?"오늘 미션 "+g+"개를 모두 하면":"오늘 미션을 하면")+" 🎁 "+(reward||"오늘의 상");
  const cols=g<=4?2:Math.min(5,Math.ceil(Math.sqrt(g)));stars.style.gridTemplateColumns="repeat("+cols+",auto)";stars.innerHTML=Array.from({length:g},(_,k)=>`<i class="${k<n?"on":""}">⭐</i>`).join("");
  const it=items(),openL=it.filter(x=>!x.done&&!x.locked),lockL=it.filter(x=>x.locked).sort((a,b)=>toMin(a.time)-toMin(b.time)),doneL=it.filter(x=>x.done);
  const grp=(l,h)=>l.length?(openL.length+lockL.length+doneL.length>l.length?`<div class="grp">${h}</div>`:"")+l.map(taskRow).join(""):"";
