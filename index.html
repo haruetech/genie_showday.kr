@@ -19,9 +19,9 @@ input{min-width:0;flex:1;border:2px solid #eadcf0;border-radius:14px;padding:9px
 .prog{display:flex;gap:9px;align-items:center;margin-top:6px;font-weight:900;font-size:16px}
 .bar{height:13px;flex:1;background:#ffffff55;border-radius:20px;overflow:hidden}#fill{height:100%;background:#ffe26a;transition:.35s}
 .page{display:none;flex:1 1 auto;min-height:0;flex-direction:column;gap:6px}
-.app[data-tab="m"] #pageMission{display:flex}.app[data-tab="f"] #pageFriends{display:flex}.app[data-tab="f"] .hero{display:none}
+.app[data-tab="m"] #pageMission{display:flex}.app[data-tab="f"] #pageFriends{display:flex}.app[data-tab="f"] .hero{display:none}.app[data-tab="e"] #pageSched{display:flex}.app[data-tab="e"] .hero{display:none}.tab{position:relative}.tab .dot{position:absolute;top:0;right:26%;background:#ff5d8f;color:#fff;font-size:10px;font-style:normal;border-radius:9px;padding:0 5px;line-height:15px}.evempty{text-align:center;color:#a094aa;font-size:14px;padding:30px 10px}
 .grp{font-size:12px;font-weight:900;color:#8b7d90;margin:4px 2px 0}
-.tabs{flex:none;display:grid;grid-template-columns:repeat(3,1fr);gap:6px;background:#fff;border-radius:18px;padding:5px;box-shadow:0 -2px 14px #8f718b1a}
+.tabs{flex:none;display:grid;grid-template-columns:repeat(4,1fr);gap:6px;background:#fff;border-radius:18px;padding:5px;box-shadow:0 -2px 14px #8f718b1a}
 .tab{background:none;border-radius:13px;padding:5px 0;font-size:12px;font-weight:900;color:#8b7d90;display:flex;flex-direction:column;align-items:center;gap:1px}
 .tab span{font-size:21px;line-height:1.1}.tab.on{background:#efeaff;color:#745cff}
 .fhead{flex:none;display:flex;justify-content:space-between;align-items:baseline;margin:2px 4px}.fhead b{font-size:19px}.fhead small{color:#8b7d90;font-weight:700;font-size:12px}
@@ -159,12 +159,14 @@ details{background:#f8f4fb;border-radius:14px;padding:10px 12px;margin:8px 0}sum
 .bk.lk img{filter:grayscale(1) opacity(.6);border-color:#e8dff0}.bk.lk span{color:#b9aec0}#friendGrid .bk{position:relative}.bk.lk:after{content:"🔒";position:absolute;right:2px;top:2px;font-size:14px}.bk.sp img{border-color:#ff80ad}
 @media (max-height:620px){.hero h1{font-size:17px}.stars i{font-size:19px}.bface{width:72px;height:72px}.bubble{font-size:14px}.task b{font-size:15px}.stamp{min-height:32px}}
 .wk{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}.wk button{padding:7px 11px;border-radius:14px;background:#f3edf5;color:#6b5a78;font-weight:900;font-size:14px}.wk button.on{background:#745cff;color:#fff}.wk.pre button{background:#fff0f6;color:#b0507a;font-size:13px;padding:6px 9px}.wkrow{display:flex;align-items:center;gap:5px;padding:4px 0}.wkrow input{padding:5px 7px;font-size:14px;border-radius:9px}
+.evcard{background:#fff;border:2px solid #e5defa;border-radius:18px;padding:8px 10px;margin-bottom:8px}.evcard>b{font-size:14px;color:#745cff}.evrow{display:flex;align-items:flex-start;gap:8px;padding:7px 0;border-top:1px dashed #eee}.evrow:first-of-type{border-top:0}.evt{flex:none;font-weight:900;font-size:15px;color:#745cff;min-width:46px}.evm{flex:1;min-width:0}.evm b{font-size:15px;display:block;overflow-wrap:anywhere}.evm small{display:block;font-size:12px;color:#83778b;overflow-wrap:anywhere}.evok{flex:none;background:#745cff;color:#fff;border-radius:12px;padding:8px 10px;font-weight:900;font-size:13px}.evrow.ok{opacity:.55}.evrow.ok .evok{background:#8fd3a8}.evr{margin-top:5px}.evr button{background:#eaf3ff;color:#3a74b8;border-radius:10px;padding:6px 9px;font-weight:900;font-size:12px}.evch{display:inline-block;background:#f3edf5;border-radius:10px;padding:5px 8px;margin:2px 4px 0 0;font-weight:900;font-size:13px}
 </style></head><body><main class="app" data-tab="m">
 <section class="hero"><div class="hl"><div><b id="todayLbl">🌈 콩콩</b><span class="streak" id="streakBadge">🔥 0일</span><span class="streak cn" id="coinBadge">🪙 0</span></div><h1>미션하고 스탬프 콩! 💗</h1><div class="gl" id="goalLine"></div><div class="prog"><span id="stat">0/0</span><div class="bar"><div id="fill"></div></div></div></div><div class="stars" id="stars"></div></section>
 <div class="page" id="pageMission"><div class="tscroll"><div id="tasks" class="tasks"></div></div>
 <div class="buddy"><div class="bface" id="buddyFace"><img id="buddyImg" alt=""><span id="buddyQ">?</span><b class="lvp" id="buddyLv"></b></div><div class="bcol"><div class="bwrap"><div class="bubble" id="bubble"></div></div><button class="bookBtn" id="bookBtn" onclick="goTab('f')"></button></div></div></div>
 <div class="page" id="pageFriends"><div class="fhead"><b id="bookTitle"></b><small id="fhint"></small></div><div id="friendGrid" class="bookgrid"></div></div>
-<nav class="tabs"><button class="tab on" id="tabM" onclick="goTab('m')"><span>🎯</span>미션</button><button class="tab" id="tabF" onclick="goTab('f')"><span>🐾</span>친구들</button><button class="tab" id="tabS" onclick="openParent()"><span>⚙️</span>설정</button></nav>
+<div class="page" id="pageSched"><div class="tscroll"><div id="evBox"></div></div></div>
+<nav class="tabs"><button class="tab on" id="tabM" onclick="goTab('m')"><span>🎯</span>미션</button><button class="tab" id="tabE" onclick="goTab('e')"><span>📅</span>일정<i class="dot" id="evDot" style="display:none"></i></button><button class="tab" id="tabF" onclick="goTab('f')"><span>🐾</span>친구들</button><button class="tab" id="tabS" onclick="openParent()"><span>⚙️</span>설정</button></nav>
 </main>
 <div id="intro"><button class="imus" id="imus" onclick="toggleMusic()" aria-label="음악 켜고 끄기">🎵</button><div class="cheer" id="cheer">Genie Genie<br>화이팅! 💪</div><div class="iw" id="iw"><div class="notes"><i>🎵</i><i>🎶</i><i>✨</i><i>🎵</i></div><div class="shadow"></div>
 <svg class="mascot" viewBox="0 0 200 230" aria-label="콩콩이">
@@ -190,7 +192,9 @@ details{background:#f8f4fb;border-radius:14px;padding:10px 12px;margin:8px 0}sum
 <p style="margin:0 0 6px;font-size:12px;color:#83778b">학원·수업처럼 매주 같은 요일에 있는 일정을 한 번만 등록하면, 그날 아침에 미션으로 자동으로 들어가요.</p>
 <span class="lbl">1. 요일 고르기 (여러 개 가능)</span><div class="wk" id="wkDays"></div>
 <span class="lbl">2. 이름 쓰기 (눌러서 고르거나 직접 입력)</span><div class="wk pre" id="wkPre"></div>
+<div class="wk" id="wkKind"></div>
 <div class="add"><input id="wkName" maxlength="35" placeholder="예: 피아노"><input id="wkTime" type="time" style="flex:none;width:112px"></div>
+<div id="wkPlaceBox" style="display:none;margin-top:6px"><div class="add"><input id="wkPlace" maxlength="30" placeholder="학원 이름 (예: 강북학습센터)"><input id="wkFloor" maxlength="8" placeholder="층" style="flex:none;width:68px"></div><div class="add" style="margin-top:6px"><input id="wkAddr" maxlength="80" placeholder="주소 (예: 서울 강북구 ○○로 12)"></div></div>
 <button class="addBtn" style="width:100%;padding:10px;margin-top:6px;background:#745cff" onclick="addWeek()">➕ 고른 요일에 추가</button>
 <div class="add" style="align-items:center;margin-top:8px"><span style="font-size:13px;font-weight:900;flex:none">미션 열리는 시간</span><select id="wkOff" onchange="setWkOff()" style="flex:1;border:2px solid #eadcf0;border-radius:12px;padding:8px;font-size:15px;background:#fff"><option value="0">시작 시간에</option><option value="10">시작 10분 전에</option><option value="30">시작 30분 전에</option></select></div>
 <div id="wkList" style="margin-top:8px"></div>
@@ -338,7 +342,7 @@ function downloadIcs(){const pad=n=>String(n).padStart(2,"0"),d=new Date(),[h,m]
  const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([L.join("\r\n")],{type:"text/calendar;charset=utf-8"}));a.download="preortho-alarm.ics";document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500)}
 function renderFriends(){bookTitle.textContent="📖 친구 도감 "+owned.length+"/"+friendsData.length;fhint.textContent="🪙 "+coins+" · 눌러서 놀아줘요";friendGrid.innerHTML=friendsData.map((f,i)=>owned.includes(i)?`<div class="bk${f.special?" sp":""}" onclick="openFriend(${i})"><img src="${f.src}" alt=""><b class="lv">Lv${lvOf(i)}</b><span class="hat">${HATS[(cr[i]||{}).hat||0]}</span><span>${nm(i)}</span></div>`:`<div class="bk lk" onclick="peek(${i})"><img src="${f.src}" alt=""><span>${f.special?"???":"아직 못 만났어"}</span></div>`).join("")}
 function peek(i){fhint.textContent="🔒 미션을 완료하면 만날 수 있어요!"}
-function goTab(t){const app=document.querySelector(".app");app.dataset.tab=t;tabM.classList.toggle("on",t==="m");tabF.classList.toggle("on",t==="f");if(t==="f")renderFriends()}
+function goTab(t){const app=document.querySelector(".app");app.dataset.tab=t;tabM.classList.toggle("on",t==="m");tabF.classList.toggle("on",t==="f");tabE.classList.toggle("on",t==="e");if(t==="f")renderFriends();if(t==="e")renderEv()}
 function openFriend(i){openIdx=i;fdImg.src=friendsData[i].src;fdName.textContent=nm(i);renameInput.value=names[i]||"";fdMsg.textContent="";fdUpdate();friendModal.classList.add("show");setTimeout(()=>react(fdWrap,i),350)}
 function closeFriend(){friendModal.classList.remove("show");render()}
 function saveName(){const v=renameInput.value.trim().slice(0,8);if(v)names[openIdx]=v;else delete names[openIdx];save();fdName.textContent=nm(openIdx);render();renderFriends()}
@@ -361,21 +365,23 @@ let week={off:10,d:[[],[],[],[],[],[],[]]},skip={days:[],ranges:[]},auto={day:""
 try{const w=JSON.parse(localStorage.getItem("mobileKongWeek")||"null");if(w&&Array.isArray(w.d)){week=w;while(week.d.length<7)week.d.push([])}}catch(e){}
 try{const k=JSON.parse(localStorage.getItem("mobileKongSkip")||"null");if(k)skip=Object.assign(skip,k)}catch(e){}
 try{const a=JSON.parse(localStorage.getItem("mobileKongAuto")||"null");if(a&&a.keys)auto=a}catch(e){}
+let ev={day:"",list:[]};try{const e=JSON.parse(localStorage.getItem("mobileKongEv")||"null");if(e&&e.list)ev=e}catch(e){}
 const inSkip=d=>skip.days.includes(d)||skip.ranges.some(r=>d>=r[0]&&d<=r[1]);
 function dailyAuto(force){const today=ds(new Date()),first=auto.day!==today;if(!first&&!force)return 0;
- if(first){const old=auto.keys||[];for(let i=missions.length-1;i>=0;i--){if(old.includes(missions[i])){missions.splice(i,1);done.splice(i,1);mt.splice(i,1);mp.splice(i,1)}}auto={day:today,keys:[]}}
+ if(first){const old=auto.keys||[];for(let i=missions.length-1;i>=0;i--){if(old.includes(missions[i])){missions.splice(i,1);done.splice(i,1);mt.splice(i,1);mp.splice(i,1)}}auto={day:today,keys:[]};ev={day:today,list:[]}}
+ if(ev.day!==today)ev={day:today,list:[]};
  let n=0;if(!inSkip(today)){const nm=new Date().getHours()*60+new Date().getMinutes();let r={day:today,ids:[]};try{const q=JSON.parse(localStorage.getItem("mobileKongRem2")||"null");if(q&&q.day===today)r=q}catch(e){}
-  (week.d[new Date().getDay()]||[]).slice().sort((a,b)=>(a.t||"")<(b.t||"")?-1:1).forEach(it=>{if(!it.n||missions.includes(it.n))return;let t="";if(it.t){const[h,m]=it.t.split(":"),op=Math.max(0,+h*60+ +m-(+week.off||0));t=String(Math.floor(op/60)).padStart(2,"0")+":"+String(op%60).padStart(2,"0")}
+  (week.d[new Date().getDay()]||[]).slice().sort((a,b)=>(a.t||"")<(b.t||"")?-1:1).forEach(it=>{if(!it.n)return;if(it.k==="e"){if(!ev.list.some(x=>x.n===it.n&&x.t===(it.t||""))){ev.list.push({n:it.n,t:it.t||"",pl:it.pl||"",fl:it.fl||"",ad:it.ad||"",ok:false});ev.list.sort((a,b)=>a.t<b.t?-1:1);n++}return}if(missions.includes(it.n))return;let t="";if(it.t){const[h,m]=it.t.split(":"),op=Math.max(0,+h*60+ +m-(+week.off||0));t=String(Math.floor(op/60)).padStart(2,"0")+":"+String(op%60).padStart(2,"0")}
    missions.push(it.n);done.push(false);mt.push(t);mp.push("");auto.keys.push(it.n);n++;if(t){const[h,m]=t.split(":");if(+h*60+ +m<=nm)r.ids.push(String(missions.length-1))}});
   try{localStorage.setItem("mobileKongRem2",JSON.stringify(r))}catch(e){}}
- localStorage.setItem("mobileKongTasks",JSON.stringify(missions));localStorage.setItem("mobileKongDone",JSON.stringify(done));localStorage.setItem("mobileKongMT",JSON.stringify(mt));localStorage.setItem("mobileKongMP",JSON.stringify(mp));localStorage.setItem("mobileKongAuto",JSON.stringify(auto));return n}
+ localStorage.setItem("mobileKongTasks",JSON.stringify(missions));localStorage.setItem("mobileKongDone",JSON.stringify(done));localStorage.setItem("mobileKongMT",JSON.stringify(mt));localStorage.setItem("mobileKongMP",JSON.stringify(mp));localStorage.setItem("mobileKongAuto",JSON.stringify(auto));localStorage.setItem("mobileKongEv",JSON.stringify(ev));return n}
 dailyAuto(false);
 function save(){localStorage.setItem("mobileKongTasks",JSON.stringify(missions));localStorage.setItem("mobileKongDone",JSON.stringify(done));localStorage.setItem("mobileKongTotal",total);localStorage.setItem("mobileKongOwned",JSON.stringify(owned));localStorage.setItem("mobileKongPre",JSON.stringify(pre));localStorage.setItem("mobileKongPreDone",preDone);localStorage.setItem("mobileKongPending",pending);localStorage.setItem("mobileKongEarned",JSON.stringify(earned));localStorage.setItem("mobileKongNames",JSON.stringify(names));localStorage.setItem("mobileKongStreak",streak);localStorage.setItem("mobileKongMT",JSON.stringify(mt));localStorage.setItem("mobileKongMP",JSON.stringify(mp));localStorage.setItem("mobileKongCoins",coins);localStorage.setItem("mobileKongQuiz",JSON.stringify(qz));localStorage.setItem("mobileKongQStat",JSON.stringify(qs));localStorage.setItem("mobileKongPartner",JSON.stringify(partner));localStorage.setItem("mobileKongCT",JSON.stringify(ct));localStorage.setItem("mobileKongCare",JSON.stringify(cr));schedulePush()}
 const praise=["우와 대단해!","최고야!","멋지다 멋져!","쑥쑥 크는 중!","야호! 해냈다!","역시 우리 친구!","짝짝짝! 박수!"];
 const josa=n=>{const c=n.charCodeAt(n.length-1);return c>=0xAC00&&c<=0xD7A3&&(c-0xAC00)%28?"이":"가"};
 function confetti(n){const e=["⭐","✨","💗","🎉","🌈","🎈"];for(let i=0;i<n;i++){const s=document.createElement("span");s.className="cf";s.textContent=e[i%e.length];s.style.left=Math.random()*100+"vw";s.style.fontSize=(16+Math.random()*18)+"px";s.style.setProperty("--r",(Math.random()*720-360)+"deg");s.style.animationDuration=(1.6+Math.random()*1.6)+"s";s.style.animationDelay=Math.random()*.4+"s";document.body.appendChild(s);setTimeout(()=>s.remove(),4000)}}
 function sound(big){try{const A=new(window.AudioContext||window.webkitAudioContext)();if(big){const o=A.createOscillator(),k=A.createGain();o.frequency.setValueAtTime(140,A.currentTime);o.frequency.exponentialRampToValueAtTime(40,A.currentTime+.25);k.gain.setValueAtTime(.5,A.currentTime);k.gain.exponentialRampToValueAtTime(.001,A.currentTime+.3);o.connect(k);k.connect(A.destination);o.start();o.stop(A.currentTime+.3)}const notes=big?[523,659,784,1047,1319]:[659,880];notes.forEach((f,i)=>{const o=A.createOscillator(),g=A.createGain();o.type="triangle";o.frequency.value=f;o.connect(g);g.connect(A.destination);const t=A.currentTime+i*.12;g.gain.setValueAtTime(.18,t);g.gain.exponentialRampToValueAtTime(.001,t+.3);o.start(t);o.stop(t+.3)})}catch(e){}if(navigator.vibrate)navigator.vibrate(big?[60,40,60,40,120]:40)}
-function render(){
+function render(){renderEv();
  const n=nDone(),t=tCount(),g=eff();stat.textContent=Math.min(n,g)+"/"+g;fill.style.width=Math.min(100,n/g*100)+"%";goalLine.textContent="스탬프 "+g+"개 모으면 🎁 "+(reward||"오늘의 상");
  const cols=g<=4?2:Math.min(5,Math.ceil(Math.sqrt(g)));stars.style.gridTemplateColumns="repeat("+cols+",auto)";stars.innerHTML=Array.from({length:g},(_,k)=>`<i class="${k<n?"on":""}">⭐</i>`).join("");
  const it=items(),openL=it.filter(x=>!x.done&&!x.locked),lockL=it.filter(x=>x.locked).sort((a,b)=>toMin(a.time)-toMin(b.time)),doneL=it.filter(x=>x.done);
@@ -399,25 +405,41 @@ function checkPin(){if(hp(pinInput.value)===pinHash){closePin();showParent()}els
 function savePin(){const v=newPin.value.trim();if(!/^\d{4}$/.test(v)){alert("숫자 4자리를 입력해주세요");return}pinHash=hp(v);try{localStorage.setItem("mobileKongPin",pinHash)}catch(e){}newPin.value="";schedulePush();render();alert("비밀번호를 저장했어요")}
 function removePin(){pinHash="";try{localStorage.removeItem("mobileKongPin")}catch(e){}schedulePush();render()}
 pinInput.addEventListener("keydown",e=>{if(e.key==="Enter")checkPin()});
-const WDN=["일","월","화","수","목","금","토"],WORD=[1,2,3,4,5,6,0];let wkSel=[new Date().getDay()];
+const WDN=["일","월","화","수","목","금","토"],WORD=[1,2,3,4,5,6,0];let wkSel=[new Date().getDay()],wkK="m";
 function saveWeek(){try{localStorage.setItem("mobileKongWeek",JSON.stringify(week));localStorage.setItem("mobileKongSkip",JSON.stringify(skip));localStorage.setItem("mobileKongAuto",JSON.stringify(auto))}catch(e){}schedulePush()}
 function wkUI(){if(!document.getElementById("wkDays"))return;wkDays.innerHTML=WORD.map(d=>`<button class="${wkSel.includes(d)?"on":""}" onclick="wkTog(${d})">${WDN[d]}</button>`).join("");
- wkPre.innerHTML=["학원","피아노","영어","태권도","수영","미술","방과후","독서"].map(x=>`<button onclick="wkName.value='${x}'">${x}</button>`).join("");wkOff.value=String(week.off);
- wkList.innerHTML=WORD.map(d=>{const a=week.d[d]||[];if(!a.length)return"";return `<div style="margin-top:6px"><b style="color:#745cff">${WDN[d]}요일</b>`+a.map((it,i)=>`<div class="wkrow"><input value="${esc(it.n)}" maxlength="35" onchange="wkEdit(${d},${i},'n',this.value)" style="flex:1;min-width:0"><input type="time" value="${it.t||""}" onchange="wkEdit(${d},${i},'t',this.value)" style="flex:none;width:122px"><button onclick="wkDel(${d},${i})" style="background:#fff0f4;color:#a9677e;border-radius:9px;padding:6px 8px">삭제</button></div>`).join("")+`</div>`}).join("")||'<div style="font-size:13px;color:#a094aa">아직 등록한 요일별 일정이 없어요.</div>';
+ wkPre.innerHTML=["학원","피아노","영어","태권도","수영","미술","방과후","독서"].map(x=>`<button onclick="wkName.value='${x}'">${x}</button>`).join("");wkOff.value=String(week.off);wkKind.innerHTML=`<button class="${wkK==="m"?"on":""}" onclick="setWkKind('m')">🎯 미션 (스탬프)</button><button class="${wkK==="e"?"on":""}" onclick="setWkKind('e')">📅 일정만 (확인)</button>`;wkPlaceBox.style.display=wkK==="e"?"":"none";
+ wkList.innerHTML=WORD.map(d=>{const a=week.d[d]||[];if(!a.length)return"";return `<div style="margin-top:6px"><b style="color:#745cff">${WDN[d]}요일</b>`+a.map((it,i)=>`<div class="wkrow"><span style="flex:none">${it.k==="e"?"📅":"🎯"}</span><input value="${esc(it.n)}" maxlength="35" onchange="wkEdit(${d},${i},'n',this.value)" style="flex:1;min-width:0"><input type="time" value="${it.t||""}" onchange="wkEdit(${d},${i},'t',this.value)" style="flex:none;width:122px"><button onclick="wkDel(${d},${i})" style="background:#fff0f4;color:#a9677e;border-radius:9px;padding:6px 8px">삭제</button></div>${it.k==="e"?`<div class="wkrow" style="padding-left:22px"><input value="${esc(it.pl||"")}" placeholder="학원 이름" maxlength="30" onchange="wkEdit(${d},${i},'pl',this.value)" style="flex:1;min-width:0"><input value="${esc(it.fl||"")}" placeholder="층" maxlength="8" onchange="wkEdit(${d},${i},'fl',this.value)" style="flex:none;width:56px"></div><div class="wkrow" style="padding-left:22px"><input value="${esc(it.ad||"")}" placeholder="주소" maxlength="80" onchange="wkEdit(${d},${i},'ad',this.value)" style="flex:1;min-width:0"></div>`:""}`).join("")+`</div>`}).join("")||'<div style="font-size:13px;color:#a094aa">아직 등록한 요일별 일정이 없어요.</div>';
  skList.innerHTML=skip.ranges.map((r,i)=>`<div class="wkrow"><span style="flex:1;font-size:14px">${r[0]===r[1]?r[0]:r[0]+" ~ "+r[1]}</span><button onclick="skDel(${i})" style="background:#fff0f4;color:#a9677e;border-radius:9px;padding:6px 8px">삭제</button></div>`).join("")}
+function setWkKind(k){wkK=k;wkUI()}
 function wkTog(d){const i=wkSel.indexOf(d);if(i<0)wkSel.push(d);else wkSel.splice(i,1);wkUI()}
 function setWkOff(){week.off=+wkOff.value;saveWeek()}
 function afterAuto(){save();lastSig=null;tick();render()}
 function addWeek(){const n=wkName.value.trim(),t=wkTime.value;if(!n){alert("일정 이름을 넣어 주세요");return}if(!wkSel.length){alert("요일을 하나 이상 골라 주세요");return}
- wkSel.forEach(d=>{if(!week.d[d].some(x=>x.n===n&&x.t===t))week.d[d].push({n,t})});wkName.value="";wkTime.value="";saveWeek();
+ const o={n,t};if(wkK==="e"){o.k="e";o.pl=wkPlace.value.trim();o.fl=wkFloor.value.trim();o.ad=wkAddr.value.trim()}wkSel.forEach(d=>{if(!week.d[d].some(x=>x.n===n&&x.t===t))week.d[d].push(Object.assign({},o))});wkName.value="";wkTime.value="";wkPlace.value="";wkFloor.value="";wkAddr.value="";saveWeek();
  if(wkSel.includes(new Date().getDay())){dailyAuto(true);afterAuto()}wkUI()}
 function wkEdit(d,i,k,v){if(!week.d[d][i])return;week.d[d][i][k]=(k==="n"?v.trim():v);saveWeek()}
 function wkDel(d,i){week.d[d].splice(i,1);saveWeek();wkUI()}
 function applyWeekToday(){const n=dailyAuto(true);afterAuto();alert(inSkip(ds(new Date()))?"오늘은 쉬는 날로 되어 있어서 넣지 않았어요":n+"개의 일정을 오늘 미션에 넣었어요")}
-function removeAutoToday(){const old=auto.keys||[];for(let i=missions.length-1;i>=0;i--){if(old.includes(missions[i])){missions.splice(i,1);done.splice(i,1);mt.splice(i,1);mp.splice(i,1)}}auto.keys=[]}
+function removeAutoToday(){ev.list=[];const old=auto.keys||[];for(let i=missions.length-1;i>=0;i--){if(old.includes(missions[i])){missions.splice(i,1);done.splice(i,1);mt.splice(i,1);mp.splice(i,1)}}auto.keys=[]}
 function skipToday(){const t=ds(new Date());if(!skip.days.includes(t))skip.days.push(t);removeAutoToday();saveWeek();afterAuto();wkUI();alert("오늘은 쉬는 날로 했어요. 요일별 일정이 오늘 목록에서 빠졌어요")}
 function addSkip(){let a=skA.value,b=skB.value||a;if(!a){alert("시작 날짜를 골라 주세요");return}if(b<a){const x=a;a=b;b=x}skip.ranges.push([a,b]);skA.value="";skB.value="";const t=ds(new Date());if(t>=a&&t<=b)removeAutoToday();saveWeek();afterAuto();wkUI()}
 function skDel(i){skip.ranges.splice(i,1);saveWeek();wkUI()}
+/* ---- 오늘 일정(미션 아님) + 이동시간 ---- */
+const ROUTE_API="";/* 이동시간 API 주소 — 연결 규격 확인 후 채움 */
+function evSave(){try{localStorage.setItem("mobileKongEv",JSON.stringify(ev))}catch(e){}schedulePush()}
+function renderEv(){const b=document.getElementById("evBox");if(!b)return;const L=ev.day===dsn()?ev.list:[],left=L.filter(x=>!x.ok).length,dot=document.getElementById("evDot");if(dot){dot.textContent=left;dot.style.display=left?"":"none"}
+ if(!L.length){b.innerHTML='<div class="evempty">📅<br>오늘은 등록된 일정이 없어요<br><small>설정의 “요일별 일정”에서 일정을 넣을 수 있어요</small></div>';return}
+ const nx=L.findIndex(x=>!x.ok&&x.ad);
+ b.innerHTML='<div class="evcard"><b>📅 오늘 일정</b>'+L.map((x,i)=>`<div class="evrow ${x.ok?"ok":""}"><span class="evt">${esc(x.t||"--:--")}</span><div class="evm"><b>${esc(x.n)}</b>${(x.pl||x.fl)?`<small>📍 ${esc(x.pl)} ${esc(x.fl)}</small>`:""}${x.ad?`<small>${esc(x.ad)}</small>`:""}${(i===nx)?`<div class="evr" id="evR"><button onclick="routeGo(${i})">🧭 지금 위치에서 이동시간 보기</button></div>`:""}</div><button class="evok" onclick="evOk(${i})">${x.ok?"확인함 ✓":"확인했어요"}</button></div>`).join("")+"</div>"}
+function evOk(i){if(!ev.list[i])return;ev.list[i].ok=!ev.list[i].ok;evSave();renderEv()}
+function routeFetch(lat,lng,x){/* 규격 확인 후 이 함수만 맞추면 돼요. 결과: {car:분, bus:분, walk:분} */
+ return fetch(ROUTE_API+"?from="+lat+","+lng+"&to="+encodeURIComponent(x.ad)).then(r=>{if(!r.ok)throw new Error("route");return r.json()}).then(j=>({car:j.car,bus:j.transit||j.bus,walk:j.walk}))}
+async function routeGo(i){const x=ev.list[i],box=document.getElementById("evR");if(!x||!box)return;
+ if(!ROUTE_API){box.innerHTML='<small>이동시간 서비스가 아직 연결되지 않았어요</small>';return}
+ box.innerHTML="<small>현재 위치를 확인하는 중…</small>";let pos;
+ try{pos=await new Promise((ok,no)=>navigator.geolocation.getCurrentPosition(ok,no,{timeout:10000,maximumAge:60000}))}catch(e){box.innerHTML='<small>위치 허용이 필요해요. 브라우저의 위치 권한을 허용해 주세요</small>';return}
+ try{const r=await routeFetch(pos.coords.latitude,pos.coords.longitude,x),f=v=>v==null?"-":v+"분";box.innerHTML=`<span class="evch">🚗 ${f(r.car)}</span><span class="evch">🚌 ${f(r.bus)}</span><span class="evch">🚶 ${f(r.walk)}</span><div><button onclick="routeGo(${i})">🔄 다시 보기</button></div>`}catch(e){box.innerHTML='<small>이동시간을 가져오지 못했어요</small><div><button onclick="routeGo('+i+')">다시 해보기</button></div>'}}
 function addTask(){let v=newTask.value.trim();if(!v)return;missions.push(v);done.push(false);mt.push(newTime.value||"");mp.push(newPraise.value.trim());newTask.value="";newTime.value="";newPraise.value="";save();lastSig=null;tick()}
 function removeTask(i){missions.splice(i,1);done.splice(i,1);mt.splice(i,1);mp.splice(i,1);save();lastSig=null;tick()}
 function revokeEarned(){const t=ds(new Date());if(!(earned&&earned.day===t))return;const f=earned.f;if(!earned.had)owned=owned.filter(x=>x!==f);streak=Math.max(0,streak-1);addCoins(-4);earned=null;pending=f;ensurePending()}
@@ -432,7 +454,7 @@ function saveReward(){reward=rewardInput.value.trim();localStorage.setItem("mobi
 /* ---- 가족 공유 (Supabase) ---- */
 const SB_URL="https://ayygbemcxuajccaknfir.supabase.co",SB_KEY="sb_publishable_tiLGpJNheNZZ4Yn9cIhTow_HjW2dx2E";
 const SBOK=/^https:\/\/[a-z0-9-]+\.supabase\.co$/i.test(SB_URL)&&SB_KEY.length>30&&!/YOUR/.test(SB_KEY+SB_URL);
-const SYNCK=["Tasks","Done","MT","MP","Reward","Goal","Total","Streak","Day","Owned","Pending","Earned","Names","Pre","PreDone","Coins","CT","Care","Partner","Quiz","QStat","Pin","Week","Skip","Auto"];
+const SYNCK=["Tasks","Done","MT","MP","Reward","Goal","Total","Streak","Day","Owned","Pending","Earned","Names","Pre","PreDone","Coins","CT","Care","Partner","Quiz","QStat","Pin","Week","Skip","Auto","Ev"];
 let fam="",syncTs=0,pushT=null,busyP=false,busyL=false;
 try{fam=localStorage.getItem("mobileKongFam")||"";syncTs=+(localStorage.getItem("mobileKongSyncTs")||0)}catch(e){}
 const TE=new TextEncoder(),TD=new TextDecoder(),keyCache={};
@@ -506,14 +528,15 @@ function parseSched(txt){const L=txt.split(/\r?\n/).map(x=>x.trim()).filter(Bool
 let schedEv=[];
 function readSched(){schedEv=parseSched(schedText.value);if(!schedEv.length){schedPrev.innerHTML='<div style="font-size:13px;color:#e0457b;padding:6px 0">시간이 들어 있는 일정을 찾지 못했어요. 예) 오후 3:00 피아노</div>';schedGo.style.display="none";return}
  const anyToday=schedEv.some(e=>e.today),off=+schedOff.value;
- schedPrev.innerHTML=schedEv.map((e,i)=>{const st=e.h*60+e.m,op=Math.max(0,st-off),f=x=>fmt(String(Math.floor(x/60)).padStart(2,"0")+":"+String(x%60).padStart(2,"0"));return `<label class="sr"><input type="checkbox" data-i="${i}" ${(e.today||!anyToday)?"checked":""}><span style="flex:1">${esc(e.title)}<small>${f(st)} 시작 · ${f(op)}에 열려요${e.today?"":" · "+e.date}</small></span></label>`}).join("");schedGo.style.display=""}
+ schedPrev.innerHTML=schedEv.map((e,i)=>{const st=e.h*60+e.m,op=Math.max(0,st-off),f=x=>fmt(String(Math.floor(x/60)).padStart(2,"0")+":"+String(x%60).padStart(2,"0"));return `<label class="sr"><input type="checkbox" data-i="${i}" ${(e.today||!anyToday)?"checked":""}><span style="flex:1">${esc(e.title)}<small>${f(st)} 시작 · ${f(op)}에 열려요${e.today?"":" · "+e.date}</small></span></label><div class="add" style="margin:0 0 8px 28px"><select data-k="${i}" style="flex:none;border:2px solid #eadcf0;border-radius:10px;padding:5px;font-size:13px;background:#fff"><option value="m">🎯 미션</option><option value="e">📅 일정만</option></select><input data-ad="${i}" maxlength="80" placeholder="주소(선택)" style="font-size:13px;padding:5px 8px"></div>`}).join("");schedGo.style.display=""}
 function applySched(){const off=+schedOff.value,boxes=[...schedPrev.querySelectorAll("input[type=checkbox]")].filter(b=>b.checked);if(!boxes.length){alert("넣을 일정을 골라 주세요");return}
  if(schedClear.checked){missions=[];done=[];mt=[];mp=[]}
- let n=0;boxes.forEach(b=>{const e=schedEv[+b.dataset.i],st=e.h*60+e.m,op=Math.max(0,st-off),t=String(Math.floor(op/60)).padStart(2,"0")+":"+String(op%60).padStart(2,"0");
-  if(missions.some((x,k)=>x===e.title&&mt[k]===t))return;missions.push(e.title);done.push(false);mt.push(t);mp.push("");if(!auto.keys.includes(e.title))auto.keys.push(e.title);n++});try{localStorage.setItem("mobileKongAuto",JSON.stringify(auto))}catch(e){}
+ let n=0;if(ev.day!==dsn())ev={day:dsn(),list:[]};boxes.forEach(b=>{const e=schedEv[+b.dataset.i],st=e.h*60+e.m,op=Math.max(0,st-off),t=String(Math.floor(op/60)).padStart(2,"0")+":"+String(op%60).padStart(2,"0"),kind=schedPrev.querySelector('select[data-k="'+b.dataset.i+'"]').value,ad=schedPrev.querySelector('input[data-ad="'+b.dataset.i+'"]').value.trim();
+  if(kind==="e"){const t0=String(e.h).padStart(2,"0")+":"+String(e.m).padStart(2,"0");if(!ev.list.some(x=>x.n===e.title&&x.t===t0)){ev.list.push({n:e.title,t:t0,pl:"",fl:"",ad,ok:false});ev.list.sort((a,b)=>a.t<b.t?-1:1);n++}return}
+  if(missions.some((x,k)=>x===e.title&&mt[k]===t))return;missions.push(e.title);done.push(false);mt.push(t);mp.push("");if(!auto.keys.includes(e.title))auto.keys.push(e.title);n++});try{localStorage.setItem("mobileKongAuto",JSON.stringify(auto));localStorage.setItem("mobileKongEv",JSON.stringify(ev))}catch(e){}
  let r={day:dsn(),ids:[]};try{const q=JSON.parse(localStorage.getItem("mobileKongRem2")||"null");if(q&&q.day===dsn())r=q}catch(e){}
  missions.forEach((_,k)=>{if(mt[k]&&toMin(mt[k])<=nowMin()&&!r.ids.includes(String(k)))r.ids.push(String(k))});try{localStorage.setItem("mobileKongRem2",JSON.stringify(r))}catch(e){}
- save();lastSig=null;tick();schedText.value="";schedPrev.innerHTML="";schedGo.style.display="none";alert(n+"개의 일정을 미션으로 넣었어요!")}
+ save();lastSig=null;tick();schedText.value="";schedPrev.innerHTML="";schedGo.style.display="none";alert(n+"개의 일정을 넣었어요!")}
 function downloadIcsAll(){const pad=x=>String(x).padStart(2,"0"),d=new Date(),day=d.getFullYear()+pad(d.getMonth()+1)+pad(d.getDate()),stamp=new Date().toISOString().replace(/[-:]/g,"").split(".")[0]+"Z",url=location.href.split("#")[0],ev=[];
  missions.forEach((m,i)=>{if(mt[i])ev.push([m,mt[i]])});if(pre.on)ev.push(["프리올쏘 하기",pre.time]);
  if(!ev.length){alert("시간을 정한 미션이 없어요");return}
