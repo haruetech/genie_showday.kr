@@ -160,6 +160,7 @@ details{background:#f8f4fb;border-radius:14px;padding:10px 12px;margin:8px 0}sum
 @media (max-height:620px){.hero h1{font-size:17px}.stars i{font-size:19px}.bface{width:72px;height:72px}.bubble{font-size:14px}.task b{font-size:15px}.stamp{min-height:32px}}
 .wk{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}.wk button{padding:7px 11px;border-radius:14px;background:#f3edf5;color:#6b5a78;font-weight:900;font-size:14px}.wk button.on{background:#745cff;color:#fff}.wk.pre button{background:#fff0f6;color:#b0507a;font-size:13px;padding:6px 9px}.wkrow{display:flex;align-items:center;gap:5px;padding:4px 0}.wkrow input{padding:5px 7px;font-size:14px;border-radius:9px}
 .evcard{background:#fff;border:2px solid #e5defa;border-radius:18px;padding:8px 10px;margin-bottom:8px}.evcard>b{font-size:14px;color:#745cff}.evrow{display:flex;align-items:flex-start;gap:8px;padding:7px 0;border-top:1px dashed #eee}.evrow:first-of-type{border-top:0}.evt{flex:none;font-weight:900;font-size:15px;color:#745cff;min-width:46px}.evm{flex:1;min-width:0}.evm b{font-size:15px;display:block;overflow-wrap:anywhere}.evm small{display:block;font-size:12px;color:#83778b;overflow-wrap:anywhere}.evok{flex:none;background:#745cff;color:#fff;border-radius:12px;padding:8px 10px;font-weight:900;font-size:13px}.evrow.ok{opacity:.55}.evrow.ok .evok{background:#8fd3a8}.evr{margin-top:5px}.evr button{background:#eaf3ff;color:#3a74b8;border-radius:10px;padding:6px 9px;font-weight:900;font-size:12px}.evch{display:inline-block;background:#f3edf5;border-radius:10px;padding:5px 8px;margin:2px 4px 0 0;font-weight:900;font-size:13px}
+.calg{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-top:6px}.calg i{font-style:normal;text-align:center;font-size:12px;font-weight:900;color:#a094aa;padding:3px 0}.calg button{position:relative;aspect-ratio:1;border-radius:11px;background:#fff;border:2px solid #f0e9f6;font-weight:900;font-size:14px;color:#40354b;padding:0}.calg button.td{border-color:#ffb8d2}.calg button.sel{background:#745cff;color:#fff;border-color:#745cff}.calg button.sun{color:#e0457b}.calg button.sel.sun{color:#fff}.calg button .p{position:absolute;bottom:3px;left:50%;transform:translateX(-50%);font-size:9px;line-height:1}.calg button.off{background:#f6f2f8;color:#c9bfd0}.calnav{display:flex;justify-content:space-between;align-items:center;margin-top:4px}.calnav button{background:#f3edf5;border-radius:10px;padding:6px 12px;font-weight:900}
 </style></head><body><main class="app" data-tab="m">
 <section class="hero"><div class="hl"><div><b id="todayLbl">🌈 콩콩</b><span class="streak" id="streakBadge">🔥 0일</span><span class="streak cn" id="coinBadge">🪙 0</span></div><h1>미션하고 스탬프 콩! 💗</h1><div class="gl" id="goalLine"></div><div class="prog"><span id="stat">0/0</span><div class="bar"><div id="fill"></div></div></div></div><div class="stars" id="stars"></div></section>
 <div class="page" id="pageMission"><div class="tscroll"><div id="tasks" class="tasks"></div></div>
@@ -205,6 +206,16 @@ details{background:#f8f4fb;border-radius:14px;padding:10px 12px;margin:8px 0}sum
 <button class="addBtn" style="width:100%;padding:10px;background:#ff8a65" onclick="skipToday()">😴 오늘은 쉬는 날이에요</button>
 <div class="add" style="margin-top:6px;align-items:center"><input id="skA" type="date"><span style="flex:none">~</span><input id="skB" type="date"><button class="addBtn" onclick="addSkip()">추가</button></div>
 <div id="skList" style="margin-top:6px"></div></details>
+<details><summary>🗓 달력으로 일정 등록 (날짜별)</summary>
+<p style="margin:0 0 6px;font-size:12px;color:#83778b">병원·예약·행사처럼 그날 하루만 있는 일정이나, 아이에게 전할 메시지를 날짜를 눌러서 등록해요. 그날이 되면 자동으로 들어와요.</p>
+<div class="calnav"><button onclick="calNav(-1)">◀</button><b id="calTitle"></b><button onclick="calNav(1)">▶</button></div>
+<div class="calg" id="calGrid"></div>
+<div id="calDay" style="margin-top:10px"></div>
+<span class="lbl">종류</span><div class="wk" id="calKind"></div>
+<div class="add"><input id="calName" maxlength="40" placeholder="예: 치과 예약"><input id="calTime" type="time" style="flex:none;width:112px"></div>
+<div id="calPlaceBox" style="margin-top:6px"><div class="add"><input id="calPlace" maxlength="30" placeholder="장소·학원 이름"><input id="calFloor" maxlength="8" placeholder="층" style="flex:none;width:68px"></div><div class="add" style="margin-top:6px"><input id="calAddr" maxlength="80" placeholder="주소(선택)"></div></div>
+<button class="addBtn" style="width:100%;padding:10px;margin-top:6px;background:#745cff" onclick="addCal()">➕ 이 날짜에 추가</button>
+<button class="addBtn" style="width:100%;padding:10px;margin-top:6px;background:#ff8a65" onclick="skipDate()">😴 이 날은 쉬는 날 (요일별 일정 빼기)</button></details>
 <details><summary>📋 카톡 일정 붙여넣기</summary>
 <p style="margin:0 0 6px;font-size:12px;color:#83778b">카톡·톡캘린더에서 오늘 일정을 복사해 아래에 붙여넣으세요. 시간과 일정 이름을 찾아서 예약 미션으로 만들어 줘요.</p>
 <textarea id="schedText" rows="5" placeholder="예)&#10;체험학습&#10;오후 1:10 - 오후 3:00&#10;피아노&#10;오후 6:10 - 오후 6:40" style="width:100%;border:2px solid #eadcf0;border-radius:14px;padding:9px 10px;font-size:15px;font-family:inherit;outline:none;resize:vertical"></textarea>
@@ -365,6 +376,7 @@ let week={off:10,d:[[],[],[],[],[],[],[]]},skip={days:[],ranges:[]},auto={day:""
 try{const w=JSON.parse(localStorage.getItem("mobileKongWeek")||"null");if(w&&Array.isArray(w.d)){week=w;while(week.d.length<7)week.d.push([])}}catch(e){}
 try{const k=JSON.parse(localStorage.getItem("mobileKongSkip")||"null");if(k)skip=Object.assign(skip,k)}catch(e){}
 try{const a=JSON.parse(localStorage.getItem("mobileKongAuto")||"null");if(a&&a.keys)auto=a}catch(e){}
+let cal={};try{const c=JSON.parse(localStorage.getItem("mobileKongCal")||"null");if(c&&typeof c==="object")cal=c;const t0=ds(new Date());Object.keys(cal).forEach(k=>{if(k<t0)delete cal[k]})}catch(e){}
 let ev={day:"",list:[]};try{const e=JSON.parse(localStorage.getItem("mobileKongEv")||"null");if(e&&e.list)ev=e}catch(e){}
 const inSkip=d=>skip.days.includes(d)||skip.ranges.some(r=>d>=r[0]&&d<=r[1]);
 function dailyAuto(force){const today=ds(new Date()),first=auto.day!==today;if(!first&&!force)return 0;
@@ -374,6 +386,11 @@ function dailyAuto(force){const today=ds(new Date()),first=auto.day!==today;if(!
   (week.d[new Date().getDay()]||[]).slice().sort((a,b)=>(a.t||"")<(b.t||"")?-1:1).forEach(it=>{if(!it.n)return;if(it.k==="e"){if(!ev.list.some(x=>x.n===it.n&&x.t===(it.t||""))){ev.list.push({n:it.n,t:it.t||"",pl:it.pl||"",fl:it.fl||"",ad:it.ad||"",ok:false});ev.list.sort((a,b)=>a.t<b.t?-1:1);n++}return}if(missions.includes(it.n))return;let t="";if(it.t){const[h,m]=it.t.split(":"),op=Math.max(0,+h*60+ +m-(+week.off||0));t=String(Math.floor(op/60)).padStart(2,"0")+":"+String(op%60).padStart(2,"0")}
    missions.push(it.n);done.push(false);mt.push(t);mp.push("");auto.keys.push(it.n);n++;if(t){const[h,m]=t.split(":");if(+h*60+ +m<=nm)r.ids.push(String(missions.length-1))}});
   try{localStorage.setItem("mobileKongRem2",JSON.stringify(r))}catch(e){}}
+ {const its=cal[today]||[];if(its.length){const nm=new Date().getHours()*60+new Date().getMinutes();let r2={day:today,ids:[]};try{const q=JSON.parse(localStorage.getItem("mobileKongRem2")||"null");if(q&&q.day===today)r2=q}catch(e){}
+  its.forEach(it=>{if(!it.n)return;if(it.k==="m"){if(missions.includes(it.n))return;let t="";if(it.t){const[h,m]=it.t.split(":"),op=Math.max(0,+h*60+ +m-(+week.off||0));t=String(Math.floor(op/60)).padStart(2,"0")+":"+String(op%60).padStart(2,"0")}
+    missions.push(it.n);done.push(false);mt.push(t);mp.push("");auto.keys.push(it.n);n++;if(t){const[h,m]=t.split(":");if(+h*60+ +m<=nm)r2.ids.push(String(missions.length-1))}}
+   else if(!ev.list.some(x=>x.n===it.n&&x.t===(it.t||""))){ev.list.push({n:it.n,t:it.t||"",pl:it.pl||"",fl:it.fl||"",ad:it.ad||"",ok:false,msg:it.k==="g"?1:0});n++}});
+  ev.list.sort((a,b)=>(a.t||"")<(b.t||"")?-1:1);try{localStorage.setItem("mobileKongRem2",JSON.stringify(r2))}catch(e){}}}
  localStorage.setItem("mobileKongTasks",JSON.stringify(missions));localStorage.setItem("mobileKongDone",JSON.stringify(done));localStorage.setItem("mobileKongMT",JSON.stringify(mt));localStorage.setItem("mobileKongMP",JSON.stringify(mp));localStorage.setItem("mobileKongAuto",JSON.stringify(auto));localStorage.setItem("mobileKongEv",JSON.stringify(ev));return n}
 dailyAuto(false);
 function save(){localStorage.setItem("mobileKongTasks",JSON.stringify(missions));localStorage.setItem("mobileKongDone",JSON.stringify(done));localStorage.setItem("mobileKongTotal",total);localStorage.setItem("mobileKongOwned",JSON.stringify(owned));localStorage.setItem("mobileKongPre",JSON.stringify(pre));localStorage.setItem("mobileKongPreDone",preDone);localStorage.setItem("mobileKongPending",pending);localStorage.setItem("mobileKongEarned",JSON.stringify(earned));localStorage.setItem("mobileKongNames",JSON.stringify(names));localStorage.setItem("mobileKongStreak",streak);localStorage.setItem("mobileKongMT",JSON.stringify(mt));localStorage.setItem("mobileKongMP",JSON.stringify(mp));localStorage.setItem("mobileKongCoins",coins);localStorage.setItem("mobileKongQuiz",JSON.stringify(qz));localStorage.setItem("mobileKongQStat",JSON.stringify(qs));localStorage.setItem("mobileKongPartner",JSON.stringify(partner));localStorage.setItem("mobileKongCT",JSON.stringify(ct));localStorage.setItem("mobileKongCare",JSON.stringify(cr));schedulePush()}
@@ -392,7 +409,7 @@ function render(){renderEv();
   if(ea){buddyImg.src=friendsData[earned.f].src;buddyImg.style.filter="";buddyFace.classList.add("glowbox");buddyQ.style.display="none";bubble.textContent=nm(earned.f)+": "+cheers[earned.f%cheers.length]}
   else{const nxo=it.find(x=>!x.done&&!x.locked)||it.find(x=>!x.done),nx=nxo?nxo.name:"";const pf=partnerF()>=0?partnerF():pending;buddyImg.src=friendsData[pf].src;buddyImg.style.filter=mys(n/g);buddyFace.classList.remove("glowbox");buddyQ.style.display="";buddyQ.style.opacity=(1-.6*Math.min(1,n/g)).toFixed(2);bubble.textContent=!t?"오늘 할 일을 먼저 정해줘!":n===0?"❓ 오늘의 친구가 숨어 있어! 스탬프를 찍어봐!":"❓ 누굴까? 벌써 Lv."+n+"! "+Math.max(1,g-n)+"개만 더 하면 정체가 나타나!"}
   bookBtn.textContent="🐾 친구 도감 "+owned.length+"/"+friendsData.length;if(app_().dataset.tab==="f")renderFriends();
- syncQuiz();famUI();wkUI();rewardInput.value=reward;goalInput.value=goal;preOn.checked=pre.on;preTime.value=pre.time;pinState.textContent=pinHash?"현재: 설정됨 🔒":"아직 없음 — 정하면 아이가 설정 화면을 열 수 없어요";photoPrev.style.display=photo?"block":"none";if(photo)photoPrev.src=photo;
+ syncQuiz();famUI();wkUI();calUI();rewardInput.value=reward;goalInput.value=goal;preOn.checked=pre.on;preTime.value=pre.time;pinState.textContent=pinHash?"현재: 설정됨 🔒":"아직 없음 — 정하면 아이가 설정 화면을 열 수 없어요";photoPrev.style.display=photo?"block":"none";if(photo)photoPrev.src=photo;
  undoList.innerHTML=(it.filter(x=>x.done).map(x=>`<div style="display:flex;align-items:center;gap:6px;padding:6px 2px;border-bottom:1px solid #eee"><span style="flex:1;font-size:14px">⭐ ${esc(x.name)}</span><button onclick="undoOne('${x.id}')" style="background:#efeaff;color:#745cff;border-radius:9px;padding:6px 10px;font-weight:900">↩ 되돌리기</button></div>`).join(""))||`<div style="font-size:12px;color:#8b7d90;padding:6px 0">오늘 완료한 미션이 없어요.</div>`;
  parentTaskList.innerHTML=missions.length?missions.map((m,i)=>`<div style="display:flex;align-items:center;gap:6px;padding:7px 2px;border-bottom:1px solid #eee"><span style="flex:1;font-size:14px;min-width:0;overflow-wrap:anywhere">${i+1}. ${m}</span><input type="time" value="${mt[i]||""}" onchange="setMt(${i},this.value)" style="flex:none;width:106px;padding:4px 6px;font-size:14px;border-radius:9px"><button onclick="removeTask(${i})" style="background:#fff0f4;color:#a9677e;border-radius:9px;padding:6px 8px">삭제</button></div><input value="${esc(mp[i]||"")}" maxlength="40" placeholder="💌 칭찬 한마디 (비우면 자동)" onchange="setMp(${i},this.value)" style="width:100%;margin:0 0 4px;padding:5px 8px;font-size:13px;border-radius:9px;border-bottom:1px solid #eee">`).join(""):`<div style="font-size:12px;color:#8b7d90;padding:8px 0">등록된 할 일이 없습니다.</div>`;
 }
@@ -431,7 +448,7 @@ function evSave(){try{localStorage.setItem("mobileKongEv",JSON.stringify(ev))}ca
 function renderEv(){const b=document.getElementById("evBox");if(!b)return;const L=ev.day===dsn()?ev.list:[],left=L.filter(x=>!x.ok).length,dot=document.getElementById("evDot");if(dot){dot.textContent=left;dot.style.display=left?"":"none"}
  if(!L.length){b.innerHTML='<div class="evempty">📅<br>오늘은 등록된 일정이 없어요<br><small>설정의 “요일별 일정”에서 일정을 넣을 수 있어요</small></div>';return}
  const nx=L.findIndex(x=>!x.ok&&x.ad);
- b.innerHTML='<div class="evcard"><b>📅 오늘 일정</b>'+L.map((x,i)=>`<div class="evrow ${x.ok?"ok":""}"><span class="evt">${esc(x.t||"--:--")}</span><div class="evm"><b>${esc(x.n)}</b>${(x.pl||x.fl)?`<small>📍 ${esc(x.pl)} ${esc(x.fl)}</small>`:""}${x.ad?`<small>${esc(x.ad)}</small>`:""}${(i===nx)?`<div class="evr" id="evR"><button onclick="routeGo(${i})">🧭 지금 위치에서 이동시간 보기</button></div>`:""}</div><button class="evok" onclick="evOk(${i})">${x.ok?"확인함 ✓":"확인했어요"}</button></div>`).join("")+"</div>"}
+ b.innerHTML='<div class="evcard"><b>📅 오늘 일정</b>'+L.map((x,i)=>`<div class="evrow ${x.ok?"ok":""}"><span class="evt">${x.msg?"💌":esc(x.t||"--:--")}</span><div class="evm"><b>${esc(x.n)}</b>${(x.pl||x.fl)?`<small>📍 ${esc(x.pl)} ${esc(x.fl)}</small>`:""}${x.ad?`<small>${esc(x.ad)}</small>`:""}${(i===nx)?`<div class="evr" id="evR"><button onclick="routeGo(${i})">🧭 지금 위치에서 이동시간 보기</button></div>`:""}</div><button class="evok" onclick="evOk(${i})">${x.msg?(x.ok?"읽음 ✓":"읽었어요"):(x.ok?"확인함 ✓":"확인했어요")}</button></div>`).join("")+"</div>"}
 function evOk(i){if(!ev.list[i])return;ev.list[i].ok=!ev.list[i].ok;evSave();renderEv()}
 function routeFetch(lat,lng,x){/* 규격 확인 후 이 함수만 맞추면 돼요. 결과: {car:분, bus:분, walk:분} */
  return fetch(ROUTE_API+"?from="+lat+","+lng+"&to="+encodeURIComponent(x.ad)).then(r=>{if(!r.ok)throw new Error("route");return r.json()}).then(j=>({car:j.car,bus:j.transit||j.bus,walk:j.walk}))}
@@ -440,6 +457,29 @@ async function routeGo(i){const x=ev.list[i],box=document.getElementById("evR");
  box.innerHTML="<small>현재 위치를 확인하는 중…</small>";let pos;
  try{pos=await new Promise((ok,no)=>navigator.geolocation.getCurrentPosition(ok,no,{timeout:10000,maximumAge:60000}))}catch(e){box.innerHTML='<small>위치 허용이 필요해요. 브라우저의 위치 권한을 허용해 주세요</small>';return}
  try{const r=await routeFetch(pos.coords.latitude,pos.coords.longitude,x),f=v=>v==null?"-":v+"분";box.innerHTML=`<span class="evch">🚗 ${f(r.car)}</span><span class="evch">🚌 ${f(r.bus)}</span><span class="evch">🚶 ${f(r.walk)}</span><div><button onclick="routeGo(${i})">🔄 다시 보기</button></div>`}catch(e){box.innerHTML='<small>이동시간을 가져오지 못했어요</small><div><button onclick="routeGo('+i+')">다시 해보기</button></div>'}}
+/* ---- 달력 (날짜별 일정) ---- */
+let calY=new Date().getFullYear(),calM=new Date().getMonth(),calSel=ds(new Date()),calK="e";
+const CKN={m:"🎯 미션",e:"📅 일정",g:"💌 메시지"},CPH={m:"예: 병원 다녀오기",e:"예: 치과 예약",g:"예: 오늘은 할머니 댁에 가요"};
+const p2=n=>String(n).padStart(2,"0");
+function calSave(){try{localStorage.setItem("mobileKongCal",JSON.stringify(cal))}catch(e){}schedulePush()}
+function calNav(d){calM+=d;if(calM<0){calM=11;calY--}if(calM>11){calM=0;calY++}calUI()}
+function calPick(d){calSel=d;calUI()}
+function setCalK(k){calK=k;calUI()}
+function calUI(){if(!document.getElementById("calGrid"))return;const today=ds(new Date()),first=new Date(calY,calM,1).getDay(),days=new Date(calY,calM+1,0).getDate();
+ calTitle.textContent=calY+"년 "+(calM+1)+"월";let h=WDN.map((w,i)=>`<i style="${i===0?"color:#e0457b":""}">${w}</i>`).join("");for(let i=0;i<first;i++)h+="<span></span>";
+ for(let d=1;d<=days;d++){const k=calY+"-"+p2(calM+1)+"-"+p2(d),wd=new Date(calY,calM,d).getDay(),has=(cal[k]||[]).length,wk=(week.d[wd]||[]).length,sk=inSkip(k);
+  h+=`<button class="${k===today?"td ":""}${k===calSel?"sel ":""}${wd===0?"sun ":""}${k<today?"off":""}" onclick="calPick('${k}')">${d}<span class="p">${sk?"😴":has?"●":wk?"·":""}</span></button>`}
+ calGrid.innerHTML=h;
+ const sd=new Date(calSel+"T00:00:00"),wd=sd.getDay(),L=cal[calSel]||[],W=(week.d[wd]||[]);
+ calDay.innerHTML=`<b style="color:#745cff">${sd.getMonth()+1}월 ${sd.getDate()}일 (${WDN[wd]})${inSkip(calSel)?" 😴 쉬는 날":""}</b>`+(W.length?`<div style="font-size:12px;color:#83778b;margin-top:3px">매주 반복: ${W.map(x=>(x.k==="e"?"📅":"🎯")+" "+esc(x.t||"")+" "+esc(x.n)).join(" · ")}</div>`:"")+
+  (L.length?L.map((x,i)=>`<div class="wkrow"><span style="flex:none">${x.k==="g"?"💌":x.k==="m"?"🎯":"📅"}</span><span style="flex:1;font-size:14px;overflow-wrap:anywhere">${esc(x.t||"")} ${esc(x.n)}${(x.pl||x.fl)?" · "+esc(x.pl)+" "+esc(x.fl):""}</span><button onclick="calDel('${calSel}',${i})" style="background:#fff0f4;color:#a9677e;border-radius:9px;padding:6px 8px">삭제</button></div>`).join(""):'<div style="font-size:13px;color:#a094aa;margin-top:4px">이 날 등록한 일정이 없어요.</div>');
+ calKind.innerHTML=["m","e","g"].map(k=>`<button class="${calK===k?"on":""}" onclick="setCalK('${k}')">${CKN[k]}</button>`).join("");calName.placeholder=CPH[calK];calPlaceBox.style.display=calK==="e"?"":"none";calTime.style.opacity=calK==="g"?".4":"1"}
+function addCal(){const n=calName.value.trim(),t=calK==="g"?"":calTime.value,today=ds(new Date());if(!n){alert("이름이나 내용을 넣어 주세요");return}if(calSel<today){alert("지난 날짜에는 등록할 수 없어요");return}
+ (cal[calSel]=cal[calSel]||[]).push({n,t,k:calK,pl:calK==="e"?calPlace.value.trim():"",fl:calK==="e"?calFloor.value.trim():"",ad:calK==="e"?calAddr.value.trim():""});
+ calName.value="";calTime.value="";calPlace.value="";calFloor.value="";calAddr.value="";calSave();if(calSel===today){dailyAuto(true);afterAuto()}calUI()}
+function calDel(d,i){const a=cal[d]||[],it=a[i];if(!it)return;a.splice(i,1);if(!a.length)delete cal[d];calSave();
+ if(d===ds(new Date())){if(it.k==="m"){const j=missions.indexOf(it.n);if(j>=0){missions.splice(j,1);done.splice(j,1);mt.splice(j,1);mp.splice(j,1)}}else ev.list=ev.list.filter(x=>!(x.n===it.n&&x.t===(it.t||"")));evSave();afterAuto()}calUI()}
+function skipDate(){const t=ds(new Date());if(calSel<t){alert("지난 날짜예요");return}skip.ranges.push([calSel,calSel]);if(calSel===t)removeAutoToday();saveWeek();afterAuto();wkUI();calUI();alert("이 날은 쉬는 날로 했어요")}
 function addTask(){let v=newTask.value.trim();if(!v)return;missions.push(v);done.push(false);mt.push(newTime.value||"");mp.push(newPraise.value.trim());newTask.value="";newTime.value="";newPraise.value="";save();lastSig=null;tick()}
 function removeTask(i){missions.splice(i,1);done.splice(i,1);mt.splice(i,1);mp.splice(i,1);save();lastSig=null;tick()}
 function revokeEarned(){const t=ds(new Date());if(!(earned&&earned.day===t))return;const f=earned.f;if(!earned.had)owned=owned.filter(x=>x!==f);streak=Math.max(0,streak-1);addCoins(-4);earned=null;pending=f;ensurePending()}
@@ -454,7 +494,7 @@ function saveReward(){reward=rewardInput.value.trim();localStorage.setItem("mobi
 /* ---- 가족 공유 (Supabase) ---- */
 const SB_URL="https://ayygbemcxuajccaknfir.supabase.co",SB_KEY="sb_publishable_tiLGpJNheNZZ4Yn9cIhTow_HjW2dx2E";
 const SBOK=/^https:\/\/[a-z0-9-]+\.supabase\.co$/i.test(SB_URL)&&SB_KEY.length>30&&!/YOUR/.test(SB_KEY+SB_URL);
-const SYNCK=["Tasks","Done","MT","MP","Reward","Goal","Total","Streak","Day","Owned","Pending","Earned","Names","Pre","PreDone","Coins","CT","Care","Partner","Quiz","QStat","Pin","Week","Skip","Auto","Ev"];
+const SYNCK=["Tasks","Done","MT","MP","Reward","Goal","Total","Streak","Day","Owned","Pending","Earned","Names","Pre","PreDone","Coins","CT","Care","Partner","Quiz","QStat","Pin","Week","Skip","Auto","Ev","Cal"];
 let fam="",syncTs=0,pushT=null,busyP=false,busyL=false;
 try{fam=localStorage.getItem("mobileKongFam")||"";syncTs=+(localStorage.getItem("mobileKongSyncTs")||0)}catch(e){}
 const TE=new TextEncoder(),TD=new TextDecoder(),keyCache={};
