@@ -1,6 +1,6 @@
 <!doctype html><html lang="ko"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="robots" content="noindex,nofollow"><meta name="theme-color" content="#8b70ff"><link rel="manifest" href="/manifest.json"><link rel="icon" type="image/png" href="/icons/icon-192.png"><link rel="apple-touch-icon" href="/icons/icon-180.png"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="콩콩 미션"><title>콩콩 미션</title>
+<meta name="robots" content="noindex,nofollow"><meta name="theme-color" content="#8b70ff"><link rel="manifest" href="/manifest.json"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/icon-180.png"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="콩콩 미션"><title>콩콩 미션</title>
 <style>
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;height:100%;overflow:hidden;font-family:Arial,"Noto Sans KR",sans-serif;background:#fff7e8;color:#40354b}
@@ -210,7 +210,7 @@ details{background:#f8f4fb;border-radius:14px;padding:10px 12px;margin:8px 0}sum
 <button class="addBtn" style="width:100%;padding:11px;background:#745cff" onclick="createFam()">🆕 새 가족 코드 만들기</button>
 <span class="lbl">이미 코드가 있다면</span><div class="add"><input id="famInput" maxlength="40" placeholder="가족 코드 입력"><button class="addBtn" onclick="joinFam()">연결</button></div></div>
 <div id="famOn" style="display:none"><p style="margin:0 0 4px;font-size:12px;color:#83778b">가족 코드 (다른 사람에게 알려주지 마세요)</p>
-<div id="famCode" style="font-weight:900;font-size:15px;word-break:break-all;background:#fff;border-radius:12px;padding:8px 10px"></div>
+<div style="display:flex;gap:6px;align-items:center"><div id="famCode" style="flex:1;font-weight:900;font-size:15px;word-break:break-all;background:#fff;border-radius:12px;padding:8px 10px;letter-spacing:1px"></div><button class="addBtn" id="famEye" style="flex:none;padding:10px 12px;background:#9b8fa8" onclick="toggleFamCode()">👁 보기</button></div>
 <div class="add" style="margin-top:8px"><button class="addBtn" style="flex:1;padding:10px;background:#745cff" onclick="shareFam()">📤 초대 링크 보내기</button><button class="addBtn" style="flex:1;padding:10px;background:#5aa0d8" onclick="syncNow()">🔄 지금 동기화</button></div>
 <div id="famMsg" style="font-size:12px;color:#83778b;margin-top:6px"></div>
 <button onclick="leaveFam()" style="background:none;color:#aa8292;font-size:13px;padding:6px 2px">이 폰 연결 끊기</button></div></details>
@@ -401,8 +401,10 @@ function applyRemote(r){SYNCK.forEach(k=>{const v=r.data&&r.data[k];if(v===undef
 async function pull(){if(!fam||!SBOK||busyL||pushT||busyP)return;busyL=true;try{const r=await rpc("kong_get",{p_code:await idOf(fam)});if(r&&r.ts>syncTs){if(document.querySelector(".modal.show")||document.getElementById("intro")){busyL=false;return}applyRemote({data:await decObj(fam,r.data),ts:r.ts});return}if(r)famMsg("✅ 최신 상태예요")}catch(e){}busyL=false}
 function syncNow(){famMsg("동기화 중…");pushT&&clearTimeout(pushT);(async()=>{await pull();if(!busyL)await pushNow()})()}
 function genCode(){const a="abcdefghjkmnpqrstuvwxyz23456789",b=new Uint8Array(20);crypto.getRandomValues(b);return Array.from(b,x=>a[x%a.length]).join("")}
-function famUI(){famOff.style.display=!SBOK?"":"none";famNew.style.display=(SBOK&&!fam)?"":"none";famOn.style.display=(SBOK&&fam)?"":"none";famCode.textContent=fam}
-async function createFam(){if(!SBOK)return;fam=genCode();localStorage.setItem("mobileKongFam",fam);await pushNow();if(syncTs===0){fam="";localStorage.removeItem("mobileKongFam");famUI();alert("서버에 연결하지 못했어요. 인터넷을 확인해 주세요");return}famUI();alert("가족 코드를 만들었어요! 초대 링크를 가족에게 보내 주세요")}
+function famUI(){famOff.style.display=!SBOK?"":"none";famNew.style.display=(SBOK&&!fam)?"":"none";famOn.style.display=(SBOK&&fam)?"":"none";famShowOff()}
+var famTm=0;function famShowOff(){clearTimeout(famTm);famCode.textContent=fam?"●".repeat(fam.length>20?20:fam.length):"";famCode.dataset.on="";const e=document.getElementById("famEye");if(e)e.textContent="👁 보기"}
+function toggleFamCode(){if(famCode.dataset.on){famShowOff();return}if(!pinHash){alert("먼저 아래 🔒 비밀번호에서 숫자 4자리를 정해 주세요.\n정하지 않으면 아이가 설정에 들어와서 코드를 볼 수 있어요.");return}famCode.textContent=fam;famCode.dataset.on="1";document.getElementById("famEye").textContent="🙈 숨기기";clearTimeout(famTm);famTm=setTimeout(famShowOff,8000)}
+async function createFam(){if(!SBOK)return;fam=genCode();localStorage.setItem("mobileKongFam",fam);await pushNow();if(syncTs===0){fam="";localStorage.removeItem("mobileKongFam");famUI();alert("서버에 연결하지 못했어요. 인터넷을 확인해 주세요");return}famUI();alert("가족 코드를 만들었어요! 초대 링크를 가족에게 보내 주세요");if(!pinHash){const v=prompt("아이가 설정을 열지 못하게 잠글 비밀번호 숫자 4자리를 정해 주세요.\n(취소하면 나중에 설정의 🔒 비밀번호에서 정할 수 있어요)");if(v&&/^\d{4}$/.test(v.trim())){pinHash=hp(v.trim());try{localStorage.setItem("mobileKongPin",pinHash)}catch(e){}schedulePush();render();alert("설정 비밀번호를 저장했어요")}}}
 async function joinCode(code){code=(code||"").trim().toLowerCase();if(code.length<16){alert("가족 코드를 정확히 입력해 주세요");return}try{const r=await rpc("kong_get",{p_code:await idOf(code)});if(!r){alert("없는 코드예요. 다시 확인해 주세요");return}const data=await decObj(code,r.data);if(!confirm("이 폰의 기록이 가족 기록으로 바뀌어요. 연결할까요?"))return;fam=code;localStorage.setItem("mobileKongFam",fam);applyRemote({data,ts:r.ts})}catch(e){alert("서버에 연결하지 못했어요")}}
 function joinFam(){joinCode(famInput.value)}
 function leaveFam(){if(!confirm("이 폰의 가족 연결을 끊을까요?\n기록은 이 폰에 그대로 남아요."))return;fam="";syncTs=0;localStorage.removeItem("mobileKongFam");localStorage.removeItem("mobileKongSyncTs");famUI()}
