@@ -209,18 +209,23 @@ details{background:#f8f4fb;border-radius:14px;padding:10px 12px;margin:8px 0}sum
 <div class="add" style="margin-top:6px;align-items:center"><span style="font-size:13px;font-weight:900;flex:none">⏰ 예약 시간(선택)</span><input id="newTime" type="time"></div>
 <div class="add" style="margin-top:6px"><input id="newPraise" maxlength="40" placeholder="💌 칭찬 한마디(비우면 자동으로 칭찬해줘요)"></div>
 <div id="parentTaskList" style="margin-top:8px"></div></details>
-<details><summary>🎯 요일별 미션 (매주 반복)</summary>
-<p style="margin:0 0 6px;font-size:12px;color:#83778b">요일마다 하는 미션(예: 월요일은 피아노 연습)을 한 번만 등록하면 그날 아침 자동으로 들어가요. 학원 같은 일정은 일정 탭 달력에서 \u2018매주 반복\u2019으로 넣어요.</p>
+<details><summary>🗓 달력으로 일정·미션 등록</summary>
+<p style="margin:0 0 6px;font-size:12px;color:#83778b">날짜를 눌러 일정·미션·메시지를 등록해요. 학원처럼 매주 있는 건 ‘매주 반복’을 체크하고 요일을 고르면 돼요. 그날이 되면 자동으로 들어와요. (일정은 📅 일정 탭에서, 미션은 오늘의 미션에서 보여요)</p>
+<div class="calnav"><button onclick="calNav(-1)">◀</button><b id="calTitle"></b><button onclick="calNav(1)">▶</button></div>
+<div class="calg" id="calGrid"></div>
+<div id="calDay" style="margin-top:10px"></div>
+<span class="lbl">종류</span><div class="wk" id="calKind"></div><div class="wk pre" id="calPre"></div>
+<div class="add"><input id="calName" maxlength="40" placeholder="예: 치과 예약"><input id="calTime" type="time" style="flex:none;width:112px"></div>
+<div id="calPlaceBox" style="margin-top:6px"><div class="add" style="margin-bottom:6px;align-items:center"><span style="flex:none;font-size:13px;font-weight:900">🔔 알림</span><select id="calAl" style="flex:1;border:2px solid #eadcf0;border-radius:12px;padding:8px;font-size:15px;background:#fff"></select></div><div class="add"><input id="calPlace" maxlength="30" placeholder="장소·학원 이름"><input id="calFloor" maxlength="8" placeholder="층" style="flex:none;width:68px"></div><div class="add" style="margin-top:6px"><input id="calAddr" maxlength="80" placeholder="주소(선택)"></div></div>
+<div id="calRepBox" style="margin-top:6px"><label class="qlb"><input type="checkbox" id="calRep" onchange="calUI()">🔁 매주 반복도 함께 등록하기</label><div class="wk" id="calRepDays" style="display:none"></div></div>
+<button class="addBtn" style="width:100%;padding:10px;margin-top:6px;background:#745cff" onclick="addCal()">➕ 이 날짜에 추가</button>
+<button class="addBtn" style="width:100%;padding:10px;margin-top:6px;background:#ff8a65" onclick="skipDate()">😴 이 날은 쉬는 날 (요일별 일정 빼기)</button>
+<button class="addBtn" style="width:100%;padding:10px;margin-top:6px;background:#5aa0d8" onclick="downloadIcsPlan()">📲 알림을 폰 달력에 넣기 (앱이 꺼져 있어도 울려요)</button></details>
+<details><summary>🔁 매주 반복 · 쉬는 날 관리</summary>
+<p style="margin:0 0 6px;font-size:12px;color:#83778b">달력에서 ‘매주 반복’으로 등록한 일정·미션을 한눈에 보고 고치거나 지워요.</p>
 <div id="wkBoard" class="evcard" style="margin-top:2px"></div>
-<label class="qlb"><input type="checkbox" id="wkHol" onchange="setWkHol()">공휴일(설날·추석 등)에는 요일별 일정 쉬기</label>
-<b style="font-size:14px;display:block;margin-top:10px">➕ 새 미션 넣기</b>
-<span class="lbl">1. 요일 고르기 (여러 개 가능)</span><div class="wk" id="wkDays"></div>
-<span class="lbl">2. 이름 쓰기 (눌러서 고르거나 직접 입력)</span><div class="wk pre" id="wkPre"></div>
-<div class="wk" id="wkKind"></div>
-<div class="add"><input id="wkName" maxlength="35" placeholder="예: 피아노"><input id="wkTime" type="time" style="flex:none;width:112px"></div>
-<div id="wkPlaceBox" style="display:none;margin-top:6px"><div class="add" style="margin-bottom:6px;align-items:center"><span style="flex:none;font-size:13px;font-weight:900">🔔 알림</span><select id="wkAl" style="flex:1;border:2px solid #eadcf0;border-radius:12px;padding:8px;font-size:15px;background:#fff"></select></div><div class="add"><input id="wkPlace" maxlength="30" placeholder="학원 이름 (예: 강북학습센터)"><input id="wkFloor" maxlength="8" placeholder="층" style="flex:none;width:68px"></div><div class="add" style="margin-top:6px"><input id="wkAddr" maxlength="80" placeholder="주소 (예: 서울 강북구 ○○로 12)"></div></div>
-<button class="addBtn" style="width:100%;padding:10px;margin-top:6px;background:#745cff" onclick="addWeek()">➕ 고른 요일에 추가</button>
-<div class="add" style="align-items:center;margin-top:8px"><span style="font-size:13px;font-weight:900;flex:none">미션 열리는 시간</span><select id="wkOff" onchange="setWkOff()" style="flex:1;border:2px solid #eadcf0;border-radius:12px;padding:8px;font-size:15px;background:#fff"><option value="0">시작 시간에</option><option value="10">시작 10분 전에</option><option value="30">시작 30분 전에</option></select></div>
+<label class="qlb"><input type="checkbox" id="wkHol" onchange="setWkHol()">공휴일(설날·추석 등)에는 매주 반복 일정·미션 쉬기</label>
+<div class="add" style="align-items:center;margin-top:8px"><span style="font-size:13px;font-weight:900;flex:none">반복 미션 열리는 시간</span><select id="wkOff" onchange="setWkOff()" style="flex:1;border:2px solid #eadcf0;border-radius:12px;padding:8px;font-size:15px;background:#fff"><option value="0">시작 시간에</option><option value="10">시작 10분 전에</option><option value="30">시작 30분 전에</option></select></div>
 <details style="margin-top:8px"><summary style="font-size:14px">✏️ 수정·삭제하기</summary><div id="wkList" style="margin-top:6px"></div></details>
 <p style="margin:6px 0 0;font-size:11px;color:#a094aa">※ 오늘 목록은 바로 안 바뀌어요. 오늘 것을 고치려면 위의 “오늘의 미션”에서 고치거나 아래 버튼을 눌러요.</p>
 <button class="addBtn" style="width:100%;padding:10px;margin-top:6px;background:#5aa0d8" onclick="applyWeekToday()">🔄 오늘 일정 다시 반영하기</button>
@@ -229,18 +234,6 @@ details{background:#f8f4fb;border-radius:14px;padding:10px 12px;margin:8px 0}sum
 <button class="addBtn" style="width:100%;padding:10px;background:#ff8a65" onclick="skipToday()">😴 오늘은 쉬는 날이에요</button>
 <div class="add" style="margin-top:6px;align-items:center"><input id="skA" type="date"><span style="flex:none">~</span><input id="skB" type="date"><button class="addBtn" onclick="addSkip()">추가</button></div>
 <div id="skList" style="margin-top:6px"></div></details>
-<details><summary>🗓 달력으로 일정 등록 (날짜별)</summary>
-<p style="margin:0 0 6px;font-size:12px;color:#83778b">병원·예약·행사처럼 그날 하루만 있는 일정이나, 아이에게 전할 메시지를 날짜를 눌러서 등록해요. (미션은 “오늘의 미션”에서 따로 등록해요) 그날이 되면 자동으로 들어와요.</p>
-<div class="calnav"><button onclick="calNav(-1)">◀</button><b id="calTitle"></b><button onclick="calNav(1)">▶</button></div>
-<div class="calg" id="calGrid"></div>
-<div id="calDay" style="margin-top:10px"></div>
-<span class="lbl">종류</span><div class="wk" id="calKind"></div>
-<div class="add"><input id="calName" maxlength="40" placeholder="예: 치과 예약"><input id="calTime" type="time" style="flex:none;width:112px"></div>
-<div id="calPlaceBox" style="margin-top:6px"><div class="add" style="margin-bottom:6px;align-items:center"><span style="flex:none;font-size:13px;font-weight:900">🔔 알림</span><select id="calAl" style="flex:1;border:2px solid #eadcf0;border-radius:12px;padding:8px;font-size:15px;background:#fff"></select></div><div class="add"><input id="calPlace" maxlength="30" placeholder="장소·학원 이름"><input id="calFloor" maxlength="8" placeholder="층" style="flex:none;width:68px"></div><div class="add" style="margin-top:6px"><input id="calAddr" maxlength="80" placeholder="주소(선택)"></div></div>
-<div id="calRepBox" style="margin-top:6px"><label class="qlb"><input type="checkbox" id="calRep" onchange="calUI()">🔁 매주 반복도 함께 등록하기</label><div class="wk" id="calRepDays" style="display:none"></div></div>
-<button class="addBtn" style="width:100%;padding:10px;margin-top:6px;background:#745cff" onclick="addCal()">➕ 이 날짜에 추가</button>
-<button class="addBtn" style="width:100%;padding:10px;margin-top:6px;background:#ff8a65" onclick="skipDate()">😴 이 날은 쉬는 날 (요일별 일정 빼기)</button>
-<button class="addBtn" style="width:100%;padding:10px;margin-top:6px;background:#5aa0d8" onclick="downloadIcsPlan()">📲 알림을 폰 달력에 넣기 (앱이 꺼져 있어도 울려요)</button></details>
 <details><summary>📋 카톡 일정 붙여넣기</summary>
 <p style="margin:0 0 6px;font-size:12px;color:#83778b">카톡·톡캘린더에서 오늘 일정을 복사해 아래에 붙여넣으세요. 시간과 일정 이름을 찾아서 예약 미션으로 만들어 줘요.</p>
 <textarea id="schedText" rows="5" placeholder="예)&#10;체험학습&#10;오후 1:10 - 오후 3:00&#10;피아노&#10;오후 6:10 - 오후 6:40" style="width:100%;border:2px solid #eadcf0;border-radius:14px;padding:9px 10px;font-size:15px;font-family:inherit;outline:none;resize:vertical"></textarea>
@@ -405,7 +398,7 @@ function pushPlan(){const out=[],now=Date.now(),mk=(k,at,to,t,b,g,tag)=>({k,at,t
    else if(/^\d+$/.test(String(x.al))){at=at0+(tm-(+x.al))*60000;t="🔔 "+(x.al==="0"?"지금 일정이에요":"곧 일정이에요 ("+ALN[x.al]+")");b=x.n+" ("+fmt(x.t)+")"+(where?"\n📍 "+where:"")}
    else return;
    if(at>now-60000)out.push(mk("e:"+k+":"+x.n+":"+x.t+":"+x.al,at,"",t,b,"e","e-"+x.n))});
-  const ms={};items().forEach(x=>{if(!x.time)return;if(n===0&&x.done)return;(ms[x.time]=ms[x.time]||[]).push(x.name)});
+  const ms={},add=(tm,nm)=>{(ms[tm]=ms[tm]||[]).push(nm)};if(n===0){items().forEach(x=>{if(x.time&&!x.done)add(x.time,x.name)})}else{const ak=auto.keys||[];items().forEach(x=>{if(x.time&&(x.pre||!ak.includes(x.name)))add(x.time,x.name)});dayEvents(k).forEach(x=>{if(x.mis&&x.t){const[h,m]=x.t.split(":"),o=Math.max(0,+h*60+ +m-(+week.off||0));add(p2(Math.floor(o/60))+":"+p2(o%60),x.n)}})}
   Object.keys(ms).forEach(tm=>{const[h,m]=tm.split(":"),at=at0+(+h*60+ +m)*60000;if(at>now-60000)out.push(mk("m:"+k+":"+tm,at,"아이","🔔 미션 시간이에요!",ms[tm].join(", "),"m","m-"+tm))})}
  return out}
 let pushBusy=false;
@@ -494,33 +487,28 @@ function removePin(){pinHash="";try{localStorage.removeItem("mobileKongPin")}cat
 pinInput.addEventListener("keydown",e=>{if(e.key==="Enter")checkPin()});
 const WDN=["일","월","화","수","목","금","토"],WORD=[1,2,3,4,5,6,0];let wkSel=[new Date().getDay()],wkK="m";
 function saveWeek(){try{localStorage.setItem("mobileKongWeek",JSON.stringify(week));localStorage.setItem("mobileKongSkip",JSON.stringify(skip));localStorage.setItem("mobileKongAuto",JSON.stringify(auto))}catch(e){}schedulePush()}
-function wkUI(){if(!document.getElementById("wkDays"))return;wkDays.innerHTML=WORD.map(d=>`<button class="${wkSel.includes(d)?"on":""}" onclick="wkTog(${d})">${WDN[d]}</button>`).join("");
- wkPre.innerHTML=["학원","피아노","영어","태권도","수영","미술","방과후","독서"].map(x=>`<button onclick="wkName.value='${x}'">${x}</button>`).join("");wkOff.value=String(week.off);wkHol.checked=week.hol!==false;wkBoard.innerHTML=wkBoardHtml();if(!wkAl.options.length)wkAl.innerHTML=alOpts("10");wkK="m";wkKind.innerHTML='<div style="font-size:12px;color:#83778b;padding:2px 0">🎯 여기서는 <b>미션</b>(스탬프)만 등록해요. 학원·병원 같은 <b>일정</b>은 📅 일정 탭에서 날짜를 눌러 등록하세요(매주 반복 가능).</div>';wkPlaceBox.style.display="none";
+function wkUI(){if(!document.getElementById("wkList"))return;wkOff.value=String(week.off);wkHol.checked=week.hol!==false;wkBoard.innerHTML=wkBoardHtml();
  wkList.innerHTML=WORD.map(d=>{const a=week.d[d]||[];if(!a.length)return"";return `<div style="margin-top:6px"><b style="color:#745cff">${WDN[d]}요일</b>`+a.map((it,i)=>`<div class="wkrow"><span style="flex:none">${it.k==="e"?"📅":"🎯"}</span><input value="${esc(it.n)}" maxlength="35" onchange="wkEdit(${d},${i},'n',this.value)" style="flex:1;min-width:0"><input type="time" value="${it.t||""}" onchange="wkEdit(${d},${i},'t',this.value)" style="flex:none;width:122px"><button onclick="wkDel(${d},${i})" style="background:#fff0f4;color:#a9677e;border-radius:9px;padding:6px 8px">삭제</button></div>${it.k==="e"?`<div class="wkrow" style="padding-left:22px"><input value="${esc(it.pl||"")}" placeholder="학원 이름" maxlength="30" onchange="wkEdit(${d},${i},'pl',this.value)" style="flex:1;min-width:0"><input value="${esc(it.fl||"")}" placeholder="층" maxlength="8" onchange="wkEdit(${d},${i},'fl',this.value)" style="flex:none;width:56px"></div><div class="wkrow" style="padding-left:22px"><input value="${esc(it.ad||"")}" placeholder="주소" maxlength="80" onchange="wkEdit(${d},${i},'ad',this.value)" style="flex:1;min-width:0"></div><div class="wkrow" style="padding-left:22px"><span style="flex:none;font-size:12px">🔔</span><select onchange="wkEdit(${d},${i},'al',this.value)" style="flex:1;border:2px solid #eadcf0;border-radius:10px;padding:5px;font-size:13px;background:#fff">${alOpts(it.al)}</select></div>`:""}`).join("")+`</div>`}).join("")||'<div style="font-size:13px;color:#a094aa">아직 등록한 요일별 일정이 없어요.</div>';
  skList.innerHTML=skip.ranges.map((r,i)=>`<div class="wkrow"><span style="flex:1;font-size:14px">${r[0]===r[1]?r[0]:r[0]+" ~ "+r[1]}</span><button onclick="skDel(${i})" style="background:#fff0f4;color:#a9677e;border-radius:9px;padding:6px 8px">삭제</button></div>`).join("")}
-function setWkKind(k){wkK=k;wkUI()}
-function wkTog(d){const i=wkSel.indexOf(d);if(i<0)wkSel.push(d);else wkSel.splice(i,1);wkUI()}
 function setWkHol(){week.hol=wkHol.checked;saveWeek();wkUI();calUI()}
 function setWkOff(){week.off=+wkOff.value;saveWeek()}
 function afterAuto(){save();lastSig=null;tick();render()}
-function addWeek(){const n=wkName.value.trim(),t=wkTime.value;if(!n){alert("일정 이름을 넣어 주세요");return}if(!wkSel.length){alert("요일을 하나 이상 골라 주세요");return}
- const o={n,t};if(wkK==="e"){o.k="e";o.al=wkAl.value;o.pl=wkPlace.value.trim();o.fl=wkFloor.value.trim();o.ad=wkAddr.value.trim()}wkSel.forEach(d=>{if(!week.d[d].some(x=>x.n===n&&x.t===t))week.d[d].push(Object.assign({},o))});wkName.value="";wkTime.value="";wkPlace.value="";wkFloor.value="";wkAddr.value="";saveWeek();
- if(wkSel.includes(new Date().getDay())){dailyAuto(true);afterAuto()}wkUI()}
-function wkEdit(d,i,k,v){if(!week.d[d][i])return;week.d[d][i][k]=(k==="n"?v.trim():v);saveWeek()}
-function wkDel(d,i){week.d[d].splice(i,1);saveWeek();wkUI()}
+function unmat(it){if(it.k==="e"||it.k==="g"){ev.list=ev.list.filter(x=>!(x.n===it.n&&x.t===(it.t||"")));evSave()}else{const ak=auto.keys||[],j=missions.indexOf(it.n);if(j>=0&&ak.includes(it.n)){missions.splice(j,1);done.splice(j,1);mt.splice(j,1);mp.splice(j,1);auto.keys=ak.filter(x=>x!==it.n)}}}
+function wkEdit(d,i,k,v){const it=week.d[d][i];if(!it)return;const td=d===new Date().getDay();if(td)unmat(it);it[k]=(k==="n"?v.trim():v);saveWeek();if(td){dailyAuto(true);afterAuto()}wkUI()}
+function wkDel(d,i){const it=week.d[d][i],td=d===new Date().getDay();if(it&&td)unmat(it);week.d[d].splice(i,1);saveWeek();if(td){dailyAuto(true);afterAuto()}wkUI()}
 function applyWeekToday(){const n=dailyAuto(true);afterAuto();alert(isOff(ds(new Date()))?"오늘은 쉬는 날(공휴일 포함)로 되어 있어서 요일별 일정은 넣지 않았어요":n+"개의 일정을 오늘 미션에 넣었어요")}
-function removeAutoToday(){ev.list=[];const old=auto.keys||[];for(let i=missions.length-1;i>=0;i--){if(old.includes(missions[i])){missions.splice(i,1);done.splice(i,1);mt.splice(i,1);mp.splice(i,1)}}auto.keys=[]}
+function removeAutoToday(){ev.list=[];const old=auto.keys||[];for(let i=missions.length-1;i>=0;i--){if(old.includes(missions[i])){missions.splice(i,1);done.splice(i,1);mt.splice(i,1);mp.splice(i,1)}}auto.keys=[];dailyAuto(true);evSave()}
 function skipToday(){const t=ds(new Date());if(!skip.days.includes(t))skip.days.push(t);removeAutoToday();saveWeek();afterAuto();wkUI();alert("오늘은 쉬는 날로 했어요. 요일별 일정이 오늘 목록에서 빠졌어요")}
 function addSkip(){let a=skA.value,b=skB.value||a;if(!a){alert("시작 날짜를 골라 주세요");return}if(b<a){const x=a;a=b;b=x}skip.ranges.push([a,b]);skA.value="";skB.value="";const t=ds(new Date());if(t>=a&&t<=b)removeAutoToday();saveWeek();afterAuto();wkUI()}
-function skDel(i){skip.ranges.splice(i,1);saveWeek();wkUI()}
+function skDel(i){skip.ranges.splice(i,1);saveWeek();if(!isOff(ds(new Date()))){dailyAuto(true)}afterAuto();wkUI()}
 /* ---- 오늘 일정(미션 아님) + 이동시간 ---- */
 const ROUTE_API="";/* 이동시간 API 주소 — 연결 규격 확인 후 채움 */
 function evSave(){try{localStorage.setItem("mobileKongEv",JSON.stringify(ev))}catch(e){}schedulePush()}
 let evY=new Date().getFullYear(),evM=new Date().getMonth(),evSel=ds(new Date());
 function dayEvents(k){const today=ds(new Date()),out=[];
  if(k===today){ev.list.forEach((x,i)=>out.push(Object.assign({i},x)));return out}
- (cal[k]||[]).forEach(x=>{if(x.k!=="m")out.push({n:x.n,t:x.t||"",pl:x.pl||"",fl:x.fl||"",ad:x.ad||"",al:x.al||"",msg:x.k==="g"?1:0})});
- if(!isOff(k)){const wd=new Date(k+"T00:00:00").getDay();(week.d[wd]||[]).forEach(x=>{if(x.k==="e")out.push({n:x.n,t:x.t||"",pl:x.pl||"",fl:x.fl||"",ad:x.ad||"",al:x.al||"",msg:0,rep:1})})}
+ (cal[k]||[]).forEach(x=>{out.push({n:x.n,t:x.t||"",pl:x.pl||"",fl:x.fl||"",ad:x.ad||"",al:x.k==="m"?"":(x.al||""),msg:x.k==="g"?1:0,mis:x.k==="m"?1:0})});
+ if(!isOff(k)){const wd=new Date(k+"T00:00:00").getDay();(week.d[wd]||[]).forEach(x=>{out.push({n:x.n,t:x.t||"",pl:x.pl||"",fl:x.fl||"",ad:x.ad||"",al:x.k==="e"?(x.al||""):"",msg:0,rep:1,mis:x.k==="e"?0:1})})}
  return out.sort((a,b)=>(a.t||"")<(b.t||"")?-1:1)}
 function evNav(d){evM+=d;if(evM<0){evM=11;evY--}if(evM>11){evM=0;evY++}renderEv()}
 function evPick(k){evSel=k;renderEv()}
@@ -533,7 +521,7 @@ function renderEv(){const b=document.getElementById("evBox");if(!b)return;const 
  for(let d=1;d<=days;d++){const k=evY+"-"+p2(evM+1)+"-"+p2(d),wd=new Date(evY,evM,d).getDay(),E=dayEvents(k),hn=HOL[k]||"",nt=E.filter(x=>!x.msg).length,ng=E.filter(x=>x.msg).length;
   g+=`<button class="${k===today?"td ":""}${k===evSel?"sel ":""}${wd===0?"sun ":""}${hn?"hol ":""}${k<today?"off":""}" onclick="evPick('${k}')">${hn?`<span class="hn">${esc(hn.replace(" 연휴","").replace("대체공휴일","대체"))}</span>`:""}${d}<span class="dd">${nt>3?"<b>"+nt+"</b>":"<i></i>".repeat(nt)}${ng?'<i class="g"></i>':""}</span></button>`}
  const sd=new Date(evSel+"T00:00:00"),E=dayEvents(evSel),isT=evSel===today,nx=isT?L.findIndex(x=>!x.ok&&x.ad&&!x.msg):-1;
- const rows=E.length?E.map(x=>{const ok=isT&&x.ok;return `<div class="evrow ${ok?"ok":""}"><span class="evt">${x.msg?"💌":esc(x.t?fmt(x.t):"종일")}</span><div class="evm"><b>${esc(x.n)}</b><div>${x.rep?'<span class="evtag rep">🔁 매주</span>':""}${(x.al!==""&&x.al!=null&&!x.msg&&x.al in ALN)?`<span class="evtag al">🔔 ${ALN[x.al]}</span>`:""}</div>${(x.pl||x.fl)?`<small>📍 ${esc(x.pl)} ${esc(x.fl)}</small>`:""}${x.ad?`<small>${esc(x.ad)}</small>`:""}${(isT&&x.i===nx)?`<div class="evr" id="evR"><button onclick="routeGo(${x.i})">🧭 지금 위치에서 이동시간 보기</button></div>`:""}</div>${isT?`<button class="evok" onclick="evOk(${x.i})">${x.msg?(ok?"읽음 ✓":"읽었어요"):(ok?"확인함 ✓":"확인했어요")}</button>`:""}</div>`}).join(""):'<div class="evempty" style="padding:14px 6px">이 날은 등록된 일정이 없어요</div>';
+ const rows=E.length?E.map(x=>{const ok=isT&&x.ok;return `<div class="evrow ${ok?"ok":""}"><span class="evt">${x.mis?"🎯":x.msg?"💌":esc(x.t?fmt(x.t):"종일")}</span><div class="evm"><b>${esc(x.n)}</b><div>${x.rep?'<span class="evtag rep">🔁 매주</span>':""}${(x.al!==""&&x.al!=null&&!x.msg&&x.al in ALN)?`<span class="evtag al">🔔 ${ALN[x.al]}</span>`:""}</div>${(x.pl||x.fl)?`<small>📍 ${esc(x.pl)} ${esc(x.fl)}</small>`:""}${x.ad?`<small>${esc(x.ad)}</small>`:""}${(isT&&x.i===nx)?`<div class="evr" id="evR"><button onclick="routeGo(${x.i})">🧭 지금 위치에서 이동시간 보기</button></div>`:""}</div>${isT?`<button class="evok" onclick="evOk(${x.i})">${x.msg?(ok?"읽음 ✓":"읽었어요"):(ok?"확인함 ✓":"확인했어요")}</button>`:""}</div>`}).join(""):'<div class="evempty" style="padding:14px 6px">이 날은 등록된 일정이 없어요</div>';
  b.innerHTML=`<div class="evcard evcal"><div class="calnav"><button onclick="evNav(-1)">◀</button><b>${evY}년 ${evM+1}월</b><button onclick="evNav(1)">▶</button></div><div class="calg">${g}</div></div>
  <div class="evday"><h3>${sd.getMonth()+1}월 ${sd.getDate()}일 (${WDN[sd.getDay()]})${isT?" · 오늘":""} ${HOL[evSel]?`<span class="hol">🎌 ${esc(HOL[evSel])}</span>`:""}${inSkip(evSel)?' <span class="hol">😴 쉬는 날</span>':""}</h3>${rows}<div class="evbtns"><button onclick="evToday()">📅 오늘로</button><button onclick="editDay()">✏️ 이 날 일정 넣기</button></div></div>
  <details class="evcard" style="margin-top:8px"><summary style="font-weight:900;font-size:14px;color:#745cff">🔁 매주 일정 한눈에</summary><div style="margin-top:4px">${wkBoardHtml()}</div></details>`}
@@ -547,7 +535,7 @@ async function routeGo(i){const x=ev.list[i],box=document.getElementById("evR");
  try{const r=await routeFetch(pos.coords.latitude,pos.coords.longitude,x),f=v=>v==null?"-":v+"분";box.innerHTML=`<span class="evch">🚗 ${f(r.car)}</span><span class="evch">🚌 ${f(r.bus)}</span><span class="evch">🚶 ${f(r.walk)}</span><div><button onclick="routeGo(${i})">🔄 다시 보기</button></div>`}catch(e){box.innerHTML='<small>이동시간을 가져오지 못했어요</small><div><button onclick="routeGo('+i+')">다시 해보기</button></div>'}}
 /* ---- 달력 (날짜별 일정) ---- */
 let calY=new Date().getFullYear(),calM=new Date().getMonth(),calSel=ds(new Date()),calK="e",calRepSel=[new Date().getDay()];
-const CKN={m:"🎯 미션",e:"📅 일정",g:"💌 메시지"},CPH={m:"예: 병원 다녀오기",e:"예: 치과 예약",g:"예: 오늘은 할머니 댁에 가요"};
+const CKN={m:"🎯 미션",e:"📅 일정",g:"💌 메시지"},CPH={m:"예: 피아노 연습하기",e:"예: 치과 예약",g:"예: 오늘은 할머니 댁에 가요"},CPRE={e:["학원","피아노","영어","태권도","수영","미술","방과후","병원"],m:["숙제하기","독서","양치하기","책가방 챙기기","운동하기"],g:[]};
 const p2=n=>String(n).padStart(2,"0");
 function calSave(){try{localStorage.setItem("mobileKongCal",JSON.stringify(cal))}catch(e){}schedulePush()}
 function calNav(d){calM+=d;if(calM<0){calM=11;calY--}if(calM>11){calM=0;calY++}calUI()}
@@ -562,16 +550,16 @@ function calUI(){if(!document.getElementById("calGrid"))return;const today=ds(ne
  const sd=new Date(calSel+"T00:00:00"),wd=sd.getDay(),L=cal[calSel]||[],W=(week.d[wd]||[]);
  calDay.innerHTML=`<b style="color:#745cff">${sd.getMonth()+1}월 ${sd.getDate()}일 (${WDN[wd]})${HOL[calSel]?` <span style="color:#e0457b">🎌 ${esc(HOL[calSel])}</span>`:""}${inSkip(calSel)?" 😴 쉬는 날":""}</b>`+(W.length?`<div style="font-size:12px;color:#83778b;margin-top:3px">매주 반복: ${W.map(x=>(x.k==="e"?"📅":"🎯")+" "+esc(x.t||"")+" "+esc(x.n)).join(" · ")}</div>`:"")+
   (L.length?L.map((x,i)=>`<div class="wkrow"><span style="flex:none">${x.k==="g"?"💌":x.k==="m"?"🎯":"📅"}</span><span style="flex:1;font-size:14px;overflow-wrap:anywhere">${esc(x.t||"")} ${esc(x.n)}${(x.pl||x.fl)?" · "+esc(x.pl)+" "+esc(x.fl):""}</span><button onclick="calDel('${calSel}',${i})" style="background:#fff0f4;color:#a9677e;border-radius:9px;padding:6px 8px">삭제</button></div>`).join(""):'<div style="font-size:13px;color:#a094aa;margin-top:4px">이 날 등록한 일정이 없어요.</div>');
- calKind.innerHTML=["e","g"].map(k=>`<button class="${calK===k?"on":""}" onclick="setCalK('${k}')">${CKN[k]}</button>`).join("");calName.placeholder=CPH[calK];calPlaceBox.style.display=calK==="e"?"":"none";calTime.style.opacity=calK==="g"?".4":"1";if(!calAl.options.length)calAl.innerHTML=alOpts("10");calRepBox.style.display=calK==="g"?"none":"";const rp=calRep.checked&&calK!=="g";calRepDays.style.display=rp?"":"none";calRepDays.innerHTML=WORD.map(d=>`<button class="${calRepSel.includes(d)?"on":""}" onclick="calRepTog(${d})">${WDN[d]}</button>`).join("")}
+ calKind.innerHTML=["e","m","g"].map(k=>`<button class="${calK===k?"on":""}" onclick="setCalK('${k}')">${CKN[k]}</button>`).join("");calName.placeholder=CPH[calK];calPre.innerHTML=(CPRE[calK]||[]).map(x=>`<button onclick="calName.value='${x}'">${x}</button>`).join("");calPlaceBox.style.display=calK==="e"?"":"none";calTime.style.opacity=calK==="g"?".4":"1";if(!calAl.options.length)calAl.innerHTML=alOpts("10");calRepBox.style.display=calK==="g"?"none":"";const rp=calRep.checked&&calK!=="g";calRepDays.style.display=rp?"":"none";calRepDays.innerHTML=WORD.map(d=>`<button class="${calRepSel.includes(d)?"on":""}" onclick="calRepTog(${d})">${WDN[d]}</button>`).join("")}
 function addCal(){const n=calName.value.trim(),t=calK==="g"?"":calTime.value,today=ds(new Date()),rep=calRep.checked&&calK!=="g";if(!n){alert("이름이나 내용을 넣어 주세요");return}
  const base={n,t,pl:calK==="e"?calPlace.value.trim():"",fl:calK==="e"?calFloor.value.trim():"",ad:calK==="e"?calAddr.value.trim():"",al:calK==="e"?calAl.value:""};
  if(rep){const days=calRepSel.length?calRepSel:[new Date(calSel+"T00:00:00").getDay()];days.forEach(d=>{if(!week.d[d].some(x=>x.n===n&&x.t===t)){const o={n,t};if(calK==="e"){o.k="e";o.al=base.al;o.pl=base.pl;o.fl=base.fl;o.ad=base.ad}week.d[d].push(o)}});saveWeek();wkUI();
-  calName.value="";calTime.value="";calPlace.value="";calFloor.value="";calAddr.value="";calRep.checked=false;if(days.includes(new Date().getDay())){dailyAuto(true);afterAuto()}calUI();alert("매주 "+days.map(d=>WDN[d]).join("·")+"요일에 반복해서 등록했어요");return}
+  calName.value="";calTime.value="";calPlace.value="";calFloor.value="";calAddr.value="";calRep.checked=false;if(days.includes(new Date().getDay())){dailyAuto(true);afterAuto()}calUI();if(calSel>=today&&!days.includes(new Date(calSel+"T00:00:00").getDay())){(cal[calSel]=cal[calSel]||[]).push(Object.assign({k:calK},base));calSave();if(calSel===today){dailyAuto(true);afterAuto()}calUI()}alert("매주 "+days.map(d=>WDN[d]).join("·")+"요일에 반복해서 등록했어요");return}
  if(calSel<today){alert("지난 날짜에는 등록할 수 없어요");return}
  (cal[calSel]=cal[calSel]||[]).push(Object.assign({k:calK},base));
  calName.value="";calTime.value="";calPlace.value="";calFloor.value="";calAddr.value="";calSave();if(calSel===today){dailyAuto(true);afterAuto()}calUI()}
 function calDel(d,i){const a=cal[d]||[],it=a[i];if(!it)return;a.splice(i,1);if(!a.length)delete cal[d];calSave();
- if(d===ds(new Date())){if(it.k==="m"){const j=missions.indexOf(it.n);if(j>=0){missions.splice(j,1);done.splice(j,1);mt.splice(j,1);mp.splice(j,1)}}else ev.list=ev.list.filter(x=>!(x.n===it.n&&x.t===(it.t||"")));evSave();afterAuto()}calUI()}
+ if(d===ds(new Date())){unmat(it.k==="m"?{n:it.n}:{k:"e",n:it.n,t:it.t||""});dailyAuto(true);evSave();afterAuto()}calUI()}
 function skipDate(){const t=ds(new Date());if(calSel<t){alert("지난 날짜예요");return}skip.ranges.push([calSel,calSel]);if(calSel===t)removeAutoToday();saveWeek();afterAuto();wkUI();calUI();alert("이 날은 쉬는 날로 했어요")}
 /* ---- 알림 · 내일 일정 · 한눈에 보기 ---- */
 const ALN={"":"알림 없음","0":"시작 시간에","10":"10분 전","30":"30분 전","60":"1시간 전","day":"전날 저녁 8시"};
@@ -638,7 +626,7 @@ function renderChat(){const L=document.getElementById("chatList");if(!L)return;
   if(!mine)h+=`<div class="cn">${esc(m.f)}</div>`;
   h+=`<div class="cb ${mine?"me":"ot"}">${m.t!=="all"?`<span class="cwhis">${mine?"→ "+esc(m.t)+"에게":"🔒 나에게"}</span>`:""}${esc(m.x)}</div><div class="cm ${mine?"me":""}">${tm}${m.tmp?" · 보내는 중":""}</div>`});
  L.innerHTML=h||'<div class="evempty">💬<br>아직 메시지가 없어요<br><small>아래에서 첫 메시지를 보내 보세요</small></div>';
- const to=["all"].concat(roster());if(!to.includes(msgTo))msgTo="all";cTo.innerHTML=to.map(t=>`<button class="${msgTo===t?"on":""}" onclick="setTo('${t}')">${t==="all"?"👨‍👩‍👧 전체":esc(t)+"에게"}</button>`).join("")+'<button onclick="addMem()">＋ 사람 추가</button>';
+ const to=["all"].concat(roster());if(!to.includes(msgTo))msgTo="all";cTo.innerHTML=to.map(t=>`<button class="${msgTo===t?"on":""}" onclick="setTo(${esc(JSON.stringify(t))})">${t==="all"?"👨‍👩‍👧 전체":esc(t)+"에게"}</button>`).join("")+'<button onclick="addMem()">＋ 사람 추가</button>';
  cQ.innerHTML=QUICK.map((q,i)=>`<button onclick="sendMsg(QUICK[${i}])">${q}</button>`).join("");
  const atTab=document.querySelector(".app").dataset.tab==="c";if(atTab){const mx=Math.max(0,...msgs.map(msgNum));if(mx>msgRead){msgRead=mx;msgSave()}L.scrollTop=L.scrollHeight}updMsgDot()}
 async function fetchMsgs(force){if(!SBOK||!fam||!me||msgBusy)return;if(document.visibilityState==="hidden"&&!force)return;msgBusy=true;
@@ -679,7 +667,7 @@ async function decObj(code,w){const raw=unb64(w.e),k=await keyOf(code),pt=await 
 async function rpc(fn,args){const h={"Content-Type":"application/json",apikey:SB_KEY};if(/^eyJ/.test(SB_KEY))h.Authorization="Bearer "+SB_KEY;const r=await fetch(SB_URL+"/rest/v1/rpc/"+fn,{method:"POST",headers:h,body:JSON.stringify(args)});if(!r.ok)throw new Error(r.status);const t=await r.text();return t?JSON.parse(t):null}
 function famMsg(t){const e=document.getElementById("famMsg");if(e)e.textContent=t}
 function schedulePush(){if(!fam||!SBOK)return;clearTimeout(pushT);pushT=setTimeout(pushNow,1200)}
-async function pushNow(){if(!fam||!SBOK||busyP)return;busyP=true;pushT=null;try{const data={};SYNCK.forEach(k=>{const v=localStorage.getItem("mobileKong"+k);if(v!==null)data[k]=v});const ts=Date.now();await rpc("kong_put",{p_code:await idOf(fam),p_data:await encObj(fam,data),p_ts:ts});syncTs=ts;localStorage.setItem("mobileKongSyncTs",String(ts));famMsg("✅ 동기화됨 "+new Date().toLocaleTimeString("ko-KR",{hour:"2-digit",minute:"2-digit"}))}catch(e){famMsg("⚠️ 서버에 연결하지 못했어요. 잠시 후 다시 시도해요")}busyP=false}
+async function pushNow(){if(!fam||!SBOK||busyP)return;busyP=true;pushT=null;try{const data={};SYNCK.forEach(k=>{const v=localStorage.getItem("mobileKong"+k);if(v!==null)data[k]=v});const ts=Math.max(Date.now(),syncTs+1);await rpc("kong_put",{p_code:await idOf(fam),p_data:await encObj(fam,data),p_ts:ts});syncTs=ts;localStorage.setItem("mobileKongSyncTs",String(ts));famMsg("✅ 동기화됨 "+new Date().toLocaleTimeString("ko-KR",{hour:"2-digit",minute:"2-digit"}))}catch(e){famMsg("⚠️ 서버에 연결하지 못했어요. 잠시 후 다시 시도해요");pushT=setTimeout(pushNow,20000)}busyP=false}
 function applyRemote(r){SYNCK.forEach(k=>{const v=r.data&&r.data[k];if(v===undefined||v===null)localStorage.removeItem("mobileKong"+k);else localStorage.setItem("mobileKong"+k,v)});localStorage.setItem("mobileKongSyncTs",String(r.ts));location.reload()}
 async function pull(){if(!fam||!SBOK||busyL||pushT||busyP)return;busyL=true;try{const r=await rpc("kong_get",{p_code:await idOf(fam)});if(r&&r.ts>syncTs){if(document.querySelector(".modal.show")||document.getElementById("intro")){busyL=false;return}applyRemote({data:await decObj(fam,r.data),ts:r.ts});return}if(r)famMsg("✅ 최신 상태예요")}catch(e){}busyL=false}
 function syncNow(){famMsg("동기화 중…");pushT&&clearTimeout(pushT);(async()=>{await pull();if(!busyL)await pushNow()})()}
