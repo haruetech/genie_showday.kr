@@ -1018,7 +1018,7 @@ const STORY=[(f)=>`${J(f.n,"은는")} ${f.bio} 오늘 너를 처음 만나서 �
 function say(i,t){fdMsg.textContent=t}
 function greetFriend(i){const f=finfo(i);return GREET[f.v][Math.floor(Math.random()*3)].replace("{n}",f.n)}
 function talkFriend(){talkAsk()}
-function openStory(){const i=openIdx;if(i<0)return;const f=finfo(i),L=lvOf(i);boxOpen(`<h2>📖 ${esc(f.n)}의 이야기</h2><small style="color:#83778b">레벨이 오르면 다음 이야기가 열려요 (지금 Lv.${L})</small>`+STORY.map((s,k)=>k<L?`<div class="wrow" style="display:block"><b style="color:#745cff">${k+1}장</b><div style="margin-top:3px;font-size:15px;line-height:1.5">${esc(s(f))}</div></div>`:`<div class="wrow" style="opacity:.55"><b>🔒 ${k+1}장</b><small>Lv.${k+1}에서 열려요</small></div>`).join(""))}
+function openStory(){const i=openIdx;if(i<0)return;const f=finfo(i),L=lvOf(i);boxOpen(`<h2>📖 ${esc(f.n)}의 이야기</h2><small style="color:#83778b">레벨이 오르면 다음 이야기가 열려요 (지금 Lv.${L})</small>`+STORY.map((s,k)=>k<L?`<div class="wrow" style="display:block"><b style="color:#745cff">${k+1}장</b><div style="margin-top:3px;font-size:15px;line-height:1.5">${esc(s(f))}</div><button class="tkb" style="text-align:center;padding:6px;margin:6px 0 0;font-size:14px" onclick="speakStory(${k})">🔊 들려주기</button></div>`:`<div class="wrow" style="opacity:.55"><b>🔒 ${k+1}장</b><small>Lv.${k+1}에서 열려요</small></div>`).join(""))}
 const careCost=k=>k==="snack"?3:k==="play"?1:2;
 function doCare(kind){const i=openIdx;if(i<0)return;if(coins<careCost(kind)){fdMsg.textContent="🪙이 모자라요! 미션을 하면 생겨요";return}
  const sh=a=>{const b=a.slice();for(let k=b.length-1;k>0;k--){const j=Math.floor(Math.random()*(k+1));[b[k],b[j]]=[b[j],b[k]]}return b};
@@ -1073,14 +1073,14 @@ var rouBusy=false;
 function rouletteOpen(){const u=funGet();if(u.r){if(u.f>=0)boxOpen(`<h2>🌟 오늘의 친구</h2><div style="text-align:center"><img src="${friendsData[u.f].src}" style="width:150px;height:150px;border-radius:50%;object-fit:cover;border:4px solid #ffe16c"><div style="font-size:20px;font-weight:900;margin-top:6px">${esc(nm(u.f))}</div></div>`);else alert("오늘은 이미 뽑았어요! 내일 또 만나요");return}
  if(!allDone()){alert("오늘 미션을 모두 하면 열려요! ("+Math.min(nDone(),eff())+"/"+eff()+")");return}
  if(owned.length<1){alert("아직 친구가 없어요");return}
- boxOpen(`<h2>🎰 오늘의 친구 뽑기</h2><div style="text-align:center"><div id="rouImg" class="rouimg"><img id="rouPic" src="${friendsData[owned[0]].src}" alt=""></div><div id="rouNm" style="font-size:22px;font-weight:900;margin:6px 0;min-height:30px">누가 나올까?</div><button id="rouBtn" class="ok" onclick="rouSpin()">🎰 돌려라!</button></div>`)}
+ boxOpen(`<h2>🎰 오늘의 친구 뽑기</h2><div style="text-align:center"><small style="color:#83778b">오늘 미션 친구 말고, 다른 친구가 선물을 가지고 나와요!</small><div id="rouImg" class="rouimg"><img id="rouPic" src="${friendsData[owned[0]].src}" alt=""></div><div id="rouNm" style="font-size:22px;font-weight:900;margin:6px 0;min-height:30px">누가 나올까?</div><button id="rouBtn" class="ok" onclick="rouSpin()">🎰 돌려라!</button></div>`)}
 function rouSpin(){if(rouBusy)return;rouBusy=true;const btn=document.getElementById("rouBtn");btn.disabled=true;btn.textContent="두근두근…";
- const pool=owned.slice(),win=pool[Math.floor(Math.random()*pool.length)],steps=22+Math.floor(Math.random()*6);let k=0,idx=Math.floor(Math.random()*pool.length);
+ const mf=[partnerF(),(earned&&earned.day===ds(new Date()))?earned.f:-1];let pool=owned.filter(x=>!mf.includes(x));if(!pool.length)pool=owned.slice();const win=pool[Math.floor(Math.random()*pool.length)],steps=22+Math.floor(Math.random()*6);let k=0,idx=Math.floor(Math.random()*pool.length);
  const run=()=>{const pic=document.getElementById("rouPic"),nmE=document.getElementById("rouNm");if(!pic){rouBusy=false;return}
   const last=k>=steps;const cur=last?win:pool[idx%pool.length];pic.src=friendsData[cur].src;nmE.textContent=nm(cur);tickBeep(500+k*18);
-  if(last){const u=funGet();u.r=1;u.f=win;svFun();const c=cr[win]=cr[win]||{xp:0,hat:0};c.xp+=3;addCoins(2);save();confetti(80);sound(true);const f=finfo(win);
+  if(last){const u=funGet();u.r=1;u.f=win;svFun();const c=cr[win]=cr[win]||{xp:0,hat:0};const gt=Math.floor(Math.random()*4);let gtx="";if(gt===0){c.xp+=3;addCoins(2);gtx="🪙 코인 +2 · 경험치 +3"}else if(gt===1){const n=3+Math.floor(Math.random()*3);addCoins(n);gtx="🪙 깜짝 코인 +"+n+"!"}else if(gt===2){const h=1+Math.floor(Math.random()*(HATS.length-1));c.hat=h;c.xp+=2;gtx=HATS[h]+" 새 머리 장식 선물! (바로 썼어요) · 경험치 +2"}else{c.xp+=6;gtx="💖 경험치 +6 (친해졌어요!)"}save();confetti(80);sound(true);const f=finfo(win);
    nmE.innerHTML=`🎉 오늘의 친구는 <span style="color:#e0457b">${esc(nm(win))}</span>!`;btn.style.display="none";document.getElementById("rouImg").classList.add("win");
-   const box=document.querySelector("#boxModal .sheet");const d=document.createElement("div");d.style.cssText="font-size:15px;line-height:1.5;margin:6px 0";d.innerHTML=`${esc(greetFriend(win).replace(/^[^:]*: /,""))}<br><b style="color:#745cff">🪙 코인 +2 · ${esc(nm(win))} 경험치 +3</b>`;nmE.after(d);rouBusy=false;try{renderFriends();render()}catch(e){}return}
+   const box=document.querySelector("#boxModal .sheet");const d=document.createElement("div");d.style.cssText="font-size:15px;line-height:1.5;margin:6px 0";d.innerHTML=`${esc(greetFriend(win).replace(/^[^:]*: /,""))}<br><b style="color:#745cff">${esc(gtx)}</b>`;nmE.after(d);try{speak(d.firstChild.textContent,win)}catch(e){}rouBusy=false;try{renderFriends();render()}catch(e){}return}
   idx++;k++;const delay=50+Math.pow(k/steps,3)*420;setTimeout(run,delay)};run()}
 function boxGameOpen(){const u=funGet();if(u.b){alert("행운 상자는 오늘 이미 열었어요! 내일 또 만나요");return}if(!spGet().ok){alert("오늘의 특별 미션을 하면 열려요! (미션 화면에서 해냈어요!)");return}
  const pr=[5,3,1].sort(()=>Math.random()-.5);window._boxPr=pr;boxOpen(`<h2>📦 행운 상자</h2><div style="text-align:center;color:#83778b;font-size:14px">상자 3개 중 하나를 골라요! 안에 🪙 코인이 들어 있어요</div><div class="stk">`+[0,1,2].map(i=>`<button id="bx${i}" onclick="boxPick(${i})"><span style="font-size:44px">🎁</span>고르기</button>`).join("")+"</div>")}
@@ -1133,6 +1133,21 @@ function fcShot(inp){const fl=inp.files&&inp.files[0];inp.value="";if(!fl)return
  boxOpen(`<h2>📷 찍은 사진</h2><img src="${fcUrl}" style="width:100%;border-radius:14px;max-height:55vh;object-fit:contain;background:#000"><small style="color:#83778b;display:block;margin:6px 0">사진은 앱에 올라가지 않고 내 폰에만 저장돼요.</small><button class="tkb" style="text-align:center;background:#745cff;color:#fff;border-color:#745cff" onclick="fcSave()">📥 내 폰에 저장하기</button><button class="tkb" style="text-align:center" onclick="closeBox()">닫기</button>`)}
 async function fcSave(){if(!fcFile)return;const nmf="콩콩가족사진_"+ds(new Date())+".jpg";try{const F=new File([fcFile],nmf,{type:fcFile.type||"image/jpeg"});if(navigator.canShare&&navigator.canShare({files:[F]})){await navigator.share({files:[F],title:"가족 사진"});return}}catch(e){if(e&&e.name==="AbortError")return}
  const a=document.createElement("a");a.href=fcUrl;a.download=nmf;document.body.appendChild(a);a.click();a.remove();alert("사진을 저장했어요! (다운로드 폴더/갤러리를 확인해 보세요)")}
+
+/* ===== 인형 목소리 (폰 내장 음성) ===== */
+var voiceOn=true;try{voiceOn=localStorage.getItem("mobileKongVoice")!=="0"}catch(e){}
+var _vs=null;
+function koVoice(){try{const v=speechSynthesis.getVoices().filter(x=>/^ko/i.test(x.lang));return v[0]||null}catch(e){return null}}
+function speak(t,i,force){if(!voiceOn&&!force)return;if(!("speechSynthesis" in window))return;try{
+ t=String(t||"").replace(/^[^:：]{1,8}[:：]\s*/,"").replace(/\([^)]*\)/g,"").replace(/[\u{1F000}-\u{1FFFF}\u{2600}-\u{27BF}⭐️‍]/gu,"").replace(/\s+/g," ").trim();if(!t)return;
+ speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang="ko-KR";const v=koVoice();if(v)u.voice=v;const k=(i==null||i<0)?3:i;u.pitch=Math.min(1.9,.9+((k*7)%10)/10);u.rate=.88+((k*3)%4)*.05;u.volume=1;speechSynthesis.speak(u)}catch(e){}}
+function speakStory(k){const i=openIdx;if(i<0)return;speak(STORY[k](finfo(i)),i,true)}
+function voiceBtn(){const b=document.getElementById("vcBtn");if(b)b.textContent=voiceOn?"🔊 목소리 켜짐":"🔇 목소리 꺼짐"}
+function voiceTog(){voiceOn=!voiceOn;try{localStorage.setItem("mobileKongVoice",voiceOn?"1":"0")}catch(e){}if(!voiceOn){try{speechSynthesis.cancel()}catch(e){}}else speak("안녕! 이제 내 목소리가 들려요!",openIdx,true);voiceBtn()}
+(function(){try{const b=document.createElement("button");b.id="vcBtn";b.type="button";b.style.cssText="border:2px solid #e5defa;background:#fff;border-radius:12px;padding:5px 12px;font-size:13px;font-weight:800;color:#5b4b8a;margin:4px 0";b.onclick=voiceTog;fdLv.after(b);voiceBtn();
+ new MutationObserver(()=>{if(friendModal.classList.contains("show"))speak(fdMsg.textContent,openIdx)}).observe(fdMsg,{childList:true,characterData:true,subtree:true});
+ const _cf=closeFriend;closeFriend=function(){try{speechSynthesis.cancel()}catch(e){}_cf()};
+ if("speechSynthesis" in window)speechSynthesis.getVoices()}catch(e){}})();
 ensurePending();renderFriends();render();introInit();buddyFace.onclick=()=>{const fid=earned&&earned.day===dsn()?earned.f:(partnerF()>=0?partnerF():pending);tapK++;react(buddyFace,fid,null,actFor(fid,nDone()-1+tapK))};tick();setInterval(tick,15000);setInterval(askMe,2500);setInterval(evAlarmTick,20000);setInterval(()=>fetchMsgs(false),10000);setTimeout(()=>{fetchMsgs(false);updMsgDot()},1800);document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")fetchMsgs(true)});document.getElementById("cInput").addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.isComposing){e.preventDefault();sendMsg()}});setTimeout(evAlarmTick,2500);setTimeout(()=>{ensurePush(false).then(x=>{pushState=x;updPushStat()}).catch(()=>{});pushSync(true)},3000);setInterval(pushSync,30000);if(navigator.serviceWorker){navigator.serviceWorker.addEventListener("message",e=>{if(e.data&&e.data.go)goTab(e.data.go==="c"?"c":e.data.go==="e"?"e":"m")});const g=new URLSearchParams(location.search).get("go");if(g)setTimeout(()=>goTab(g==="c"?"c":g==="e"?"e":"m"),1500)}updPushStat();
 
 </script></body></html>
