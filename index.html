@@ -561,7 +561,7 @@ function dayEvents(k){return dayEventsAll(k).filter(okWho)}
 function exKey(x){return x.n+"@"+(x.t||"")+"@"+(x.k==="e"?"e":"m")}function isExc(k,x){return((week.ex||{})[k]||[]).includes(exKey(x))}
 function skippedFor(k){const a=(week.ex||{})[k]||[];if(!a.length||isOff(k))return[];const wd=new Date(k+"T00:00:00").getDay();return(week.d[wd]||[]).filter(x=>a.includes(exKey(x))).map(x=>({n:x.n,t:x.t||"",te:x.k==="e"?(x.te||""):"",ek:exKey(x),mis:x.k==="e"?0:1}))}
 function dayEventsAll(k){const today=ds(new Date()),out=[];
- if(k===today){ev.list.forEach((x,i)=>out.push(Object.assign({i},x)));return out}
+ if(k===today){if(ev.day!==today){try{dailyAuto(true)}catch(e){}}if(ev.day!==today)return out;ev.list.forEach((x,i)=>out.push(Object.assign({i},x)));return out}
  (cal[k]||[]).forEach(x=>{out.push({n:x.n,t:x.t||"",pl:x.pl||"",fl:x.fl||"",ad:x.ad||"",al:x.k==="m"?"":(x.al||""),who:x.k==="m"?"":(x.who||""),te:x.te||"",msg:x.k==="g"?1:0,mis:x.k==="m"?1:0})});
  if(!isOff(k)){const wd=new Date(k+"T00:00:00").getDay();(week.d[wd]||[]).forEach(x=>{if(isExc(k,x))return;out.push({n:x.n,t:x.t||"",pl:x.pl||"",fl:x.fl||"",ad:x.ad||"",al:x.k==="e"?(x.al||""):"",who:x.k==="e"?(x.who||""):"",te:x.k==="e"?(x.te||""):"",msg:0,rep:1,mis:x.k==="e"?0:1})})}
  return out.sort((a,b)=>(a.t||"")<(b.t||"")?-1:1)}
