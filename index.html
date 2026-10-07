@@ -945,12 +945,12 @@ function claimPraise(){if(me!=="아이")return;const got=praiseGotSet(),nw=pstk.
 var wmD=7;
 function openWish(){const adult=me!=="아이",myP=pstk.length,td=dsn(),
  rows=wish.length?wish.slice().sort((a,b)=>(a.st==="done"?1:0)-(b.st==="done"?1:0)||a.id-b.id).map(w=>{let act,sub;const leg=w.m===undefined&&w.c>0;
-  if(w.st==="done"){act='<span>🎉 이뤄졌어요</span>';sub=w.m?"🎯 "+esc(w.m):""}
+  if(w.st==="done"){act=adult?`<span>🎉 이뤄졌어요</span><button onclick="wishUndo(${w.id})">↩ 되돌리기</button>`:'<span>🎉 이뤄졌어요</span>';sub=w.m?"🎯 "+esc(w.m):""}
   else if(w.st==="new"){act=adult?`<button onclick="wishMissionOpen(${w.id})">🎯 미션 정하기</button>`:'<span>⏳ 부모님이 미션을 정해 줄 거야</span>';sub="미션 정하는 중"}
   else if(w.st==="req"){act=adult?`<button onclick="wishDone(${w.id})">✅ 들어줬어요</button>`:'<span>🎉 미션 성공! 확인 중</span>';sub="🎯 "+esc(w.m||"")+" · 완료!"}
   else if(leg){act=coins>=w.c?`<button onclick="wishAsk(${w.id})">🪙 ${w.c}로 교환</button>`:`<button class="dis">🪙 ${w.c-coins} 더 필요</button>`;sub="🪙 "+w.c}
   else{const p=w.p||0,t=w.t||1;sub="🎯 "+esc(w.m)+" · "+p+"/"+t+"일";act=adult?`<span>${p}/${t}일</span>`:(w.l===td?'<button class="dis">✅ 오늘 했어요</button>':`<button onclick="wishTick(${w.id})">✅ 오늘 했어요!</button>`)}
-  return `<div class="wrow${w.st==="done"?" done":""}"><b>🎁 ${esc(w.n)}<br><small style="color:#a094aa">${sub}</small></b>${act}${w.st!=="req"&&w.st!=="done"?`<button class="x" onclick="wishDel(${w.id})">✕</button>`:""}</div>`}).join(""):'<div class="evempty" style="padding:12px">갖고 싶은 것, 하고 싶은 것을 적어 봐요!<br><small>부모님이 정한 미션을 해내면 소원이 이뤄져요</small></div>';
+  return `<div class="wrow${w.st==="done"?" done":""}"><b>🎁 ${esc(w.n)}<br><small style="color:#a094aa">${sub}</small></b>${act}${(w.st!=="req"&&w.st!=="done")||(adult&&w.st==="done")?`<button class="x" onclick="wishDel(${w.id})">✕</button>`:""}</div>`}).join(""):'<div class="evempty" style="padding:12px">갖고 싶은 것, 하고 싶은 것을 적어 봐요!<br><small>부모님이 정한 미션을 해내면 소원이 이뤄져요</small></div>';
  const sug=["🎬 영화 보기","🍦 아이스크림 먹기","🛝 놀이터 1시간","📚 책 사기","🍕 맛있는 외식","🎮 게임 30분","🧸 인형 사기","🎨 문구점 가기"];
  boxOpen(`<h2>🎁 소원 상자</h2><div style="font-weight:900;color:#745cff">🌟 받은 칭찬 ${myP}개</div><small style="color:#83778b">소원을 적으면 부모님이 미션을 정해 줘요. 미션을 해내면 소원이 이뤄져요!</small>${rows}
  <div style="font-weight:900;margin-top:10px">✏️ 소원 적기</div><div class="whochips" style="margin:6px 0">${sug.map(x=>`<button onclick="wiN.value='${x}'">${x}</button>`).join("")}</div>
@@ -963,6 +963,7 @@ async function wishTick(id){const w=wish.find(v=>v.id===id);if(!w||w.st!==""||w.
  if(fin&&me&&fam){const keep=msgTo;msgTo="all";try{await sendMsg("🎁 소원 미션 성공! "+w.n+" — 「"+w.m+"」 "+w.t+"일 완료! 소원을 들어주세요")}catch(e){}msgTo=keep}}
 function wishDel(id){if(!confirm("이 소원을 지울까요?"))return;wish=wish.filter(w=>w.id!==id);svWi();openWish()}
 async function wishAsk(id){const w=wish.find(v=>v.id===id);if(!w||coins<w.c)return;if(!confirm(`🪙 ${w.c}개로 "${w.n}" 소원을 교환할까요?`))return;addCoins(-w.c);save();render();try{renderFriends()}catch(e){}w.st="req";svWi();openWish();if(me&&fam){const keep=msgTo;msgTo="all";try{await sendMsg("🎁 소원 교환 요청: "+w.n+" (🪙"+w.c+")")}catch(e){}msgTo=keep}}
+function wishUndo(id){const w=wish.find(v=>v.id===id);if(!w||!confirm("'이뤄졌어요' 표시를 취소하고 다시 '들어줬어요' 대기로 돌릴까요?"))return;w.st="req";svWi();openWish()}
 function wishDone(id){const w=wish.find(v=>v.id===id);if(!w)return;w.st="done";svWi();openWish()}
 setInterval(claimPraise,5000);setTimeout(claimPraise,1500);
 
