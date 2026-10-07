@@ -693,7 +693,7 @@ const GEN=[["무지개는 몇 가지 색일까?","7가지",["3가지","5가지"]
 let recentQ=[],curQ=null,qTry=0;
 function genQ(){const kinds=[];if(qz.mul&&qz.tb.length)kinds.push("mul");if(qz.add&&(qz.ls||qz.lt))kinds.push("add");if(qz.eng)kinds.push("eng");if(qz.gen)kinds.push("gen");if(!kinds.length)return null;
  const k=pickOne(kinds);
- if(k==="mul"){const a=pickOne(qz.tb),b=1+rnd(9),sw=Math.random()<.5,ans=a*b;return{tag:"✖️ 곱셈",q:(sw?b:a)+" × "+(sw?a:b)+" = ?",sub:"",opts:numOpts(ans,[a,1,2,a+1].filter(x=>x>0))}}
+ if(k==="mul"){const a=pickOne(qz.tb),b=1+rnd(9),ans=a*b;return{tag:"✖️ 곱셈",q:a+" × "+b+" = ?",sub:"",opts:numOpts(ans,[a,1,2,a+1].filter(x=>x>0))}}
  if(k==="add"){const lv=[];if(qz.ls)lv.push("s");if(qz.lt)lv.push("t","u");const L=pickOne(lv);let a,b,op=Math.random()<.5?"+":"−",ans;
   if(L==="s"){if(op==="+"){a=1+rnd(12);b=1+rnd(Math.min(9,20-a));ans=a+b}else{a=5+rnd(16);b=1+rnd(Math.min(9,a-1));ans=a-b}}
   else if(L==="t"){if(op==="+"){a=(1+rnd(7))*10;b=(1+rnd(Math.min(9-a/10,8)))*10;ans=a+b}else{a=(2+rnd(8))*10;b=(1+rnd(a/10-1))*10;ans=a-b}}
