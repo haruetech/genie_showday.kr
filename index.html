@@ -1,5 +1,5 @@
 <!doctype html><html lang="ko"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"><script>(function(){try{if(/android/i.test(navigator.userAgent)){var m=document.querySelector('meta[name="viewport"]');if(m)m.content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"}var f=function(){var h=(window.visualViewport&&window.visualViewport.height)||window.innerHeight;if(h)document.documentElement.style.setProperty("--ah",Math.round(h)+"px")};f();window.addEventListener("resize",f);if(window.visualViewport)window.visualViewport.addEventListener("resize",f);window.addEventListener("orientationchange",function(){setTimeout(f,300)});document.addEventListener("visibilitychange",function(){setTimeout(f,200)})}catch(e){}})()</script>
 <meta name="robots" content="noindex,nofollow"><meta name="theme-color" content="#8b70ff"><link rel="manifest" href="/manifest.json"><link rel="icon" type="image/png" href="/icon-192.png"><link rel="apple-touch-icon" href="/icon-180.png"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="콩콩 미션"><title>콩콩 미션</title>
 <style>
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -9,7 +9,7 @@ input{min-width:0;flex:1;border:2px solid #eadcf0;border-radius:14px;padding:9px
 .add{display:flex;gap:7px}.addBtn{min-width:58px;background:#ff72a4;color:#fff;border-radius:12px;font-weight:900}
 
 /* ---- layout: hero / missions(scroll) / reward / buddy ---- */
-.app{width:100%;max-width:480px;margin:0 auto;height:100vh;height:100dvh;padding:8px 10px calc(8px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:6px;overflow:hidden}
+.app{width:100%;max-width:480px;margin:0 auto;height:100vh;height:100dvh;height:var(--ah,100dvh);padding:8px 10px calc(8px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:6px;overflow:hidden}
 .hero{position:relative;flex:none;display:flex;gap:8px;align-items:center;background:linear-gradient(135deg,#826cff,#ff76a9);color:#fff;border-radius:18px;padding:9px 12px;box-shadow:0 8px 20px #a270a833}
 .hl{flex:1;min-width:0}.hero b{font-size:13px}.hero h1{font-size:19px;line-height:1.2;margin:3px 0 0}
 .gl{font-size:13px;font-weight:900;margin-top:3px;opacity:.95;overflow-wrap:anywhere}
