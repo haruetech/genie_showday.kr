@@ -209,11 +209,11 @@ details{background:#f8f4fb;border-radius:14px;padding:10px 12px;margin:8px 0}sum
 <div class="add" style="margin-top:6px;align-items:center"><span style="font-size:13px;font-weight:900;flex:none">⏰ 예약 시간(선택)</span><input id="newTime" type="time"></div>
 <div class="add" style="margin-top:6px"><input id="newPraise" maxlength="40" placeholder="💌 칭찬 한마디(비우면 자동으로 칭찬해줘요)"></div>
 <div id="parentTaskList" style="margin-top:8px"></div></details>
-<details><summary>📆 요일별 일정 (매주 반복)</summary>
-<p style="margin:0 0 6px;font-size:12px;color:#83778b">학원·수업처럼 매주 같은 요일에 있는 일정을 한 번만 등록하면, 그날 아침에 미션으로 자동으로 들어가요.</p>
+<details><summary>🎯 요일별 미션 (매주 반복)</summary>
+<p style="margin:0 0 6px;font-size:12px;color:#83778b">요일마다 하는 미션(예: 월요일은 피아노 연습)을 한 번만 등록하면 그날 아침 자동으로 들어가요. 학원 같은 일정은 일정 탭 달력에서 \u2018매주 반복\u2019으로 넣어요.</p>
 <div id="wkBoard" class="evcard" style="margin-top:2px"></div>
 <label class="qlb"><input type="checkbox" id="wkHol" onchange="setWkHol()">공휴일(설날·추석 등)에는 요일별 일정 쉬기</label>
-<b style="font-size:14px;display:block;margin-top:10px">➕ 새 일정 넣기</b>
+<b style="font-size:14px;display:block;margin-top:10px">➕ 새 미션 넣기</b>
 <span class="lbl">1. 요일 고르기 (여러 개 가능)</span><div class="wk" id="wkDays"></div>
 <span class="lbl">2. 이름 쓰기 (눌러서 고르거나 직접 입력)</span><div class="wk pre" id="wkPre"></div>
 <div class="wk" id="wkKind"></div>
@@ -495,7 +495,7 @@ pinInput.addEventListener("keydown",e=>{if(e.key==="Enter")checkPin()});
 const WDN=["일","월","화","수","목","금","토"],WORD=[1,2,3,4,5,6,0];let wkSel=[new Date().getDay()],wkK="m";
 function saveWeek(){try{localStorage.setItem("mobileKongWeek",JSON.stringify(week));localStorage.setItem("mobileKongSkip",JSON.stringify(skip));localStorage.setItem("mobileKongAuto",JSON.stringify(auto))}catch(e){}schedulePush()}
 function wkUI(){if(!document.getElementById("wkDays"))return;wkDays.innerHTML=WORD.map(d=>`<button class="${wkSel.includes(d)?"on":""}" onclick="wkTog(${d})">${WDN[d]}</button>`).join("");
- wkPre.innerHTML=["학원","피아노","영어","태권도","수영","미술","방과후","독서"].map(x=>`<button onclick="wkName.value='${x}'">${x}</button>`).join("");wkOff.value=String(week.off);wkHol.checked=week.hol!==false;wkBoard.innerHTML=wkBoardHtml();if(!wkAl.options.length)wkAl.innerHTML=alOpts("10");wkKind.innerHTML=`<button class="${wkK==="m"?"on":""}" onclick="setWkKind('m')">🎯 미션 (스탬프)</button><button class="${wkK==="e"?"on":""}" onclick="setWkKind('e')">📅 일정만 (확인)</button>`;wkPlaceBox.style.display=wkK==="e"?"":"none";
+ wkPre.innerHTML=["학원","피아노","영어","태권도","수영","미술","방과후","독서"].map(x=>`<button onclick="wkName.value='${x}'">${x}</button>`).join("");wkOff.value=String(week.off);wkHol.checked=week.hol!==false;wkBoard.innerHTML=wkBoardHtml();if(!wkAl.options.length)wkAl.innerHTML=alOpts("10");wkK="m";wkKind.innerHTML='<div style="font-size:12px;color:#83778b;padding:2px 0">🎯 여기서는 <b>미션</b>(스탬프)만 등록해요. 학원·병원 같은 <b>일정</b>은 📅 일정 탭에서 날짜를 눌러 등록하세요(매주 반복 가능).</div>';wkPlaceBox.style.display="none";
  wkList.innerHTML=WORD.map(d=>{const a=week.d[d]||[];if(!a.length)return"";return `<div style="margin-top:6px"><b style="color:#745cff">${WDN[d]}요일</b>`+a.map((it,i)=>`<div class="wkrow"><span style="flex:none">${it.k==="e"?"📅":"🎯"}</span><input value="${esc(it.n)}" maxlength="35" onchange="wkEdit(${d},${i},'n',this.value)" style="flex:1;min-width:0"><input type="time" value="${it.t||""}" onchange="wkEdit(${d},${i},'t',this.value)" style="flex:none;width:122px"><button onclick="wkDel(${d},${i})" style="background:#fff0f4;color:#a9677e;border-radius:9px;padding:6px 8px">삭제</button></div>${it.k==="e"?`<div class="wkrow" style="padding-left:22px"><input value="${esc(it.pl||"")}" placeholder="학원 이름" maxlength="30" onchange="wkEdit(${d},${i},'pl',this.value)" style="flex:1;min-width:0"><input value="${esc(it.fl||"")}" placeholder="층" maxlength="8" onchange="wkEdit(${d},${i},'fl',this.value)" style="flex:none;width:56px"></div><div class="wkrow" style="padding-left:22px"><input value="${esc(it.ad||"")}" placeholder="주소" maxlength="80" onchange="wkEdit(${d},${i},'ad',this.value)" style="flex:1;min-width:0"></div><div class="wkrow" style="padding-left:22px"><span style="flex:none;font-size:12px">🔔</span><select onchange="wkEdit(${d},${i},'al',this.value)" style="flex:1;border:2px solid #eadcf0;border-radius:10px;padding:5px;font-size:13px;background:#fff">${alOpts(it.al)}</select></div>`:""}`).join("")+`</div>`}).join("")||'<div style="font-size:13px;color:#a094aa">아직 등록한 요일별 일정이 없어요.</div>';
  skList.innerHTML=skip.ranges.map((r,i)=>`<div class="wkrow"><span style="flex:1;font-size:14px">${r[0]===r[1]?r[0]:r[0]+" ~ "+r[1]}</span><button onclick="skDel(${i})" style="background:#fff0f4;color:#a9677e;border-radius:9px;padding:6px 8px">삭제</button></div>`).join("")}
 function setWkKind(k){wkK=k;wkUI()}
