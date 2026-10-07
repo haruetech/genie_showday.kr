@@ -583,7 +583,7 @@ let calY=new Date().getFullYear(),calM=new Date().getMonth(),calSel=ds(new Date(
 const CKN={m:"🎯 미션",e:"📅 일정",g:"💌 메시지"},CPH={m:"예: 피아노 연습하기",e:"예: 치과 예약",g:"예: 오늘은 할머니 댁에 가요"},CPRE={e:["학원","피아노","영어","태권도","수영","미술","방과후","병원"],m:["숙제하기","독서","양치하기","책가방 챙기기","운동하기"],g:[]};
 const p2=n=>String(n).padStart(2,"0");
 let calWhoSel=[];function calWhoTog(x){if(!x)calWhoSel=[];else{const i=calWhoSel.indexOf(x);if(i<0)calWhoSel.push(x);else calWhoSel.splice(i,1)}calUI()}
-function whoList(){const s=new Set(ROLES);mem.forEach(x=>s.add(x));msgs.forEach(m=>{if(m.f)s.add(m.f);if(m.t&&m.t!=="all")s.add(m.t)});if(me)s.add(me);return[...s].filter(x=>x&&x!=="__join")}
+function whoList(){const s=new Set(ROLES);mem.forEach(x=>s.add(x));msgs.forEach(m=>{if(m.f)s.add(m.f);if(m.t&&m.t!=="all")s.add(m.t)});if(me)s.add(me);return[...s].filter(x=>x&&x!=="__join"&&!gone.includes(x))}
 function calSave(){try{localStorage.setItem("mobileKongCal",JSON.stringify(cal))}catch(e){}schedulePush()}
 function calNav(d){calM+=d;if(calM<0){calM=11;calY--}if(calM>11){calM=0;calY++}calUI()}
 function calPick(d){calSel=d;calRepSel=[new Date(d+"T00:00:00").getDay()];calUI()}
@@ -650,7 +650,8 @@ const msgVis=m=>!String(m.x==null?"":m.x).startsWith("__")&&(m.t==="all"||m.t===
 let reads={},rx={},dl={},replyTo=null,lastRd=0;try{dl=JSON.parse(localStorage.getItem("mobileKongDl")||"{}");reads=JSON.parse(localStorage.getItem("mobileKongRd")||"{}");rx=JSON.parse(localStorage.getItem("mobileKongRx")||"{}");lastRd=+(localStorage.getItem("mobileKongRdSent")||0)}catch(e){}
 const svRd=()=>{try{localStorage.setItem("mobileKongRd",JSON.stringify(reads));localStorage.setItem("mobileKongDl",JSON.stringify(dl));localStorage.setItem("mobileKongRx",JSON.stringify(rx))}catch(e){}};
 let mem=[];try{mem=JSON.parse(localStorage.getItem("mobileKongMem")||"[]")}catch(e){}
-function roster(){const s=new Set(mem);msgs.forEach(m=>{if(m.f)s.add(m.f);if(m.t&&m.t!=="all")s.add(m.t)});const a=[...s].filter(x=>x&&x!==me);return a.sort((x,y)=>{const i=ROLES.indexOf(x),j=ROLES.indexOf(y);return (i<0?99:i)-(j<0?99:j)})}
+var gone=[];try{gone=JSON.parse(localStorage.getItem("mobileKongGone")||"[]");if(!Array.isArray(gone))gone=[]}catch(e){gone=[]}
+function roster(){const s=new Set(mem);msgs.forEach(m=>{if(m.f)s.add(m.f);if(m.t&&m.t!=="all")s.add(m.t)});const a=[...s].filter(x=>x&&x!==me&&!gone.includes(x));return a.sort((x,y)=>{const i=ROLES.indexOf(x),j=ROLES.indexOf(y);return (i<0?99:i)-(j<0?99:j)})}
 function addMem(){const r=(prompt("받는 사람 이름(예: 큰이모, 삼촌)")||"").trim().slice(0,6);if(!r||r===me)return;if(!mem.includes(r)){mem.push(r);try{localStorage.setItem("mobileKongMem",JSON.stringify(mem))}catch(e){}}msgTo=r;renderChat()}
 var meAsked=false;function askMe(){if(me||meAsked||document.getElementById("intro")||document.querySelector(".modal.show"))return;meAsked=true;const d=document.createElement("div");d.id="meModal";d.className="modal show";d.style.zIndex=99998;d.innerHTML='<div class="sheet"><div class="cwho2"><p>👨‍👩‍👧 가족 확인<br>이 폰을 쓰는 사람은 누구예요?<br><small style="font-weight:700;color:#83778b">처음 한 번만 정하면 돼요. 내가 해당되는 일정과 메시지만 보여요</small></p>'+ROLES.map(r=>`<button onclick="pickMe('${r}')">${r}</button>`).join("")+'<button onclick="pickMe(\'__etc\')">✏️ 직접 입력</button></div></div>';document.body.appendChild(d)}
 function pickMe(r){setMe(r);if(me){const m=document.getElementById("meModal");if(m)m.remove();try{renderEv();render();renderChat()}catch(e){}ensurePush(true).then(x=>{pushState=x;updPushStat();pushSync(true)}).catch(()=>{})}}
@@ -658,7 +659,7 @@ const msgNum=m=>typeof m.id==="number"?m.id:0;
 function msgSave(){try{localStorage.setItem("mobileKongMsgs",JSON.stringify({fid:msgFid,list:msgs.slice(-300)}));localStorage.setItem("mobileKongMsgRead",String(msgRead));localStorage.setItem("mobileKongMsgSeen",String(msgSeen))}catch(e){}}
 function msgUnread(){return msgs.filter(m=>msgNum(m)>msgRead&&m.f!==me&&msgVis(m)).length}
 function updMsgDot(){const n=msgUnread(),d=document.getElementById("msgDot");if(!d)return;d.textContent=n>9?"9+":n;d.style.display=n?"":"none"}
-function setMe(r){if(r==="__etc"){r=(prompt("이름(예: 이모, 삼촌)")||"").trim().slice(0,6);if(!r)return}me=r;try{localStorage.setItem("mobileKongMe",me)}catch(e){}if(msgTo===me)msgTo="all";renderChat();announce();fetchMsgs(true);ensurePush(false).then(x=>{pushState=x;updPushStat()}).catch(()=>{})}
+function setMe(r){if(r==="__etc"){r=(prompt("이름(예: 이모, 삼촌)")||"").trim().slice(0,6);if(!r)return}me=r;try{localStorage.setItem("mobileKongMe",me)}catch(e){}if(gone.includes(me)){gone=gone.filter(x=>x!==me);svGone()}if(msgTo===me)msgTo="all";renderChat();announce();fetchMsgs(true);ensurePush(false).then(x=>{pushState=x;updPushStat()}).catch(()=>{})}
 async function announce(){try{if(SBOK&&fam&&me)await rpc("kong_msg_send",{p_code:await idOf(fam),p_data:await encObj(fam,{f:me,t:"all",x:"__join"})})}catch(e){}}
 function chgMe(){if(pinHash){const v=prompt("🔒 이 폰의 사용자를 바꾸려면 부모님 비밀번호 4자리를 입력하세요");if(v===null)return;if(hp(String(v).trim())!==pinHash){alert("비밀번호가 달라요");return}}else if(!confirm("이 폰을 쓰는 사람을 바꿀까요?\n(설정에서 🔒 비밀번호를 정하면 함부로 바꾸지 못하게 잠글 수 있어요)"))return;me="";meAsked=false;try{localStorage.removeItem("mobileKongMe")}catch(e){}renderChat();try{renderEv()}catch(e){}askMe()}
 function setTo(t){msgTo=t;renderChat()}
@@ -685,7 +686,7 @@ function renderChatMain(){const L=document.getElementById("chatList");if(!L)retu
   h+=`<div class="crow ${mine?"me":""}">${mine?meta+bub:bub+meta}</div>`;
   if(rr.length&&!gone)h+=`<div class="crx ${mine?"me":""}">${Object.entries(rg).map(([e,a])=>`<span class="rxc${a.includes(me)?" my":""}" title="${esc(a.join(", "))}" onclick="rxOpen(${m.id})">${e}${a.length>1?" "+a.length:""}</span>`).join("")}</div>`});
  L.innerHTML=h||'<div class="evempty">💬<br>아직 메시지가 없어요<br><small>아래에서 첫 메시지를 보내 보세요</small></div>';
- const to=["all"].concat(roster());if(!to.includes(msgTo))msgTo="all";cTo.innerHTML=to.map(t=>`<button class="${msgTo===t?"on":""}" onclick="setTo(${esc(JSON.stringify(t))})">${t==="all"?"👨‍👩‍👧 전체":esc(t)+"에게"}</button>`).join("")+'<button onclick="addMem()">＋ 사람 추가</button>';
+ const to=["all"].concat(roster());if(!to.includes(msgTo))msgTo="all";cTo.innerHTML=to.map(t=>`<button class="${msgTo===t?"on":""}" onclick="setTo(${esc(JSON.stringify(t))})">${t==="all"?"👨‍👩‍👧 전체":esc(t)+"에게"}</button>`).join("")+'<button onclick="addMem()">＋ 사람 추가</button><button onclick="needPin(peopleOpen)">✏️ 사람 관리</button>';
  cQ.innerHTML=(me!=="아이"?'<button class="prbtn" onclick="openPraise()">🌟 칭찬 스티커</button>':"")+QUICK.map((q,i)=>`<button onclick="sendMsg(QUICK[${i}])">${q}</button>`).join("");
  const atTab=document.querySelector(".app").dataset.tab==="c";if(atTab){const mx=Math.max(0,...msgs.map(msgNum));if(mx>msgRead){msgRead=mx;msgSave()}L.scrollTop=L.scrollHeight;if(document.visibilityState!=="hidden")sendRead()}updMsgDot()}
 async function fetchMsgs(force){if(!SBOK||!fam||!me||msgBusy)return;if(document.visibilityState==="hidden"&&!force)return;msgBusy=true;
@@ -714,7 +715,7 @@ function saveReward(){reward=rewardInput.value.trim();localStorage.setItem("mobi
 /* ---- 가족 공유 (Supabase) ---- */
 const SB_URL="https://ayygbemcxuajccaknfir.supabase.co",SB_KEY="sb_publishable_tiLGpJNheNZZ4Yn9cIhTow_HjW2dx2E";
 const SBOK=/^https:\/\/[a-z0-9-]+\.supabase\.co$/i.test(SB_URL)&&SB_KEY.length>30&&!/YOUR/.test(SB_KEY+SB_URL);
-const SYNCK=["Tasks","Done","MT","MP","Reward","Goal","Total","Streak","Day","Owned","Pending","Earned","Names","Pre","PreDone","Coins","CT","Care","Partner","Quiz","QStat","Pin","Week","Skip","Auto","Ev","Cal","Shop","Wish","Pstk","Sp","Fc","Fun"];
+const SYNCK=["Tasks","Done","MT","MP","Reward","Goal","Total","Streak","Day","Owned","Pending","Earned","Names","Pre","PreDone","Coins","CT","Care","Partner","Quiz","QStat","Pin","Week","Skip","Auto","Ev","Cal","Shop","Wish","Pstk","Sp","Fc","Fun","Gone"];
 let fam="",syncTs=0,pushT=null,busyP=false,busyL=false;
 try{fam=localStorage.getItem("mobileKongFam")||"";syncTs=+(localStorage.getItem("mobileKongSyncTs")||0)}catch(e){}
 const TE=new TextEncoder(),TD=new TextDecoder(),keyCache={};
@@ -1038,7 +1039,7 @@ var fcd=null;try{fcd=JSON.parse(localStorage.getItem("mobileKongFc")||"null")}ca
 function wkKey(){const d=new Date();d.setDate(d.getDate()-((d.getDay()+6)%7));return ds(d)}
 function fcGet(){const k=wkKey();if(!fcd||fcd.wk!==k)fcd={wk:k,i:hsh(k)%FCP.length,done:{},extra:[]};if(!fcd.extra)fcd.extra=[];return fcd}
 function svFc(){try{localStorage.setItem("mobileKongFc",JSON.stringify(fcd))}catch(e){}schedulePush()}
-function fcMembers(){const s=new Set(roster().concat(me?[me]:[]));["엄마","아빠","아이"].forEach(x=>{if(s.size<3)s.add(x)});fcGet().extra.forEach(x=>s.add(x));return[...s].filter(x=>x&&x!=="__join")}
+function fcMembers(){const s=new Set(roster().concat(me?[me]:[]));["엄마","아빠","아이"].forEach(x=>{if(s.size<3)s.add(x)});fcGet().extra.forEach(x=>s.add(x));return[...s].filter(x=>x&&x!=="__join"&&!gone.includes(x))}
 function fcMark(n){const f=fcGet();if(f.done[n])delete f.done[n];else f.done[n]=1;svFc();fcCheck();fcRender()}
 function fcAddOpen(){const M=fcMembers(),rest=ROLES.filter(r=>!M.includes(r));boxOpen('<h2>➕ 함께한 사람 추가</h2><small style="color:#83778b">누르면 목록에 넣고 "했어요"로 표시해요</small><div class="stk">'+rest.map(r=>`<button onclick="fcAdd('${r}')"><span>🙂</span>${r}</button>`).join("")+'</div><button class="alt" style="width:100%;padding:9px;border-radius:12px;border:2px solid #d9d0f5;background:#fff;color:#745cff;font-weight:900" onclick="fcAdd(\'\')">✏️ 이름 직접 입력</button>')}
 function fcAdd(r){closeBox();if(!r){r=(prompt("이름(예: 큰이모)")||"").trim().slice(0,6);if(!r)return}const f=fcGet();if(!f.extra.includes(r))f.extra.push(r);f.done[r]=1;svFc();fcCheck();fcRender()}
@@ -1047,7 +1048,7 @@ function fcTog(){if(!me){alert("먼저 이 폰을 쓰는 사람을 정해 주세
 function fcFull(){const f=fcGet(),M=fcMembers();return M.length>=2&&M.every(x=>f.done[x])}
 function fcCheck(){const f=fcGet();if(!fcFull())return;let got="";try{got=localStorage.getItem("mobileKongFcGot")||""}catch(e){}if(me==="아이"&&got!==f.wk){try{localStorage.setItem("mobileKongFcGot",f.wk)}catch(e){}addCoins(10);save();confetti(90);try{sound(true)}catch(e){}{const t=document.getElementById("msgToast");if(t){t.innerHTML="<small>👨‍👩‍👧 가족 챌린지 성공!</small>🎉 코인 10개를 받았어요!";t.style.display="block";clearTimeout(t._h);t._h=setTimeout(()=>{t.style.display="none"},9000)}}}}
 function fcRender(){const e=document.getElementById("fcCard");if(!e)return;try{fcCheck()}catch(_){}const f=fcGet(),m=FCP[f.i],M=fcMembers(),n=M.filter(x=>f.done[x]).length,full=fcFull();
- e.innerHTML=`<div class="fcc${full?" done":""}"><div class="spt">👨‍👩‍👧 이번 주 가족 챌린지 <small>${full?"🎉 성공! 아이가 코인 10개!":n+"/"+M.length+"명 완료"}</small></div><div class="spb"><span class="spe">${m[0]}</span><b>${esc(m[1])}</b></div><div class="fcm">${M.map(x=>`<button class="${f.done[x]?"on":""}" onclick="fcMark(${esc(JSON.stringify(x))})">${f.done[x]?"✅":"⬜"} ${esc(x)}</button>`).join("")}<button class="add2" onclick="fcAddOpen()">➕ 사람 추가</button></div><div class="fcnote">이름을 누르면 ✅ 표시가 돼요. 한 폰으로 가족 모두 체크해도 돼요!</div></div>`}
+ e.innerHTML=`<div class="fcc${full?" done":""}"><div class="spt">👨‍👩‍👧 이번 주 가족 챌린지 <small>${full?"🎉 성공! 아이가 코인 10개!":n+"/"+M.length+"명 완료"}</small></div><div class="spb"><span class="spe">${m[0]}</span><b>${esc(m[1])}</b></div><div class="fcm">${M.map(x=>`<button class="${f.done[x]?"on":""}" onclick="fcMark(${esc(JSON.stringify(x))})">${f.done[x]?"✅":"⬜"} ${esc(x)}</button>`).join("")}<button class="add2" onclick="fcAddOpen()">➕ 사람 추가</button><button class="add2" onclick="needPin(peopleOpen)">✏️ 사람 관리</button></div><div class="fcnote">이름을 누르면 ✅ 표시가 돼요. 한 폰으로 가족 모두 체크해도 돼요!</div></div>`}
 /* ===== 친구들 탭: 오늘의 친구 뽑기 · 행운 상자 ===== */
 var fund=null;try{fund=JSON.parse(localStorage.getItem("mobileKongFun")||"null")}catch(e){}
 function funGet(){const t=ds(new Date());if(!fund||fund.day!==t)fund={day:t,r:0,b:0,f:-1};return fund}
@@ -1072,6 +1073,13 @@ function rouSpin(){if(rouBusy)return;rouBusy=true;const btn=document.getElementB
 function boxGameOpen(){const u=funGet();if(u.b){alert("행운 상자는 오늘 이미 열었어요! 내일 또 만나요");return}if(!spGet().ok){alert("오늘의 특별 미션을 하면 열려요! (미션 화면에서 해냈어요!)");return}
  const pr=[5,3,1].sort(()=>Math.random()-.5);window._boxPr=pr;boxOpen(`<h2>📦 행운 상자</h2><div style="text-align:center;color:#83778b;font-size:14px">상자 3개 중 하나를 골라요! 안에 🪙 코인이 들어 있어요</div><div class="stk">`+[0,1,2].map(i=>`<button id="bx${i}" onclick="boxPick(${i})"><span style="font-size:44px">🎁</span>고르기</button>`).join("")+"</div>")}
 function boxPick(i){const u=funGet();if(u.b)return;u.b=1;svFun();const pr=window._boxPr||[1,1,1],v=pr[i];[0,1,2].forEach(k=>{const b=document.getElementById("bx"+k);if(b){b.disabled=true;b.innerHTML=`<span style="font-size:34px">${k===i?"🎉":"💨"}</span>🪙 ${pr[k]}${k===i?" ← 내 상자!":""}`;if(k===i)b.style.borderColor="#e0457b"}});addCoins(v);save();confetti(v>=5?90:40);sound(v>=5);try{funBarRender();render()}catch(e){}}
+
+/* ===== 가족 구성원 관리 (없는 사람 지우기) ===== */
+function svGone(){try{localStorage.setItem("mobileKongGone",JSON.stringify(gone))}catch(e){}schedulePush()}
+function peopleOpen(){const names=whoList().filter(x=>x!==me);const row=(n,hid)=>`<div class="wrow"><b>${hid?"🙈":"👤"} ${esc(n)}</b>${hid?`<button onclick="peopleBack(${esc(JSON.stringify(n))})">↩ 되살리기</button>`:`<button style="background:#fff0f4;color:#c0506f" onclick="peopleDel(${esc(JSON.stringify(n))})">🗑 지우기</button>`}</div>`;
+ boxOpen('<h2>✏️ 가족 사람 관리</h2><small style="color:#83778b">우리 가족이 아닌 이름을 지우면 목록, 받는 사람, 일정의 누구에게, 가족 챌린지에서 사라져요</small>'+(names.length?names.map(n=>row(n,0)).join(""):'<div class="evempty" style="padding:10px">지울 이름이 없어요</div>')+(gone.length?'<div style="font-weight:900;margin-top:10px">지운 이름</div>'+gone.map(n=>row(n,1)).join(""):""))}
+function peopleDel(n){if(!confirm("\""+n+"\" 을(를) 목록에서 지울까요?\n(이미 보낸 메시지는 남아 있어요)"))return;if(!gone.includes(n))gone.push(n);mem=mem.filter(x=>x!==n);try{localStorage.setItem("mobileKongMem",JSON.stringify(mem))}catch(e){}const f=fcGet();f.extra=f.extra.filter(x=>x!==n);delete f.done[n];svFc();if(msgTo===n)msgTo="all";calWhoSel=calWhoSel.filter(x=>x!==n);shopWho=shopWho.filter(x=>x!==n);svGone();peopleOpen();try{renderChat();fcRender();calUI()}catch(e){}}
+function peopleBack(n){gone=gone.filter(x=>x!==n);svGone();peopleOpen();try{renderChat();fcRender();calUI()}catch(e){}}
 
 ensurePending();renderFriends();render();introInit();buddyFace.onclick=()=>{const fid=earned&&earned.day===dsn()?earned.f:(partnerF()>=0?partnerF():pending);tapK++;react(buddyFace,fid,null,actFor(fid,nDone()-1+tapK))};tick();setInterval(tick,15000);setInterval(askMe,2500);setInterval(evAlarmTick,20000);setInterval(()=>fetchMsgs(false),10000);setTimeout(()=>{fetchMsgs(false);updMsgDot()},1800);document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")fetchMsgs(true)});document.getElementById("cInput").addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.isComposing){e.preventDefault();sendMsg()}});setTimeout(evAlarmTick,2500);setTimeout(()=>{ensurePush(false).then(x=>{pushState=x;updPushStat()}).catch(()=>{});pushSync(true)},3000);setInterval(pushSync,30000);if(navigator.serviceWorker){navigator.serviceWorker.addEventListener("message",e=>{if(e.data&&e.data.go)goTab(e.data.go==="c"?"c":e.data.go==="e"?"e":"m")});const g=new URLSearchParams(location.search).get("go");if(g)setTimeout(()=>goTab(g==="c"?"c":g==="e"?"e":"m"),1500)}updPushStat();
 
