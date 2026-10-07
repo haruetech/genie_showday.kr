@@ -573,8 +573,8 @@ let evGoCal="";
 function homeCard(){const t=new Date(),k=ds(t),L=ev.day===dsn()?ev.list:[],n=nDone(),g=eff(),hn=HOL[k]?` · 🎌 ${esc(HOL[k])}`:"",left=L.filter(x=>!x.ok&&okWho(x)).length;
  const tm=new Date(t);tm.setDate(tm.getDate()+1);const tk=ds(tm),TE=dayEvents(tk).filter(x=>!x.mis).slice(0,4),un=typeof msgUnread==="function"?msgUnread():0;
  const row=x=>`<div class="hrow${x.ok?" ok":""}${okWho(x)&&x.who?" mine":""}"><span class="evt">${x.msg?"💌":(x.t?rngH(x.t,x.te):"종일")}</span><div><b>${esc(x.n)}</b> ${x.who?`<span class="evtag who">👤 ${esc(whoTxt(x.who))}</span>`:""}</div></div>`;
+ if(!TE.length&&!un)return "";
  return `<div class="home">
- <div class="hkid">🎯 아이 미션 ${Math.min(n,g)}/${g}<span class="hb"><i style="width:${Math.min(100,n/g*100)}%"></i></span>${n>=g&&tCount()>0?"🎉":"⭐"}</div>
   ${TE.length?`<div class="hsub">내일 미리보기</div>`+TE.map(row).join(""):""}
  ${un?`<span class="hbtn" onclick="goTab('c')">💬 안 읽은 메시지 ${un}개 보기</span>`:""}</div>`}
 function renderEvCal(){const b=document.getElementById("evBox");if(!b)return;const today=ds(new Date()),L=ev.day===dsn()?ev.list:[],left=L.filter(x=>!x.ok&&okWho(x)).length,dot=document.getElementById("evDot");if(dot){dot.textContent=left;dot.style.display=left?"":"none"}
