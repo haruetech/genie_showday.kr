@@ -947,7 +947,7 @@ function openWish(){const adult=me!=="아이",myP=pstk.length,td=dsn(),
  rows=wish.length?wish.slice().sort((a,b)=>(a.st==="done"?1:0)-(b.st==="done"?1:0)||a.id-b.id).map(w=>{let act,sub;const leg=w.m===undefined&&w.c>0;
   if(w.st==="done"){act=adult?`<span>🎉 이뤄졌어요</span><button onclick="wishUndo(${w.id})">↩ 되돌리기</button>`:'<span>🎉 이뤄졌어요</span>';sub=w.m?"🎯 "+esc(w.m):""}
   else if(w.st==="new"){act=adult?`<button onclick="wishMissionOpen(${w.id})">🎯 미션 정하기</button>`:'<span>⏳ 부모님이 미션을 정해 줄 거야</span>';sub="미션 정하는 중"}
-  else if(w.st==="req"){act=adult?`<button onclick="wishDone(${w.id})">✅ 들어줬어요</button>`:'<span>🎉 미션 성공! 확인 중</span>';sub="🎯 "+esc(w.m||"")+" · 완료!"}
+  else if(w.st==="req"){act=adult?`<button onclick="wishDone(${w.id})">✅ 허락했어요</button>`:'<span>🎉 미션 성공! 확인 중</span>';sub="🎯 "+esc(w.m||"")+" · 완료!"}
   else if(leg){act=coins>=w.c?`<button onclick="wishAsk(${w.id})">🪙 ${w.c}로 교환</button>`:`<button class="dis">🪙 ${w.c-coins} 더 필요</button>`;sub="🪙 "+w.c}
   else{const p=w.p||0,t=w.t||1;sub="🎯 "+esc(w.m)+" · "+p+"/"+t+"일";act=adult?`<span>${p}/${t}일</span>`:(w.l===td?'<button class="dis">✅ 오늘 했어요</button>':`<button onclick="wishTick(${w.id})">✅ 오늘 했어요!</button>`)}
   return `<div class="wrow${w.st==="done"?" done":""}"><b>🎁 ${esc(w.n)}<br><small style="color:#a094aa">${sub}</small></b>${act}${(w.st!=="req"&&w.st!=="done")||(adult&&w.st==="done")?`<button class="x" onclick="wishDel(${w.id})">✕</button>`:""}</div>`}).join(""):'<div class="evempty" style="padding:12px">갖고 싶은 것, 하고 싶은 것을 적어 봐요!<br><small>부모님이 정한 미션을 해내면 소원이 이뤄져요</small></div>';
@@ -960,10 +960,10 @@ function wishMissionOpen(id){const w=wish.find(v=>v.id===id);if(!w)return;wmD=7;
  boxOpen(`<h2>🎯 "${esc(w.n)}" 미션 정하기</h2><small style="color:#83778b">아이가 이 미션을 며칠 해내면 소원이 이뤄져요</small><div style="font-weight:900;margin-top:8px">미션</div><div class="whochips" style="margin:6px 0">${ms.map(x=>`<button onclick="wiMt.value='${x}'">${x}</button>`).join("")}</div><input id="wiMt" maxlength="24" value="${esc(w.m||"")}" placeholder="직접 써도 돼요" style="width:100%;border:2px solid #eadcf0;border-radius:12px;padding:9px;font-size:15px"><div style="font-weight:900;margin-top:10px">며칠 동안? <span id="wmDv" style="color:#745cff">7일</span></div><div class="whochips" style="margin:6px 0">${[1,3,5,7,10,14,21,30].map(d=>`<button onclick="wmD=${d};wmDv.textContent='${d}일'">${d}일</button>`).join("")}</div><button class="ok" onclick="wishSetM(${id})">✅ 미션 정했어요</button>`)}
 function wishSetM(id){const w=wish.find(v=>v.id===id);if(!w)return;const m=(document.getElementById("wiMt").value||"").trim();if(!m){alert("미션을 골라 주세요");return}w.m=m;w.t=wmD;w.p=0;w.l="";w.st="";svWi();openWish()}
 async function wishTick(id){const w=wish.find(v=>v.id===id);if(!w||w.st!==""||w.l===dsn())return;w.p=(w.p||0)+1;w.l=dsn();let fin=false;if(w.p>=(w.t||1)){w.st="req";fin=true;confetti(80);try{sound(true)}catch(e){}}svWi();openWish();
- if(fin&&me&&fam){const keep=msgTo;msgTo="all";try{await sendMsg("🎁 소원 미션 성공! "+w.n+" — 「"+w.m+"」 "+w.t+"일 완료! 소원을 들어주세요")}catch(e){}msgTo=keep}}
+ if(fin&&me&&fam){const keep=msgTo;msgTo="all";try{await sendMsg("🎁 소원 미션 성공! "+w.n+" — 「"+w.m+"」 "+w.t+"일 완료! 소원을 허락해 주세요")}catch(e){}msgTo=keep}}
 function wishDel(id){if(!confirm("이 소원을 지울까요?"))return;wish=wish.filter(w=>w.id!==id);svWi();openWish()}
 async function wishAsk(id){const w=wish.find(v=>v.id===id);if(!w||coins<w.c)return;if(!confirm(`🪙 ${w.c}개로 "${w.n}" 소원을 교환할까요?`))return;addCoins(-w.c);save();render();try{renderFriends()}catch(e){}w.st="req";svWi();openWish();if(me&&fam){const keep=msgTo;msgTo="all";try{await sendMsg("🎁 소원 교환 요청: "+w.n+" (🪙"+w.c+")")}catch(e){}msgTo=keep}}
-function wishUndo(id){const w=wish.find(v=>v.id===id);if(!w||!confirm("'이뤄졌어요' 표시를 취소하고 다시 '들어줬어요' 대기로 돌릴까요?"))return;w.st="req";svWi();openWish()}
+function wishUndo(id){const w=wish.find(v=>v.id===id);if(!w||!confirm("'이뤄졌어요' 표시를 취소하고 다시 '허락했어요' 대기로 돌릴까요?"))return;w.st="req";svWi();openWish()}
 function wishDone(id){const w=wish.find(v=>v.id===id);if(!w)return;w.st="done";svWi();openWish()}
 setInterval(claimPraise,5000);setTimeout(claimPraise,1500);
 
