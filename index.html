@@ -205,9 +205,9 @@ details{background:#f8f4fb;border-radius:14px;padding:10px 12px;margin:8px 0}sum
 <div class="page" id="pageMission"><div class="tscroll"><div id="tasks" class="tasks"></div></div>
 <div class="buddy"><div class="bface" id="buddyFace"><img id="buddyImg" alt=""><span id="buddyQ">?</span><b class="lvp" id="buddyLv"></b></div><div class="bcol"><div class="bwrap"><div class="bubble" id="bubble"></div></div><button class="bookBtn" id="bookBtn" onclick="goTab('f')"></button></div></div></div>
 <div class="page" id="pageFriends"><div class="fhead"><b id="bookTitle"></b><small id="fhint"></small><button class="wishbtn" onclick="openWish()">🎁 소원 상자</button></div><div id="friendGrid" class="bookgrid"></div></div>
-<div class="page" id="pageChat"><div class="chead"><b>💬 가족 메시지</b><span class="cwho" id="cWho"></span><button class="cbell" onclick="requestNotif()" title="알림 허용">🔔</button></div><div id="cNote"></div><div id="chatList" class="clist"></div><div class="cbar" id="cBar"><div class="cto" id="cTo"></div><div class="cq" id="cQ"></div><div class="cin"><input id="cInput" maxlength="200" placeholder="메시지를 입력하세요" enterkeyhint="send" autocomplete="off"><button class="csend" onclick="sendMsg()">보내기</button></div></div></div>
+<div class="page" id="pageChat"><div class="chead"><b>💬 가족방</b><span class="cwho" id="cWho"></span><button class="cbell" onclick="requestNotif()" title="알림 허용">🔔</button></div><div class="evseg" id="cSeg" style="margin:4px 2px"></div><div id="shopPane" style="display:none;flex:1;min-height:0;overflow:auto;padding:0 2px 8px"></div><div id="cNote"></div><div id="chatList" class="clist"></div><div class="cbar" id="cBar"><div class="cto" id="cTo"></div><div class="cq" id="cQ"></div><div class="cin"><input id="cInput" maxlength="200" placeholder="메시지를 입력하세요" enterkeyhint="send" autocomplete="off"><button class="csend" onclick="sendMsg()">보내기</button></div></div></div>
 <div class="page" id="pageSched"><div class="tscroll"><div id="evBox"></div></div></div>
-<nav class="tabs"><button class="tab on" id="tabM" onclick="goTab('m')"><span>🎯</span>미션</button><button class="tab" id="tabE" onclick="goTab('e')"><span>📅</span>일정<i class="dot" id="evDot" style="display:none"></i></button><button class="tab" id="tabC" onclick="goTab('c')"><span>💬</span>메시지<i class="dot" id="msgDot" style="display:none"></i></button><button class="tab" id="tabF" onclick="goTab('f')"><span>🐾</span>친구들</button><button class="tab" id="tabS" onclick="openParent()"><span>⚙️</span>설정</button></nav>
+<nav class="tabs"><button class="tab on" id="tabM" onclick="goTab('m')"><span>🎯</span>미션</button><button class="tab" id="tabE" onclick="goTab('e')"><span>📅</span>일정<i class="dot" id="evDot" style="display:none"></i></button><button class="tab" id="tabC" onclick="goTab('c')"><span>💬</span>가족방<i class="dot" id="msgDot" style="display:none"></i></button><button class="tab" id="tabF" onclick="goTab('f')"><span>🐾</span>친구들</button><button class="tab" id="tabS" onclick="openParent()"><span>⚙️</span>설정</button></nav>
 </main><div id="msgToast" onclick="goTab('c');this.style.display='none'"></div>
 <div id="intro"><button class="imus" id="imus" onclick="toggleMusic()" aria-label="음악 켜고 끄기">🎵</button><div class="cheer" id="cheer">Genie Genie<br>화이팅! 💪</div><div class="iw" id="iw"><div class="notes"><i>🎵</i><i>🎶</i><i>✨</i><i>🎵</i></div><div class="shadow"></div>
 <svg class="mascot" viewBox="0 0 200 230" aria-label="콩콩이">
@@ -650,7 +650,8 @@ function msgToast(list){const t=document.getElementById("msgToast"),m=list[list.
  try{sound(false)}catch(e){}if(navigator.vibrate)navigator.vibrate([100,60,100,60,200]);
  try{if(window.Notification&&Notification.permission==="granted"&&document.visibilityState!=="visible")new Notification("💬 "+m.f,{body:m.x})}catch(e){}}
 function openChat(){renderChat();fetchMsgs(true);setTimeout(()=>{const l=document.getElementById("chatList");l.scrollTop=l.scrollHeight},50)}
-function renderChat(){const L=document.getElementById("chatList");if(!L)return;
+function renderChat(){renderChatMain();renderChatSeg()}
+function renderChatMain(){const L=document.getElementById("chatList");if(!L)return;
  cNote.innerHTML="";const bar=document.getElementById("cBar");
  if(!SBOK||!fam){bar.style.display="none";L.innerHTML="";cNote.innerHTML='<div class="cnote">👨‍👩‍👧 가족 코드를 연결하면 가족과 메시지를 주고받을 수 있어요.<br>설정 → 가족 공유에서 연결해 주세요.</div>';cWho.innerHTML="";return}
  if(!me){bar.style.display="none";cWho.innerHTML="";L.innerHTML='<div class="cwho2"><p>이 폰은 누구 폰인가요?</p>'+ROLES.map(r=>`<button onclick="setMe('${r}')">${r}</button>`).join("")+'<button onclick="setMe(\'__etc\')">직접 입력</button></div>';return}
@@ -869,7 +870,7 @@ function dateLabels(){const d=new Date();todayLbl.textContent="📅 "+(d.getMont
 function introInit(){dateLabels();imus.classList.toggle("off",!musOn);if(!musOn)ihint.style.display="none";else{startMusic();document.getElementById("intro").addEventListener("pointerdown",introGesture,{once:true})}const t=tCount(),n=nDone(),g=eff();introSub.textContent=!t?"부모님이 오늘의 미션을 정해주세요":n>=g?"오늘 미션을 다 했어! 최고야 🏆":"오늘 미션 "+t+"개 · 🔥 "+streak+"일째 도전 중!"}
 function closeIntro(){const e=document.getElementById("intro");if(e.classList.contains("out"))return;stopMusic();sound(false);e.classList.add("out");setTimeout(()=>e.remove(),500);try{if(me&&me!=="아이")goTab("e")}catch(_){}}
 /* ===== 장보기·준비물 / 칭찬 스티커 / 소원 상자 / 일정 상단 탭 ===== */
-let shopWho=[];function shopWhoTog(x){if(!x)shopWho=[];else{const i=shopWho.indexOf(x);if(i<0)shopWho.push(x);else shopWho.splice(i,1)}renderEv()}
+let shopWho=[];function shopWhoTog(x){if(!x)shopWho=[];else{const i=shopWho.indexOf(x);if(i<0)shopWho.push(x);else shopWho.splice(i,1)}renderShop()}
 const shopVis=x=>okWho({who:x.w});
 let shop=[],wish=[],pstk=[],evMode="cal",shopK="s";
 try{shop=JSON.parse(localStorage.getItem("mobileKongShop")||"[]");wish=JSON.parse(localStorage.getItem("mobileKongWish")||"[]");pstk=JSON.parse(localStorage.getItem("mobileKongPstk")||"[]")}catch(e){}
@@ -877,21 +878,24 @@ try{shop=JSON.parse(localStorage.getItem("mobileKongShop")||"[]");wish=JSON.pars
 const svSh=()=>{try{localStorage.setItem("mobileKongShop",JSON.stringify(shop))}catch(e){}schedulePush()},svWi=()=>{try{localStorage.setItem("mobileKongWish",JSON.stringify(wish))}catch(e){}schedulePush()},svPr=()=>{try{localStorage.setItem("mobileKongPstk",JSON.stringify(pstk.slice(-60)))}catch(e){}schedulePush()};
 const nid=()=>Date.now()*1000+Math.floor(Math.random()*1000);
 function evSetMode(m){evMode=m;renderEv()}
-function renderEv(){const b=document.getElementById("evBox");if(!b)return;
- if(evMode==="shop"){const L=ev.day===dsn()?ev.list:[],left=L.filter(x=>!x.ok&&okWho(x)).length,dot=document.getElementById("evDot");if(dot){dot.textContent=left;dot.style.display=left?"":"none"}b.innerHTML=shopHtml()}
- else renderEvCal();
- const n=shop.filter(x=>!x.ok&&shopVis(x)).length;b.insertAdjacentHTML("afterbegin",`<div class="evseg"><button class="${evMode==="cal"?"on":""}" onclick="evSetMode('cal')">📅 일정</button><button class="${evMode==="shop"?"on":""}" onclick="evSetMode('shop')">🛒 장보기·준비물${n?" "+n:""}</button>${me?`<span class="meb" onclick="chgMe()">${pinHash?"🔒":"👤"} ${esc(me)}</span>`:""}</div>`)}
+function renderEv(){renderEvCal()}
+let chatMode="chat";
+function chatSetMode(m){chatMode=m;renderChatSeg();if(m==="chat"){try{renderChat()}catch(e){}}}
+function renderShop(){renderChatSeg()}
+function renderChatSeg(){const sg=document.getElementById("cSeg");if(!sg)return;const n=shop.filter(x=>!x.ok&&shopVis(x)).length,isS=chatMode==="shop";
+ sg.innerHTML=`<button class="${isS?"":"on"}" onclick="chatSetMode('chat')">💬 대화</button><button class="${isS?"on":""}" onclick="chatSetMode('shop')">🛒 장보기·준비물${n?" "+n:""}</button>`;
+ const sp=document.getElementById("shopPane");sp.style.display=isS?"":"none";document.getElementById("chatList").style.display=isS?"none":"";document.getElementById("cNote").style.display=isS?"none":"";if(isS){document.getElementById("cBar").style.display="none";sp.innerHTML=shopHtml()}}
 function shopHtml(){const row=x=>`<div class="shrow${x.ok?" shdn":""}"><button class="cb2" onclick="shopTog(${x.id})">${x.ok?"✓":""}</button><b>${esc(x.n)}</b>${x.w?`<small>👤 ${esc(whoTxt(x.w))}</small>`:""}${x.by?`<small>${esc(x.by)}</small>`:""}<button class="x" onclick="shopDel(${x.id})">✕</button></div>`,
  g=k=>shop.filter(x=>x.k===k&&shopVis(x)),part=(k,t)=>{const a=g(k);return a.length?`<div class="hsub">${t} ${a.filter(x=>!x.ok).length}개 남음</div>`+a.sort((x,y)=>(x.ok?1:0)-(y.ok?1:0)||x.id-y.id).map(row).join(""):""};
- return `<div class="evcard"><div class="shk"><button class="${shopK==="s"?"on":""}" onclick="shopK='s';renderEv()">🛒 장보기</button><button class="${shopK==="p"?"on":""}" onclick="shopK='p';renderEv()">🎒 준비물</button></div>
+ return `<div class="evcard"><div class="shk"><button class="${shopK==="s"?"on":""}" onclick="shopK='s';renderShop()">🛒 장보기</button><button class="${shopK==="p"?"on":""}" onclick="shopK='p';renderShop()">🎒 준비물</button></div>
  <div class="add" style="align-items:center;margin:4px 0"><span style="flex:none;font-size:12px;font-weight:900">👤 누구만 볼까요</span><div class="whochips">${[`<button class="${shopWho.length?"":"on"}" onclick="shopWhoTog('')">👨‍👩‍👧 모두</button>`].concat(whoList().map(x=>`<button class="${shopWho.includes(x)?"on":""}" onclick="shopWhoTog(${esc(JSON.stringify(x))})">${esc(x)}</button>`)).join("")}</div></div>
  <div class="shadd"><input id="shIn" placeholder="${shopK==="s"?"예: 우유, 계란":"예: 색종이, 실내화"}" onkeydown="if(event.key==='Enter'&&!event.isComposing)shopAdd()"><button onclick="shopAdd()">추가</button></div>
  ${part("s","🛒 장보기")}${part("p","🎒 준비물")}${shop.some(shopVis)?"":'<div class="evempty" style="padding:14px 6px">가족 누구나 추가하고 체크할 수 있어요<br><small>사 올 것, 학교 준비물을 적어 보세요</small></div>'}
  ${shop.some(x=>x.ok&&shopVis(x))?'<div class="evbtns"><button onclick="shopClear()">✔ 체크한 것 지우기</button></div>':""}</div>`}
-function shopAdd(){const i=document.getElementById("shIn"),n=(i.value||"").trim().slice(0,30);if(!n)return;shop.push({id:nid(),n,k:shopK,ok:false,by:me||"",w:shopWho.join(",")});svSh();renderEv();setTimeout(()=>{const e=document.getElementById("shIn");if(e)e.focus()},50)}
-function shopTog(id){const x=shop.find(v=>v.id===id);if(!x)return;x.ok=!x.ok;svSh();renderEv()}
-function shopDel(id){shop=shop.filter(v=>v.id!==id);svSh();renderEv()}
-function shopClear(){shop=shop.filter(v=>!(v.ok&&shopVis(v)));svSh();renderEv()}
+function shopAdd(){const i=document.getElementById("shIn"),n=(i.value||"").trim().slice(0,30);if(!n)return;shop.push({id:nid(),n,k:shopK,ok:false,by:me||"",w:shopWho.join(",")});svSh();renderShop();setTimeout(()=>{const e=document.getElementById("shIn");if(e)e.focus()},50)}
+function shopTog(id){const x=shop.find(v=>v.id===id);if(!x)return;x.ok=!x.ok;svSh();renderShop()}
+function shopDel(id){shop=shop.filter(v=>v.id!==id);svSh();renderShop()}
+function shopClear(){shop=shop.filter(v=>!(v.ok&&shopVis(v)));svSh();renderShop()}
 function closeBox(){const m=document.getElementById("boxModal");if(m)m.remove()}
 function boxOpen(h){closeBox();const d=document.createElement("div");d.id="boxModal";d.className="modal show";d.style.zIndex=99990;d.innerHTML='<div class="sheet pbox">'+h+'<button class="ok" style="margin-top:10px" onclick="closeBox()">닫기</button></div>';d.addEventListener("click",e=>{if(e.target===d)closeBox()});document.body.appendChild(d)}
 /* 칭찬 스티커 */
