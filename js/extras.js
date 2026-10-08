@@ -103,3 +103,31 @@ async function rxSend(id,e){closeBox();const q=rx[id]=rx[id]||{},was=q[me];const
 function unskipDate(k){skip.days=skip.days.filter(d=>d!==k);const nr=[];skip.ranges.forEach(r=>{if(k<r[0]||k>r[1]){nr.push(r);return}const prev=new Date(k+"T00:00:00");prev.setDate(prev.getDate()-1);const next=new Date(k+"T00:00:00");next.setDate(next.getDate()+1);if(r[0]<=ds(prev))nr.push([r[0],ds(prev)]);if(ds(next)<=r[1])nr.push([ds(next),r[1]])});skip.ranges=nr;saveWeek();if(k===ds(new Date())&&!isOff(k))dailyAuto(true);afterAuto();try{wkUI()}catch(e){}try{calUI()}catch(e){}renderEv()}
 function skDayDel(i){const k=skip.days[i];if(k)unskipDate(k)}
 function setAutoOk(){week.autoOk=document.getElementById("wkAutoOk").checked;if(week.autoOk===false){ev.list.forEach(x=>{if(x.auto){x.ok=false;delete x.auto}});evSave()}saveWeek();try{renderEv()}catch(e){}}
+
+/* ===== 시간 고르기: 오전/오후 · 시 · 분을 큰 버튼으로 ===== */
+const TPH={newTime:"⏰ 시간 선택",calTime:"🕐 시간 선택",calEnd:"🕐 시간 선택",preTime:"🕐 시간 선택"};
+function tpLabel(v){if(!v||!/^\d\d:\d\d$/.test(v))return"";const h=+v.slice(0,2),m=v.slice(3);return(h<12?"오전 ":"오후 ")+((h%12)||12)+":"+m}
+(function(){const D=Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,"value");
+ Object.keys(TPH).forEach(id=>{const el=document.getElementById(id);if(!el)return;
+  const b=document.createElement("button");b.type="button";b.className="tpbtn";b.id=id+"Btn";b.style.cssText="border:2px solid #eadcf0;border-radius:12px;padding:10px 12px;font-size:16px;font-weight:900;background:#fff;text-align:center;min-height:46px;"+(el.getAttribute("style")||"flex:1");
+  if(el.style.width){b.style.minWidth=el.style.width;b.style.width="auto"}el.parentNode.insertBefore(b,el);el.style.display="none";
+  const ref=()=>{const t=tpLabel(D.get.call(el));b.textContent=t||TPH[id];b.style.color=t?"#5b45d6":"#a094aa"};
+  Object.defineProperty(el,"value",{get(){return D.get.call(el)},set(v){D.set.call(el,v);ref()},configurable:true});ref();
+  b.onclick=()=>tpOpen(id)})})();
+let tpS={id:"",ap:"",h:0,m:0};
+function tpOpen(id){const el=document.getElementById(id),v=el.value||"";let ap="",h=0,m=0;if(/^\d\d:\d\d$/.test(v)){const H=+v.slice(0,2);ap=H<12?"am":"pm";h=(H%12)||12;m=+v.slice(3)}else{ap=new Date().getHours()<12?"am":"pm"}
+ tpS={id,ap,h,m};let d=document.getElementById("tpModal");if(d)d.remove();d=document.createElement("div");d.id="tpModal";d.className="modal show";d.style.zIndex=99996;d.addEventListener("click",e=>{if(e.target===d)tpClose()});document.body.appendChild(d);tpDraw()}
+function tpClose(){const d=document.getElementById("tpModal");if(d)d.remove()}
+function tpDraw(){const d=document.getElementById("tpModal");if(!d)return;const S=tpS,on="background:#745cff;color:#fff;border-color:#745cff",off="background:#fff;color:#5b45d6;border-color:#eadcf0",bs="border:2px solid;border-radius:14px;font-weight:900;";
+ const lab=S.h?(S.ap==="am"?"오전 ":"오후 ")+S.h+":"+String(S.m).padStart(2,"0"):"시간을 골라 주세요";
+ let hh="";for(let i=1;i<=12;i++)hh+=`<button onclick="tpSet('h',${i})" style="${bs}padding:12px 0;font-size:20px;${S.h===i?on:off}">${i}</button>`;
+ let mm="";for(let i=0;i<60;i+=5)mm+=`<button onclick="tpSet('m',${i})" style="${bs}padding:10px 0;font-size:17px;${S.m===i&&S.h?on:off}">${String(i).padStart(2,"0")}</button>`;
+ d.innerHTML=`<div class="sheet" style="padding-top:16px"><div style="font-size:26px;font-weight:900;color:#5b45d6;margin-bottom:10px">${lab}</div>
+ <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><button onclick="tpSet('ap','am')" style="${bs}padding:14px 0;font-size:20px;${S.ap==="am"?on:off}">🌅 오전</button><button onclick="tpSet('ap','pm')" style="${bs}padding:14px 0;font-size:20px;${S.ap==="pm"?on:off}">🌇 오후</button></div>
+ <div style="font-size:13px;font-weight:900;color:#83778b;margin:12px 0 4px;text-align:left">시</div><div style="display:grid;grid-template-columns:repeat(6,1fr);gap:6px">${hh}</div>
+ <div style="font-size:13px;font-weight:900;color:#83778b;margin:12px 0 4px;text-align:left">분</div><div style="display:grid;grid-template-columns:repeat(6,1fr);gap:6px">${mm}</div>
+ <div style="display:flex;gap:8px;margin-top:14px"><button onclick="tpClear()" style="flex:none;padding:14px 16px;border-radius:14px;background:#f3edf5;color:#83778b;font-weight:900;font-size:16px">지우기</button><button onclick="tpDone()" style="flex:1;padding:14px;border-radius:14px;background:#745cff;color:#fff;font-weight:900;font-size:18px">확인 ✓</button></div></div>`}
+function tpSet(k,v){tpS[k]=v;tpDraw()}
+function tpPut(v){const el=document.getElementById(tpS.id);if(!el)return;el.value=v;el.dispatchEvent(new Event("input",{bubbles:true}));el.dispatchEvent(new Event("change",{bubbles:true}))}
+function tpDone(){const S=tpS;if(!S.h){alert("시(1~12)를 눌러 주세요");return}let H=S.h%12;if(S.ap==="pm")H+=12;tpPut(String(H).padStart(2,"0")+":"+String(S.m).padStart(2,"0"));tpClose()}
+function tpClear(){tpPut("");tpClose()}
