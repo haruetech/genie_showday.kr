@@ -121,11 +121,13 @@ function tpClose(){const d=document.getElementById("tpModal");if(d)d.remove()}
 function tpDraw(){const d=document.getElementById("tpModal");if(!d)return;const S=tpS,on="background:#745cff;color:#fff;border-color:#745cff",off="background:#fff;color:#5b45d6;border-color:#eadcf0",bs="border:2px solid;border-radius:14px;font-weight:900;";
  const lab=S.h?(S.ap==="am"?"오전 ":"오후 ")+S.h+":"+String(S.m).padStart(2,"0"):"시간을 골라 주세요";
  let hh="";for(let i=1;i<=12;i++)hh+=`<button onclick="tpSet('h',${i})" style="${bs}padding:12px 0;font-size:20px;${S.h===i?on:off}">${i}</button>`;
- let mm="";for(let i=0;i<60;i+=5)mm+=`<button onclick="tpSet('m',${i})" style="${bs}padding:10px 0;font-size:17px;${S.m===i&&S.h?on:off}">${String(i).padStart(2,"0")}</button>`;
+ const T=Math.floor(S.m/10)*10,O=S.m%10;let mm="";for(let i=0;i<60;i+=10)mm+=`<button onclick="tpSet('m',${i}+${O})" style="${bs}padding:10px 0;font-size:17px;${T===i&&S.h?on:off}">${String(i).padStart(2,"0")}</button>`;
+ let m1="";for(let i=0;i<10;i++)m1+=`<button onclick="tpSet('m',${T}+${i})" style="${bs}padding:10px 0;font-size:17px;${O===i&&S.h?on:off}">${i}</button>`;
  d.innerHTML=`<div class="sheet" style="padding-top:16px"><div style="font-size:26px;font-weight:900;color:#5b45d6;margin-bottom:10px">${lab}</div>
  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><button onclick="tpSet('ap','am')" style="${bs}padding:14px 0;font-size:20px;${S.ap==="am"?on:off}">🌅 오전</button><button onclick="tpSet('ap','pm')" style="${bs}padding:14px 0;font-size:20px;${S.ap==="pm"?on:off}">🌇 오후</button></div>
  <div style="font-size:13px;font-weight:900;color:#83778b;margin:12px 0 4px;text-align:left">시</div><div style="display:grid;grid-template-columns:repeat(6,1fr);gap:6px">${hh}</div>
- <div style="font-size:13px;font-weight:900;color:#83778b;margin:12px 0 4px;text-align:left">분</div><div style="display:grid;grid-template-columns:repeat(6,1fr);gap:6px">${mm}</div>
+ <div style="font-size:13px;font-weight:900;color:#83778b;margin:12px 0 4px;text-align:left">분 (앞자리)</div><div style="display:grid;grid-template-columns:repeat(6,1fr);gap:6px">${mm}</div>
+ <div style="font-size:13px;font-weight:900;color:#83778b;margin:10px 0 4px;text-align:left">분 (뒷자리 · 1분 단위)</div><div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px">${m1}</div>
  <div style="display:flex;gap:8px;margin-top:14px"><button onclick="tpClear()" style="flex:none;padding:14px 16px;border-radius:14px;background:#f3edf5;color:#83778b;font-weight:900;font-size:16px">지우기</button><button onclick="tpDone()" style="flex:1;padding:14px;border-radius:14px;background:#745cff;color:#fff;font-weight:900;font-size:18px">확인 ✓</button></div></div>`}
 function tpSet(k,v){tpS[k]=v;tpDraw()}
 function tpPut(v){const el=document.getElementById(tpS.id);if(!el)return;el.value=v;el.dispatchEvent(new Event("input",{bubbles:true}));el.dispatchEvent(new Event("change",{bubbles:true}))}
