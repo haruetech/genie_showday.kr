@@ -55,10 +55,10 @@ function syncQuiz(){qOn.checked=qz.on;qMul.checked=qz.mul;qAdd.checked=qz.add;qE
 function revealFriend(f,had,pz,g,n){
  const sh=document.querySelector("#modal .sheet");resultBox.style.display="";modalOk.disabled=false;heroWrap.classList.remove("glowbox");heroImg.style.filter="";
  const fr=friendsData[f],name=nm(f),m=(had?"오늘의 친구 ":"새 친구 ")+name+josa(name)+" 왔어요!";
- if(photo){heroImg.src=photo;msg.textContent="🎉 오늘 미션 완료! 최고야!";newFriendBox.style.display="";nfImg.src=fr.src;nfText.textContent=m}
+ if(photo){heroImg.src=photo;msg.textContent="🎉 오늘 미션 성공! 최고야!";newFriendBox.style.display="";nfImg.src=fr.src;nfText.textContent=m}
  else{heroImg.src=fr.src;heroWrap.classList.add("glowbox");msg.textContent=m;newFriendBox.style.display="none"}
  modalText.innerHTML=`🏆 <b>스탬프 ${g}개 모으기 성공!</b><br><b style="color:#745cff">🐾 ${name} Lv.${n} 달성!</b><br>🪙 코인 +4 (모두 ${coins}개)<br>${pz?"💌 "+esc(pz)+"<br>":""}🔥 ${streak}일 연속!<br>📖 친구 ${owned.length}/${friendsData.length}${owned.length===friendsData.length?" 모두 모았어요!":""}<br><br>🎁 받을 상<br><b style="font-size:20px">${reward||"오늘의 특별한 상"}</b>`;
- const big=bigStamp;big.className="bigstamp all";big.innerHTML="완료<br>쾅!";sh.classList.remove("shake");void big.offsetWidth;big.classList.add("slam");sh.classList.add("shake");
+ const big=bigStamp;big.className="bigstamp all";big.innerHTML="성공<br>쾅!";sh.classList.remove("shake");void big.offsetWidth;big.classList.add("slam");sh.classList.add("shake");
  confetti(80);sound(true);render();renderFriends();setTimeout(()=>fire(photo?nfWrap:heroWrap,f),700);setTimeout(()=>fire(photo?nfWrap:heroWrap,f),1900);
  const tg=photo?nfWrap:heroWrap;tg.querySelectorAll(".giftHand").forEach(x=>x.remove());const gh=document.createElement("span");gh.className="giftHand";gh.textContent="🎁";gh.onclick=e=>{e.stopPropagation();openGift(gh,f)};tg.appendChild(gh);
  giftState={f,n};modalOk.disabled=true;luckyLine.textContent="🎁 "+name+josa(name)+" 선물을 들고 왔어요!";luckyLine.className="lucky giftbtn";luckyLine.innerHTML="🎁 "+name+josa(name)+" 선물을 들고 왔어요!<br><span>👆 여기를 콕 눌러서 열어봐요!</span>";luckyLine.style.display="";luckyLine.onclick=()=>{if(giftState)openGift(gh,f)};resultBox.onclick=()=>{if(giftState)openGift(gh,f)};

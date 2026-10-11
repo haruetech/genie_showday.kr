@@ -1,16 +1,16 @@
 (function(){
 const menu=document.getElementById('learnMenuGames'),area=document.getElementById('learnGameGames');if(!menu||!area)return;
 const modes=[['subitize','👀','한눈에 개수 알기'],['action','🎤','인형 행동 말하기'],['add','➕','인형과 더하기'],['pattern','🌈','규칙 찾기'],['sort','🧩','순서대로 놓기']];
-let mode='',round=0,answer='',locked=false,rec=null;const rand=n=>Math.floor(Math.random()*n),level=()=>KongLevels.get(mode),buddy=()=>`images/buddy${String(1+rand(23)).padStart(2,'0')}.jpg`;
+let mode='',round=0,answer='',locked=false,rec=null,roundTimer=null;const rand=n=>Math.floor(Math.random()*n),level=()=>KongLevels.get(mode),buddy=()=>`images/buddy${String(1+rand(23)).padStart(2,'0')}.jpg`;
 const dot=n=>Array.from({length:n},()=>'<span style="width:19px;height:19px;border-radius:50%;background:#ab83ef;display:inline-block;margin:4px"></span>').join('');
 const actions=[{emoji:'🧸 🪥',verb:'양치',text:'인형이 양치해요',alts:['이를 닦아요','양치하고 있어요','이를 닦고 있어요']},{emoji:'🧸 📖',verb:'책',text:'인형이 책을 읽어요',alts:['독서해요','책 읽고 있어요']},{emoji:'🧸 🧹',verb:'청소',text:'인형이 청소해요',alts:['정리해요','청소하고 있어요']},{emoji:'🧸 🍚',verb:'밥',text:'인형이 밥을 먹어요',alts:['식사해요','밥 먹고 있어요']},{emoji:'🧸 💤',verb:'잠',text:'인형이 잠을 자요',alts:['자고 있어요','잠자요']},{emoji:'🧸 🧼',verb:'손',text:'인형이 손을 씻어요',alts:['손 씻고 있어요','손을 닦아요']},{emoji:'🧸 🏃',verb:'달리',text:'인형이 달려요',alts:['뛰어요','달리고 있어요']},{emoji:'🧸 🎵',verb:'노래',text:'인형이 노래해요',alts:['노래를 불러요','노래하고 있어요']}];
 menu.innerHTML=modes.map(m=>`<button data-extra="${m[0]}" style="min-height:85px"><span>${m[1]}</span>${m[2]}</button>`).join('');menu.addEventListener('click',e=>{let b=e.target.closest('[data-extra]');if(b)start(b.dataset.extra)});
-function start(m){stop();mode=m;round=0;area.hidden=false;menu.hidden=true;next()}
+function start(m){clearTimeout(roundTimer);stop();mode=m;round=0;area.hidden=false;menu.hidden=true;next()}
 function stop(){if(rec){try{rec.abort()}catch(e){}rec=null}}
-function back(){stop();area.hidden=true;menu.hidden=false}
+function back(){clearTimeout(roundTimer);stop();mode='';area.hidden=true;menu.hidden=false}
 function options(n){const a=new Set([n]);while(a.size<3){a.add(Math.max(1,n+rand(11)-5))}return [...a].sort(()=>Math.random()-.5)}
-function success(){if(locked)return;locked=true;round++;let h=document.getElementById('extraHint');if(h)h.textContent='성공! 정말 잘했어요 ⭐';setTimeout(next,900)}
-function next(){stop();locked=false;if(round>=5){area.innerHTML=`<div class="learn-done">🎉 다섯 문제 완료!<img class="learn-friend" src="${buddy()}" alt="인형 친구"><p>참 잘했어요! 💛</p></div><button class="learn-reset" id="extraAgain">다시 하기</button><button class="learn-reset" id="extraBack">게임 고르기</button>`;document.getElementById('extraAgain').onclick=()=>start(mode);document.getElementById('extraBack').onclick=back;return}
+function success(){if(locked)return;locked=true;round++;let h=document.getElementById('extraHint');if(h)h.textContent='성공! 정말 잘했어요 ⭐';{const active=mode;roundTimer=setTimeout(()=>{if(mode===active)next()},900)}}
+function next(){stop();locked=false;if(round>=5){area.innerHTML=`<div class="learn-done">🎉 다섯 문제 성공!<img class="learn-friend" src="${buddy()}" alt="인형 친구"><p>참 잘했어요! 💛</p></div><button class="learn-reset" id="extraAgain">다시 하기</button><button class="learn-reset" id="extraBack">게임 고르기</button>`;document.getElementById('extraAgain').onclick=()=>start(mode);document.getElementById('extraBack').onclick=back;return}
 let q='',visual='',arr=[],lv=level();
 if(mode==='subitize'){answer=1+rand([3,5,7,10,15][lv-1]);q='동그라미가 몇 개일까?';visual=`<div style="text-align:center;padding:16px">${dot(answer)}</div>`;arr=options(answer)}
 if(mode==='action'){answer=actions[rand(Math.min(actions.length,[3,4,5,6,8][lv-1]))];q='인형 친구가 무엇을 하고 있을까?';visual=`<div style="text-align:center;font-size:55px;margin:12px">${answer.emoji}</div><p style="text-align:center">마이크를 누르고 문장으로 말해 보세요.</p>`}
