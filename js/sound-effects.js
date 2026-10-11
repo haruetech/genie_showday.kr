@@ -1,0 +1,13 @@
+(function(){'use strict';
+var ctx=null,enabled=true,volume=.35,last=0;
+try{enabled=localStorage.getItem('kongSoundEnabled')!=='false';volume=Math.max(0,Math.min(1,Number(localStorage.getItem('kongSoundVolume')||35)/100));}catch(e){}
+function tone(freq,when,duration,kind,gain){var osc=ctx.createOscillator(),env=ctx.createGain();osc.type=kind||'sine';osc.frequency.setValueAtTime(freq,when);env.gain.setValueAtTime(.0001,when);env.gain.exponentialRampToValueAtTime(Math.max(.0002,volume*(gain||.12)),when+.018);env.gain.exponentialRampToValueAtTime(.0001,when+duration);osc.connect(env);env.connect(ctx.destination);osc.start(when);osc.stop(when+duration+.02)}
+function play(type){if(!enabled||volume<=0)return;try{ctx=ctx||new(window.AudioContext||window.webkitAudioContext)();if(ctx.state==='suspended')ctx.resume();var t=ctx.currentTime+.015;if(type==='tap')tone(530,t,.09,'sine',.10);else if(type==='wrong')tone(330,t,.13,'sine',.075);else if(type==='stamp'){tone(330,t,.11,'triangle',.15);tone(650,t+.12,.18,'sine',.13)}else if(type==='money'){[780,1040,1320].forEach((f,i)=>tone(f,t+i*.075,.16,'sine',.10))}else if(type==='complete'){[523,659,784,1047].forEach((f,i)=>tone(f,t+i*.13,.23,'sine',.13))}else{tone(660,t,.13,'sine',.13);tone(880,t+.10,.22,'sine',.13)}}catch(e){}}
+function save(){var en=document.getElementById('kongSoundEnabled'),vol=document.getElementById('kongSoundVolume');enabled=en?en.checked:enabled;volume=vol?Number(vol.value)/100:volume;try{localStorage.setItem('kongSoundEnabled',String(enabled));localStorage.setItem('kongSoundVolume',String(Math.round(volume*100)))}catch(e){}}
+function init(){var en=document.getElementById('kongSoundEnabled'),vol=document.getElementById('kongSoundVolume');if(en)en.checked=enabled;if(vol)vol.value=Math.round(volume*100);
+document.addEventListener('click',function(e){var el=e.target.closest('button');if(!el)return;var now=Date.now();if(now-last<65)return;last=now;
+if(el.closest('#pagePlayroom')){var txt=(el.textContent||'').trim();if(/다음|정답|완료|성공|다 했|축하/.test(txt))play('success');else if(/틀렸|다시/.test(txt))play('wrong');else play('tap');}
+else if(/스탬프|콩!/.test(el.textContent||''))play('stamp');
+else if(/저금|용돈/.test(el.textContent||''))play('money');},true);
+var root=document.getElementById('pagePlayroom');if(root&&window.MutationObserver){var prev='';new MutationObserver(function(){var t=(root.innerText||'').slice(-450);if(t===prev)return;prev=t;if(/모두 성공|모두 완료|참 잘했|게임 완료|축하해/.test(t))play('complete')}).observe(root,{childList:true,subtree:true});}}
+window.KongSound={play:play,save:save};if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();})();
