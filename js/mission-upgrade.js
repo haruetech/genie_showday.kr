@@ -9,7 +9,10 @@ let approval=localStorage.getItem('kong_mission_approval')==='true';
 const safe=x=>String(x).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const persist=()=>localStorage.setItem(KEY,JSON.stringify(rules));
 function rollover(){const d=today(),old=localStorage.getItem(DAY)||localStorage.getItem('mobileKongDay');if(old&&old!==d){
-  const names=missions.slice();const completed=names.filter((_,i)=>done[i]);if(completed.length)logs.push({date:old,completed});
+  /* core.js가 날짜가 바뀌면 done을 먼저 초기화하므로, 어제 완료 목록은 core.js가 따로 저장한 값을 쓴다 */
+  let prev=null;try{prev=JSON.parse(localStorage.getItem('kong_prev_day')||'null')}catch(e){}try{localStorage.removeItem('kong_prev_day')}catch(e){}
+  const completed=(prev&&Array.isArray(prev.completed))?prev.completed:missions.filter((_,i)=>done[i]),ld=(prev&&prev.day)||old;
+  logs=logs.filter(x=>!(x.date===ld&&x.early));if(completed.length)logs.push({date:ld,completed});
   logs=logs.slice(-60);localStorage.setItem(LOG,JSON.stringify(logs));
   for(let i=missions.length-1;i>=0;i--){if((rules[missions[i]]||{}).repeat==='once'){const name=missions[i];missions.splice(i,1);done.splice(i,1);mt.splice(i,1);mp.splice(i,1);delete rules[name]}}
   persist();save();

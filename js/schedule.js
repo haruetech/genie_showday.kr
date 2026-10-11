@@ -3,7 +3,6 @@ const ROUTE_API="";/* 이동시간 API 주소 — 연결 규격 확인 후 채�
 function evSave(){try{localStorage.setItem("mobileKongEv",JSON.stringify(ev))}catch(e){}schedulePush()}
 let evY=new Date().getFullYear(),evM=new Date().getMonth(),evSel=ds(new Date());
 function dayEvents(k){return dayEventsAll(k).filter(okWho)}
-function exKey(x){return x.n+"@"+(x.t||"")+"@"+(x.k==="e"?"e":"m")}function isExc(k,x){return((week.ex||{})[k]||[]).includes(exKey(x))}
 function skippedFor(k){const a=(week.ex||{})[k]||[];if(!a.length||isOff(k))return[];const wd=new Date(k+"T00:00:00").getDay();return(week.d[wd]||[]).filter(x=>a.includes(exKey(x))).map(x=>({n:x.n,t:x.t||"",te:x.k==="e"?(x.te||""):"",ek:exKey(x),mis:x.k==="e"?0:1}))}
 function dayEventsAll(k){const today=ds(new Date()),out=[];
  if(k===today){if(ev.day!==today){try{dailyAuto(true)}catch(e){}}if(ev.day!==today)return out;ev.list.forEach((x,i)=>out.push(Object.assign({i},x)));return out}

@@ -42,7 +42,7 @@ function openQuiz(force){if(!force&&!qz.on)return false;let q=null;for(let i=0;i
  const td=ds(new Date());if(qs.day!==td)qs={day:td,r:0,t:0};qStat.textContent="오늘 맞힌 문제 "+qs.r+"개";
  qOpts.innerHTML=q.opts.map((o,i)=>`<button onclick="answerQ(${i})">${o.t}</button>`).join("");quizModal.classList.add("show");if(q.speak)setTimeout(qSpeak,350);return true}
 function qSpeak(){if(!curQ||!curQ.speak)return;try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(curQ.speak);u.lang="en-US";u.rate=.8;speechSynthesis.speak(u)}catch(e){}}
-function buzz(){try{const A=new(window.AudioContext||window.webkitAudioContext)(),o=A.createOscillator(),g=A.createGain();o.type="sine";o.frequency.value=220;o.connect(g);g.connect(A.destination);g.gain.setValueAtTime(.12,A.currentTime);g.gain.exponentialRampToValueAtTime(.001,A.currentTime+.25);o.start();o.stop(A.currentTime+.26)}catch(e){}}
+function buzz(){try{const A=acx(),o=A.createOscillator(),g=A.createGain();o.type="sine";o.frequency.value=220;o.connect(g);g.connect(A.destination);g.gain.setValueAtTime(.12,A.currentTime);g.gain.exponentialRampToValueAtTime(.001,A.currentTime+.25);o.start();o.stop(A.currentTime+.26)}catch(e){}}
 function answerQ(i){if(!curQ||qNext.style.display!=="none")return;const o=curQ.opts[i],btns=qOpts.querySelectorAll("button");
  if(o.ok){btns[i].classList.add("good");btns.forEach(b=>b.disabled=true);const c=qTry===0?2:1;addCoins(c);const td=ds(new Date());if(qs.day!==td)qs={day:td,r:0,t:0};qs.r++;qs.t++;save();render();
   qMsg.style.color="#2f9e5b";qMsg.textContent=(qTry===0?"🎉 정답! 최고야! ":"👏 맞혔어! ")+"🪙 +"+c;qStat.textContent="오늘 맞힌 문제 "+qs.r+"개";qNext.style.display="";qSkip.style.display="none";confetti(30);sound(true)}
