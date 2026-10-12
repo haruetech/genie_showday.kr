@@ -26,10 +26,9 @@ function remToggle(id){const r=rems.find(x=>x.id===id);if(!r)return;r.on=!r.on;r
 
 /* 앱이 열려 있을 때: 시간이 되면 팝업 + 소리 */
 function remFired(){let r={day:dsn(),keys:[]};try{const q=JSON.parse(localStorage.getItem("mobileKongRemFired")||"null");if(q&&q.day===dsn())r=q}catch(e){}return r}
-function remTick(){try{const now=new Date(),nm=now.getHours()*60+now.getMinutes(),wd=now.getDay(),f=remFired(),due=[];
+function remTick(){try{if(document.querySelector(".modal.show"))return;const now=new Date(),nm=now.getHours()*60+now.getMinutes(),wd=now.getDay(),f=remFired(),due=[];
  rems.forEach(r=>{if(!r.on||!r.t||!remHit(r,wd))return;const tm=toMin(r.t),k=r.id+"@"+r.t;if(nm>=tm&&nm<tm+30&&!f.keys.includes(k)){f.keys.push(k);due.push(r)}});
  if(!due.length)return;try{localStorage.setItem("mobileKongRemFired",JSON.stringify(f))}catch(e){}
- if(document.querySelector(".modal.show"))return;
  remWrap.style.display="none";remEmo.style.display="";remEmo.textContent="⏰";remTitle.textContent="🔔 알림 시간이에요!";
  remText.innerHTML=due.map(r=>`<b>${esc(r.n)}</b> (${fmt(r.t)})`).join("<br>");
  remindModal.classList.add("show");sound(false);if(navigator.vibrate)navigator.vibrate([80,60,80]);

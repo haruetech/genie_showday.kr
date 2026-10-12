@@ -32,8 +32,8 @@ function applySched(){const off=+schedOff.value,boxes=[...schedPrev.querySelecto
  missions.forEach((_,k)=>{if(mt[k]&&toMin(mt[k])<=nowMin()&&!r.ids.includes(String(k)))r.ids.push(String(k))});try{localStorage.setItem("mobileKongRem2",JSON.stringify(r))}catch(e){}
  save();lastSig=null;tick();schedText.value="";schedPrev.innerHTML="";schedGo.style.display="none";alert(n+"개의 일정을 넣었어요!")}
 function downloadIcsAll(){const pad=x=>String(x).padStart(2,"0"),d=new Date(),day=d.getFullYear()+pad(d.getMonth()+1)+pad(d.getDate()),stamp=new Date().toISOString().replace(/[-:]/g,"").split(".")[0]+"Z",url=location.href.split("#")[0],ev=[];
- missions.forEach((m,i)=>{if(mt[i])ev.push([m,mt[i]])});if(pre.on)ev.push(["프리올쏘 하기",pre.time]);
- if(!ev.length){alert("시간을 정한 미션이 없어요");return}
+ missions.forEach((m,i)=>{if(mt[i])ev.push([m,mt[i]])});if(pre.on)ev.push(["프리올쏘 하기",pre.time]);try{rems.forEach(r=>{if(r.on&&r.t&&remHit(r,d.getDay()))ev.push([r.n,r.t])})}catch(e){}
+ if(!ev.length){alert("오늘 시간을 정한 미션·알림이 없어요");return}
  const L=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//kongkong//KR","CALSCALE:GREGORIAN"];
  ev.forEach(([t,tm],i)=>{const[h,m]=tm.split(":");L.push("BEGIN:VEVENT","UID:kk-"+day+"-"+i+"@"+(location.host||"local"),"DTSTAMP:"+stamp,"DTSTART:"+day+"T"+h+m+"00","DURATION:PT20M","SUMMARY:⏰ "+t,"DESCRIPTION:콩콩 미션을 열고 스탬프를 받아요! "+url,"URL:"+url,"BEGIN:VALARM","TRIGGER:PT0S","ACTION:DISPLAY","DESCRIPTION:"+t,"END:VALARM","END:VEVENT")});L.push("END:VCALENDAR");
  const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([L.join("\r\n")],{type:"text/calendar;charset=utf-8"}));a.download="kongkong-today.ics";document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500)}

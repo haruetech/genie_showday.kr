@@ -86,7 +86,7 @@ async function ensurePush(ask){
  if(!sub)sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:urlB64(VAPID_PUB)});
  await idbSet("fam",fam);await rpc("kong_push_sub",{p_code:await idOf(fam),p_sub:sub.toJSON(),p_who:me||""});
  pushState="on";return "on"}
-const PUSHMSG={fam:"먼저 설정에서 가족 코드를 연결해 주세요.",unsupported:"이 브라우저는 꺼져 있을 때 알림을 지원하지 않아요. 달력 알림(📅 매일 알림 일정 받기)을 이용해 주세요.",ios:"아이폰은 공유 버튼 → '홈 화면에 추가'로 설치한 앱에서 이 버튼을 눌러야 해요.",denied:"알림이 차단돼 있어요. 폰 설정에서 이 앱(또는 브라우저)의 알림을 허용해 주세요.",off:"알림이 아직 꺼져 있어요.",on:"✅ 알림이 켜졌어요! 앱을 닫아도 일정·메시지 알림이 울려요."};
+const PUSHMSG={fam:"먼저 설정에서 가족 코드를 연결해 주세요.",unsupported:"이 브라우저는 꺼져 있을 때 알림을 지원하지 않아요. 달력 알림(📅 폰 달력에 넣기)을 이용해 주세요.",ios:"아이폰은 공유 버튼 → '홈 화면에 추가'로 설치한 앱에서 이 버튼을 눌러야 해요.",denied:"알림이 차단돼 있어요. 폰 설정에서 이 앱(또는 브라우저)의 알림을 허용해 주세요.",off:"알림이 아직 꺼져 있어요.",on:"✅ 알림이 켜졌어요! 앱을 닫아도 일정·메시지 알림이 울려요."};
 async function requestNotif(){try{const r=await ensurePush(true);pushState=r;updPushStat();alert(PUSHMSG[r]||"알림을 켤 수 없어요");if(r==="on")pushSync(true)}catch(e){alert("알림을 켤 수 없어요. 잠시 뒤 다시 눌러 주세요.")}}
 async function pushTest(){try{const r=await ensurePush(true);pushState=r;updPushStat();if(r!=="on"){alert(PUSHMSG[r]||"알림을 켤 수 없어요");return}
  const reg=await navigator.serviceWorker.ready,sub=await reg.pushManager.getSubscription();
@@ -94,7 +94,7 @@ async function pushTest(){try{const r=await ensurePush(true);pushState=r;updPush
  await rpc("kong_push_send",{p_code:await idOf(fam),p_from:"",p_to:me||"",p_blob:await encObj(fam,{t:"🔔 알림 시험",b:"이 알림이 보이면 성공이에요!",g:"m",tag:"test"})});
  const f=await fetch(SB_URL+"/functions/v1/kong-push",{method:"POST",headers:{apikey:SB_KEY,"Content-Type":"application/json"},body:"{}"});const j=await f.json().catch(()=>({}));
  alert("시험 알림을 보냈어요. 앱을 닫고 몇 초 기다려 보세요.\n\n"+info+"\n서버 응답: "+f.status+" "+JSON.stringify(j))}catch(e){alert("시험 실패: "+(e&&e.message||e))}}
-function updPushStat(){const e=document.getElementById("pushStat");if(e)e.textContent=pushState==="on"?"✅ 이 폰은 앱이 꺼져도 알림이 와요":(pushState==="ios"?"📱 홈 화면에 설치한 앱에서 켜 주세요":(pushState==="denied"?"🚫 알림이 차단됨(폰 설정에서 허용)":"🔕 아직 꺼짐 — 위 🔔 버튼을 눌러 주세요"))}
+function updPushStat(){const e=document.getElementById("pushStat");if(e)e.textContent=pushState==="on"?"✅ 이 폰은 앱이 꺼져도 알림이 와요":(pushState==="ios"?"📱 홈 화면에 설치한 앱에서 켜 주세요":(pushState==="denied"?"🚫 알림이 차단됨(폰 설정에서 허용)":(pushState==="fam"?"👨‍👩‍👧 앱이 꺼져도 오는 알림은 가족 코드를 먼저 연결해야 해요 (앱이 열려 있을 땐 팝업으로 와요)":"🔕 아직 꺼짐 — 위 🔔 버튼을 눌러 주세요")))}
 let pushSig="";
 function pushPlan(){const out=[],now=Date.now(),mk=(k,at,to,t,b,g,tag)=>({k,at,to,t,b,g,tag});
  for(let n=0;n<=7;n++){const d=new Date();d.setDate(d.getDate()+n);const k=ds(d),at0=new Date(k+"T00:00:00").getTime();
