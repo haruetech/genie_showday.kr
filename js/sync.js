@@ -1,7 +1,7 @@
 /* ---- 가족 공유 (Supabase) ---- */
 const SB_URL="https://ayygbemcxuajccaknfir.supabase.co",SB_KEY="sb_publishable_tiLGpJNheNZZ4Yn9cIhTow_HjW2dx2E";
 const SBOK=/^https:\/\/[a-z0-9-]+\.supabase\.co$/i.test(SB_URL)&&SB_KEY.length>30&&!/YOUR/.test(SB_KEY+SB_URL);
-const SYNCK=["Tasks","Done","MT","MP","Reward","Goal","Total","Streak","Day","Owned","Pending","Earned","Names","Pre","PreDone","Coins","CT","Care","Partner","Quiz","QStat","Pin","Week","Skip","Auto","Ev","Cal","Shop","Wish","Pstk","Sp","Fc","Fun","Gone","Fset"];
+const SYNCK=["Tasks","Done","MT","MP","Reward","Goal","Total","Streak","Day","Owned","Pending","Earned","Names","Pre","PreDone","Coins","CT","Care","Partner","Quiz","QStat","Pin","Week","Skip","Auto","Ev","Cal","Rem","Shop","Wish","Pstk","Sp","Fc","Fun","Gone","Fset"];
 let fam="",syncTs=0,pushT=null,busyP=false,busyL=false;
 try{fam=localStorage.getItem("mobileKongFam")||"";syncTs=+(localStorage.getItem("mobileKongSyncTs")||0)}catch(e){}
 const TE=new TextEncoder(),TD=new TextDecoder(),keyCache={};
