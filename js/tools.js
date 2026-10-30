@@ -119,8 +119,8 @@ function startMusic(){if(mus||!musOn)return;try{const A=new(window.AudioContext|
  sched();mus.timer=setInterval(sched,400)}catch(e){mus=null}}
 function stopMusic(){if(!mus)return;const c=mus;mus=null;clearInterval(c.timer);try{c.m.gain.setTargetAtTime(0,c.A.currentTime,.15);setTimeout(()=>c.A.close(),700)}catch(e){}}
 function toggleMusic(){musOn=!musOn;try{localStorage.setItem("mobileKongMusic",musOn?"1":"0")}catch(e){}imus.classList.toggle("off",!musOn);if(musOn){startMusic();if(mus)mus.A.resume()}else stopMusic()}
-function introGesture(){ihint.style.display="none";if(!musOn)return;if(mus)mus.A.resume();else startMusic()}
+function introGesture(){ihint.style.display="none";if(!musOn)return;if(mus)mus.A.resume().catch(()=>{});else startMusic()}
 const WD=["일","월","화","수","목","금","토"];
 function dateLabels(){const d=new Date();todayLbl.textContent="📅 "+(d.getMonth()+1)+"월 "+d.getDate()+"일 ("+WD[d.getDay()]+")";const il=document.getElementById("idate");if(il)il.textContent="📅 "+d.getFullYear()+"년 "+(d.getMonth()+1)+"월 "+d.getDate()+"일 "+WD[d.getDay()]+"요일"}
-function introInit(){dateLabels();imus.classList.toggle("off",!musOn);if(!musOn)ihint.style.display="none";else{startMusic();document.getElementById("intro").addEventListener("pointerdown",introGesture,{once:true})}const t=tCount(),n=nDone(),g=eff();introSub.textContent=!t?"부모님이 오늘의 미션을 정해주세요":n>=g?"오늘 미션을 다 했어! 최고야 🏆":"오늘 미션 "+t+"개 · 🔥 "+streak+"일째 도전 중!"}
+function introInit(){dateLabels();imus.classList.toggle("off",!musOn);if(!musOn)ihint.style.display="none";else{startMusic();document.getElementById("intro").addEventListener("pointerdown",introGesture,{once:true});document.getElementById("intro").addEventListener("keydown",introGesture,{once:true})}const t=tCount(),n=nDone(),g=eff();introSub.textContent=!t?"부모님이 오늘의 미션을 정해주세요":n>=g?"오늘 미션을 다 했어! 최고야 🏆":"오늘 미션 "+t+"개 · 🔥 "+streak+"일째 도전 중!"}
 function closeIntro(){const e=document.getElementById("intro");if(!e||e.classList.contains("out"))return;try{stopMusic()}catch(_){}try{sound(false)}catch(_){}e.classList.add("out");setTimeout(()=>{try{e.remove()}catch(_){}},500);try{if(me&&me!=="아이")goTab("e")}catch(_){}}
